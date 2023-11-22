@@ -11,6 +11,8 @@
  *   the behavior is undefined.
  * - Special characters in query parameters are not decoded (e.g., "%20" will not be converted to a space).
  *
+ * @see https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL
+ *
  * @param {string} url - The URL from which to extract the query parameters.
  * @returns {Object} An object containing the query parameters as key-value pairs.
  *
@@ -24,10 +26,12 @@ export function getQueryParams(url: string): Record<string, string> {
 
 	const parameters: Record<string, string> = {};
 
-	parametersPart?.split("&").forEach((parameter) => {
-		const [name, value] = parameter.split("=");
-		parameters[name] = value;
-	});
+	if (parametersPart) {
+		for (const parameter of parametersPart.split("&")) {
+			const [name, value] = parameter.split("=");
+			parameters[name] = value;
+		}
+	}
 
 	return parameters;
 }

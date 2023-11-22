@@ -7,18 +7,7 @@ import { CRLF, EMPTY_LINE, StatusText } from "./constants";
  * necessary information such as status code, response headers, and an optional
  * response body.
  *
- * Properties:
- *  - status: A numeric HTTP status code. It is defined as a key of the `StatusText`
- *            object, ensuring that only valid HTTP status codes are used.
- *  - body (optional): A string containing the body of the response. This is optional
- *                     and may not be present for all types of responses, especially
- *                     those with no content (like a 204 No Content response).
- *  - headers: An object representing the HTTP headers to be included in the response.
- *             It's a dictionary where the keys are header names and the values are
- *             the corresponding header values.
- *
  * @example
- *
  * const httpResponse: HttpResponse = {
  *     status: 200,
  *     body: 'Hello, world!',
@@ -32,8 +21,13 @@ import { CRLF, EMPTY_LINE, StatusText } from "./constants";
  * headers for content type and cache control.
  */
 export type HttpResponse = {
+	/** A numeric HTTP status code */
 	status: keyof typeof StatusText;
+
+	/** A string containing the body of the response. Optional. */
 	body?: string;
+
+	/** An object representing the HTTP headers. Keys are header names, values are the corresponding header values. */
 	headers: Record<string, string>;
 };
 
@@ -44,6 +38,8 @@ export type HttpResponse = {
  * headers, and body (if provided) from the HttpResponse object. It includes a
  * default server header indicating the server is "Lua HTTP/1.1". If the status
  * code is not recognized, it defaults to "Unknown Status".
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages
  *
  * @param {HttpResponse} response - The HttpResponse object containing the necessary
  *                                  information to construct the response string.

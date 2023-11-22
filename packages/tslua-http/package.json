@@ -14,7 +14,6 @@
     "test": "jest --coverage"
   },
   "devDependencies": {
-    "@flying-dice/tslua-dcs-types": "0.1.0",
     "@types/jest": "^29.5.10",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1",
