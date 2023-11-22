@@ -19,7 +19,7 @@ Some useful Docs include:
 
 Using typescript over lua offers some great benefits:
 - Intelligence and type safety
-- JavaScript ecosystem of dev tools, jest, mocks, linters and for matters
+- JavaScript ecosystem of dev tools, jest, mocks, linters and formatters
 - Great support for both functional and OOP patterns
 
 You can also leverage the amazing power of dependencies with NPM as a package manager.
