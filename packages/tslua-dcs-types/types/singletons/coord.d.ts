@@ -8,19 +8,19 @@
  * @noSelfInFile
  */
 declare namespace coord {
-    interface Vec3 {
-        x: number;
-        y: number;
-        z: number;
-    }
+	interface Vec3 {
+		x: number;
+		y: number;
+		z: number;
+	}
 
-    /**
-     * Returns a point from latitude and longitude and optional altitude in the vec3 format.
-     * @param latitude
-     * @param longitude
-     * @param altitude
-     *
-     * @return Vec3
-     */
-    function LLtoLO(latitude: number, longitude: number, altitude?: number): Vec3;
+	/**
+	 * Returns a point from latitude and longitude and optional altitude in the vec3 format.
+	 * @param latitude
+	 * @param longitude
+	 * @param altitude
+	 *
+	 * @return Vec3
+	 */
+	function LLtoLO(latitude: number, longitude: number, altitude?: number): Vec3;
 }

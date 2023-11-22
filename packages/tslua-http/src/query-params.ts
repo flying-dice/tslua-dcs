@@ -19,15 +19,15 @@
  * const queryParams = getQueryParams("http://example.com/page?param1=value1&param2=value2");
  * // The function will return: { param1: "value1", param2: "value2" }
  */
-export const getQueryParams = (url: string): Record<string, string> => {
-    const [_, parametersPart] = url.split('?');
+export function getQueryParams(url: string): Record<string, string> {
+	const [_, parametersPart] = url.split("?");
 
-    const parameters: Record<string, string> = {}
+	const parameters: Record<string, string> = {};
 
-    parametersPart?.split('&').forEach(parameter => {
-        const [name, value] = parameter.split('=');
-        parameters[name] = value;
-    });
+	parametersPart?.split("&").forEach((parameter) => {
+		const [name, value] = parameter.split("=");
+		parameters[name] = value;
+	});
 
-    return parameters
+	return parameters;
 }

@@ -1,8 +1,8 @@
 {
-  "$schema": "https://typedoc.org/schema.json",
-  "entryPoints": ["packages/tslua-dcs-types", "packages/tslua-http"],
-  "entryPointStrategy": "packages",
-  "out": "./docs",
-  "githubPages": true,
-  "name": "DCS World Typescript"
+	"$schema": "https://typedoc.org/schema.json",
+	"entryPoints": ["packages/tslua-dcs-types", "packages/tslua-http"],
+	"entryPointStrategy": "packages",
+	"out": "./docs",
+	"githubPages": true,
+	"name": "DCS World Typescript"
 }

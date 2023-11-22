@@ -5,11 +5,16 @@
     "packages/*"
   ],
   "scripts": {
+    "format": "biome check --apply .",
+    "format:ci": "biome ci .",
     "build": "lerna run build",
-    "build:docs": "lerna run build && lerna run build:docs && typedoc",
+    "build:docs": "lerna run build:docs && typedoc",
+    "build:all": "npm run format && npm run build && npm run build:docs",
     "test": "lerna run test"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.3.3",
+    "rimraf": "^5.0.5",
     "lerna": "^6.6.1",
     "typedoc": "^0.25.3"
   }

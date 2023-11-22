@@ -6,12 +6,12 @@
   "license": "ISC",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "rimraf dist && tstl && rimraf **/*.test.lua",
+    "build": "rimraf dist && tstl && rimraf -g ./dist/*.test.*",
     "build:watch": "tstl --watch",
     "build:docs": "typedoc",
     "prestart": "npm run build",
     "start": "cd dist && lua index.lua",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "devDependencies": {
     "@flying-dice/tslua-dcs-types": "0.1.0",
