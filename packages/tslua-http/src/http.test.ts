@@ -1,4 +1,4 @@
-import {getQueryParams} from "./getQueryParams";
+import {getQueryParams} from "./http";
 
 describe('getQueryParams', () => {
     it('should parse multiple query parameters', () => {

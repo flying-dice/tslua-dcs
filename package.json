@@ -6,7 +6,7 @@
   ],
   "scripts": {
     "build": "lerna run build",
-    "build:docs": "lerna run build:docs && typedoc",
+    "build:docs": "lerna run build && lerna run build:docs && typedoc",
     "test": "lerna run test"
   },
   "devDependencies": {
