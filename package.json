@@ -1,0 +1,16 @@
+{
+  "name": "root",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "lerna run build",
+    "build:docs": "lerna run build:docs && typedoc",
+    "test": "lerna run test"
+  },
+  "devDependencies": {
+    "lerna": "^6.6.1",
+    "typedoc": "^0.25.3"
+  }
+}

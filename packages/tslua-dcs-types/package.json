@@ -1,0 +1,15 @@
+{
+  "name": "@flying-dice/tslua-dcs-types",
+  "version": "0.1.0",
+  "description": "Typescript type definitions for DCS",
+  "keywords": ["lua", "dcs"],
+  "license": "ISC",
+  "types": "./types/index.d.ts",
+  "scripts": {
+    "build:docs": "typedoc"
+  },
+  "devDependencies": {
+    "lua-types": "^2.13.1",
+    "typescript": "^5.2.2"
+  }
+}
