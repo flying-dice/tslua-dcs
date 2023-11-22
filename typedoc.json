@@ -3,5 +3,6 @@
   "entryPoints": ["packages/tslua-dcs-types", "packages/tslua-http"],
   "entryPointStrategy": "packages",
   "out": "./docs",
-  "githubPages": true
+  "githubPages": true,
+  "name": "DCS World Typescript"
 }
