@@ -10,7 +10,7 @@
     "build:watch": "tstl --watch",
     "build:docs": "typedoc",
     "prestart": "npm run build",
-    "start": "cd dist && lua index.lua",
+    "start": "cd dist && lua -lluarocks.loader index.lua",
     "test": "jest --coverage"
   },
   "devDependencies": {

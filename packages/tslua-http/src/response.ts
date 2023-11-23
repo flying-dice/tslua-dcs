@@ -82,7 +82,12 @@ export function assembleResponseString(response: HttpResponse): string {
 			response.body,
 		].join(CRLF);
 	} else {
-		responseString = [startLine, headers.join(CRLF), EMPTY_LINE].join(CRLF);
+		responseString = [
+			startLine,
+			headers.join(CRLF),
+			EMPTY_LINE,
+			EMPTY_LINE,
+		].join(CRLF);
 	}
 
 	return responseString;

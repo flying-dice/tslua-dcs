@@ -31,6 +31,7 @@ Hello, world!"
 "HTTP/1.1 404 Not Found
 Server: Lua HTTP/1.1
 Content-Type: text/plain
+
 "
 `);
 	});
@@ -48,6 +49,7 @@ Content-Type: text/plain
 "HTTP/1.1 999 Unknown Status
 Server: Lua HTTP/1.1
 Content-Type: text/plain
+
 "
 `);
 	});

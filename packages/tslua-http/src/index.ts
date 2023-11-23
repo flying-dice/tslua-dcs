@@ -1,11 +1,22 @@
-import { socket, TCP } from "socket";
-import { assembleResponseString, HttpResponse } from "./response";
+import * as socket from "socket";
+import { TCPRecvPattern } from "socket";
+import { HttpResponse, assembleResponseString } from "./response";
 
-const server = socket.bind("127.0.0.1", 3000);
+print("Starting Server");
+const server = socket.bind("127.0.0.1", 3001);
+
+print("Setting Timeout value");
 server.settimeout(0);
 
-const clients: Record<number, { id: number; handler: LuaThread; client: TCP }> =
-	{};
+const clients: Record<
+	number,
+	{
+		id: number;
+		handler: LuaThread;
+		client: socket.TCP;
+		recvPattern: TCPRecvPattern;
+	}
+> = {};
 let clientIdSequence = 1;
 
 const getClientId = () => {
@@ -13,40 +24,65 @@ const getClientId = () => {
 	clientIdSequence = clientIdSequence + 1;
 	return id;
 };
+
 const createClientHandler = () =>
-	coroutine.create((id: string, client: TCP) => {
-		const [received, err] = coroutine.yield("*l");
+	coroutine.create((id: number, client: socket.TCP) => {
+		print(`[${id}] - Yielding for initial startLine`);
 
-		// @ts-ignore
-		console.log(received);
+		do {
+			const [received] = coroutine.yield("*l");
+			print(`[${id}] - << ${received} from ${client.getsockname()}`);
+			if (received === "") {
+				break;
+			}
+		} while (1);
 
-		const response: HttpResponse = { status: 500, headers: {} };
+		const response: HttpResponse = { status: 200, headers: {}, body: "OK" };
 
-		client.send(assembleResponseString(response));
+		print(`[${id}] - Sending Response`);
+		const responseString = assembleResponseString(response);
+		print(responseString);
+		print(`[${id}] - Asking Client to Send ${typeof client}`);
+		print(`[${id}] - Client: ${client.getsockname()}`);
 
+		client.send(responseString);
+
+		print(`[${id}] - Closing Connection`);
 		client.close();
 	});
 
 const registerNewClients = () => {
 	const client = server.accept();
 	if (client) {
+		print("New Client Found, Creating Handler");
+		print("Setting Timeout");
 		client.settimeout(0);
+
+		print("Getting new ID");
 		const id = getClientId();
 		const handler = createClientHandler();
-		clients[id] = { id, handler, client };
+
+		print(`Handler Created with ID ${id}`);
+		print(typeof client);
+		print(`Client: ${client.getsockname()}`);
+
+		clients[id] = { id, handler, client, recvPattern: "*l" };
+		coroutine.resume(handler, id, client);
 	}
 };
 
 const receiveAndResumeClients = () => {
-	for (const clientObj of Object.values(clients)) {
-		if (coroutine.status(clientObj.handler) === "suspended") {
-			const [line, err] = clientObj.client.receive("*l");
-
-			if (err && err === "closed") {
-				delete clients[clientObj.id];
-			} else if (err) {
-			} else {
-				coroutine.resume(clientObj.handler, line);
+	for (const { id, handler, client, recvPattern } of Object.values(clients)) {
+		const status = coroutine.status(handler);
+		if (status === "suspended") {
+			print(`Client ${client.getsockname()} was suspended`);
+			try {
+				const line = client.receive(recvPattern as TCPRecvPattern);
+				const [success, nextRecvPattern] = coroutine.resume(handler, line);
+				clients[id].recvPattern = nextRecvPattern;
+			} catch (err) {
+				print(`ERROR: Caught an Error :/ ${err}`);
+				delete clients[id];
 			}
 		}
 	}
@@ -57,5 +93,6 @@ const doRxLoop = () => {
 	receiveAndResumeClients();
 };
 
-// Start loop
-doRxLoop();
+while (true) {
+	doRxLoop();
+}
