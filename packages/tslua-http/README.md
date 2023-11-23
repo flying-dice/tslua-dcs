@@ -1,11 +1,17 @@
-# `lua-http`
+# HTTP Server for Lua
 
-> TODO: description
+## Introduction
+
+tslua-http is a lightweight and simple HTTP server class designed for Lua environments with the `socket` module.
+
+The server is designed to be embedded in games such as DCS World allowing HTTP requests to be handled.
+
+Written in TypeScript and transpiled to Lua using TypeScriptToLua.
+
+## Features
+> TBC
 
 ## Usage
+See
 
-```
-const luaHttp = require('lua-http');
-
-// TODO: DEMONSTRATE API
-```
+See [Usage](USAGE.md) guide for more information
