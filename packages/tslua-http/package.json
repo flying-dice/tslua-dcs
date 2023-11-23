@@ -14,7 +14,6 @@
     "build:watch": "tstl -p tsconfig.tstl.json --watch",
     "build:docs": "typedoc",
     "prestart": "npm run build",
-    "start": "cd dist && lua -lluarocks.loader index.lua",
     "test": "jest --coverage"
   },
   "devDependencies": {

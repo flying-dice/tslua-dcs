@@ -16,7 +16,11 @@ describe("HttpServer", () => {
 		mockTcp = createMock<TCP>();
 		jest.mocked(socket.bind).mockReturnValue(mockTcp);
 
-		httpServer = new HttpServer("127.0.0.1", 8080);
+		httpServer = new HttpServer("127.0.0.1", 8080, (req, res) => {
+			res.status = 200;
+			res.body = "Hello";
+			return res;
+		});
 	});
 
 	afterAll(() => {
@@ -27,7 +31,7 @@ describe("HttpServer", () => {
 		expect(socket.bind).toHaveBeenCalledWith("127.0.0.1", 8080);
 	});
 
-	it("should handle client download request line by line and send 404 and close", () => {
+	it("should handle client download request line by line and send 200 with hello in body and close", () => {
 		const mockClient = createMock<TCP>();
 
 		mockClient.receive.mockReturnValueOnce("GET / HTTP/1.1");

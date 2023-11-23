@@ -1,7 +1,7 @@
 import * as socket from "socket";
 import { TCP } from "socket";
 import { CRLF } from "./constants";
-import { readRequestHead } from "./request";
+import { HttpRequest, readRequestHead } from "./request";
 import { HttpResponse, assembleResponseString } from "./response";
 
 /**
@@ -11,8 +11,8 @@ import { HttpResponse, assembleResponseString } from "./response";
  * accepting client connections, and handling client requests.
  *
  * @example
- * // Example of creating and starting an HttpServer
- * const httpServer = new HttpServer('127.0.0.1', 8080);
+ * // Example of creating and starting an HttpServer with a handler which returns 200 for all requests
+ * const httpServer = new HttpServer('127.0.0.1', 8080, (req, res) => { res.status = 200; return res; });
  * while(true) {
  *   httpServer.acceptNextClient();
  * }
@@ -25,15 +25,19 @@ export class HttpServer {
 	protected server: TCP;
 
 	/**
-	 * Creates an instance of an HTTP server.
+	 * Creates an instance of a HTTP server.
 	 * @param {string} bindAddress - The IP address or hostname the server will bind to.
 	 * @param {number} port - The port number the server will listen on.
-	 *
-	 * @example
-	 * // Create a new HTTP server instance
-	 * const server = new HttpServer('localhost', 3000);
+	 * @param {( req: HttpRequest, res: HttpResponse ) => HttpResponse} handler - The request handler to be used when serving requests
 	 */
-	constructor(bindAddress: string, port: number) {
+	constructor(
+		bindAddress: string,
+		port: number,
+		protected readonly handler: (
+			req: HttpRequest,
+			res: HttpResponse,
+		) => HttpResponse,
+	) {
 		this.server = socket.bind(bindAddress, port);
 		this.server.settimeout(0);
 	}
@@ -81,11 +85,10 @@ export class HttpServer {
 				+request.headers["Content-Length"],
 			) as string;
 		}
-		const response: HttpResponse = {
-			status: 200,
+		const response: HttpResponse = this.handler(request, {
+			status: 404,
 			headers: {},
-			body: request.body,
-		};
+		});
 		const responseString = assembleResponseString(response);
 		client.send(responseString);
 		client.close();
