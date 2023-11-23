@@ -2,6 +2,10 @@
 module.exports = {
 	preset: "ts-jest",
 	testEnvironment: "node",
+	roots: ["<rootDir>"],
+	moduleNameMapper: {
+		socket: "<rootDir>/types/socket.d.ts",
+	},
 	coverageThreshold: {
 		global: {
 			branches: 100,

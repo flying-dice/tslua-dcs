@@ -1,3 +1,4 @@
+import { CRLF } from "./constants";
 import { getQueryParams } from "./query-params";
 
 /**
@@ -58,7 +59,7 @@ export type HttpRequest = {
  * format, with a start line, followed by headers, an empty line, and an optional body.
  */
 export const readRequestHead = (requestPayload: string): HttpRequest => {
-	const [startLine, ...headerLines] = requestPayload.split("\r\n");
+	const [startLine, ...headerLines] = requestPayload.split(CRLF);
 	const [method, originalUrl, protocol] = startLine.split(" ");
 
 	const httpRequest: HttpRequest = {

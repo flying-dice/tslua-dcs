@@ -2,22 +2,27 @@
   "name": "@flying-dice/tslua-http",
   "version": "0.1.0",
   "description": "LUA HTTP Server written in Typescript Transpiled to lua using TypeScriptToLua",
-  "keywords": ["lua", "http"],
+  "keywords": [
+    "lua",
+    "http"
+  ],
   "license": "ISC",
   "types": "./dist/index.d.ts",
+  "main": "./dist/index",
   "scripts": {
-    "build": "rimraf dist && tstl && rimraf -g ./dist/*.test.*",
-    "build:watch": "tstl --watch",
+    "build": "rimraf dist && tstl -p tsconfig.tstl.json",
+    "build:watch": "tstl -p tsconfig.tstl.json --watch",
     "build:docs": "typedoc",
     "prestart": "npm run build",
     "start": "cd dist && lua -lluarocks.loader index.lua",
     "test": "jest --coverage"
   },
   "devDependencies": {
+    "@golevelup/ts-jest": "^0.4.0",
     "@types/jest": "^29.5.10",
     "jest": "^29.7.0",
-    "ts-jest": "^29.1.1",
     "lua-types": "^2.13.1",
+    "ts-jest": "^29.1.1",
     "typescript": "^5.2.2",
     "typescript-to-lua": "^1.22.0"
   }

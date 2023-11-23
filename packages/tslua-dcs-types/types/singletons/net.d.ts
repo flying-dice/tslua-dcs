@@ -56,10 +56,12 @@ declare namespace net {
 
 	/**
 	 * Gets statistics about a specific player.
+	 *
+	 * @see https://wiki.hoggitworld.com/view/DCS_func_get_stat
 	 * @param playerID The ID of the player.
-	 * @returns An object containing the player's statistics.
+	 * @returns Returns a statistic from a given player.
 	 */
-	function get_stat(playerID: number): any; // Replace 'any' with a more specific type if possible
+	function get_stat(playerID: number): number;
 
 	/**
 	 * Retrieves the name of a player based on their ID.
@@ -94,21 +96,31 @@ declare namespace net {
 	 * @param luaTable The Lua table to convert.
 	 * @returns A JSON string representation of the Lua table.
 	 */
-	function lua2json(luaTable: any): string; // Replace 'any' with a more specific type if possible
+	function lua2json<T>(luaTable: T): string;
 
 	/**
 	 * Converts a JSON string to a Lua table.
 	 * @param jsonString The JSON string to convert.
 	 * @returns A Lua table representation of the JSON string.
 	 */
-	function json2lua(jsonString: string): any; // Replace 'any' with a more specific type if possible
+	function json2lua<T>(jsonString: string): T;
 
 	/**
-	 * Executes a Lua string.
-	 * @param luaString The Lua string to execute.
+	 * Executes a lua string in a given lua environment in the game.
+	 *
+	 * States:
+	 *  'config': the state in which $INSTALL_DIR/Config/main.cfg is executed, as well as $WRITE_DIR/Config/autoexec.cfg
+	 *            used for configuration settings
+	 *  'mission': holds current mission
+	 *  'export': runs $WRITE_DIR/Scripts/Export.lua and the relevant export API
+	 *
+	 * @see https://wiki.hoggitworld.com/view/DCS_func_dostring_in
+	 *
+	 * @param state The Lua string to execute.
+	 * @param dostring The Lua string to execute.
 	 * @returns The result of the Lua string execution.
 	 */
-	function dostring_in(luaString: string): any; // Replace 'any' with a more specific type if possible
+	function dostring_in(state: string, dostring: string): string;
 
 	/**
 	 * Logs a message to the DCS log.
