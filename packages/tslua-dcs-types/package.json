@@ -2,14 +2,25 @@
   "name": "@flying-dice/tslua-dcs-types",
   "version": "0.1.0",
   "description": "Typescript type definitions for DCS",
-  "keywords": ["lua", "dcs"],
+  "keywords": [
+    "lua",
+    "dcs"
+  ],
   "license": "ISC",
-  "types": "./types/index.d.ts",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index",
   "scripts": {
+    "export": "tsx scripts/export.ts",
+    "build": "rimraf dist && tsc -p tsconfig.json",
+    "build:watch": "tsc -p tsconfig.json --watch",
     "build:docs": "typedoc"
   },
   "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "cosmiconfig": "^8.3.6",
+    "fs-extra": "^11.1.1",
     "lua-types": "^2.13.1",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "typescript-to-lua": "^1.22.0"
   }
 }

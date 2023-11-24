@@ -1,0 +1,15 @@
+{
+	"$schema": "https://raw.githubusercontent.com/TypeScriptToLua/TypeScriptToLua/master/tsconfig-schema.json",
+	"extends": "./tsconfig.json",
+	"exclude": ["**/*.test.ts"],
+	"compilerOptions": {
+		"outDir": "bundle",
+		"declaration": false
+	},
+	"tstl": {
+		"buildMode": "default",
+		"luaBundle": "dcs-mizkit.bundle.lua",
+		"luaBundleEntry": "src/index.ts",
+		"luaTarget": "5.1"
+	}
+}

@@ -12,34 +12,7 @@ npm install @flying-dice/tslua-dcs-types
 
 ### Usage
 
-After installation, include these types in your TypeScript project to get type checking and IntelliSense for DCS World’s API.
-
-1.	Set up your TypeScript project to transpile to Lua. See TypeScriptToLua’s Getting Started Guide for more information.
-2.	Import the DCS World types into your TypeScript files as needed with the appropriate import statement.
-3.	Use the DCS World API with TypeScript’s type checking.
-
-### The Good
-
-Using typescript over lua offers some great benefits:
-- Intelligence and type safety
-- JavaScript ecosystem of dev tools, jest, mocks, linters and for matters
-- Great support for both functional and OOP patterns
-
-You can also leverage the amazing power of dependencies with NPM as a package manager. 
-
-https://typescripttolua.github.io/docs/external-code
-
-### The Bad 
-You are not writing JavaScript you can work like you’re inside the JS ecosystem. Don’t expect NPM libraries to just work. Remember you’re transpiling your TS to Lua. It’s not running on NodeJS. That said if you can find NPM modules that you can lift TS source code from you should be ok and just paste them in a lib folder as long as they don’t use NodeJS or Browser APIs. 
-
-Take note of this list:
-https://github.com/TypeScriptToLua/TypeScriptToLua/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+label%3A%22missing+feature%22
-
-### Features
-
-- Comprehensive type definitions for the DCS World scripting API.
-- Includes types for commonly used modules, functions, and objects in DCS World.
-- Regular updates to keep up with the latest DCS World API changes.
+> TBC
 
 ### Contribution
 
@@ -47,7 +20,28 @@ Contributions to this project are welcome. If you find an issue or have suggesti
 
 There are various ways to datamine dcs and of course the docs are a great source of information.
 
-This project has relied heavily on DCSFiddle and the explore window which can help with exploring tables. 
+This project has relied heavily on DCSFiddle and the explore window which can help with exploring tables.
+
+#### Exports
+
+To seed the initial interface data is mined from DCS using DCS Fiddle.
+
+https://dcsfiddle.pages.dev/
+
+Once DCS Fiddle is setup run 
+
+```shell
+npm run export
+```
+
+This will
+1. Read the export script `packages/tslua-dcs-types/scripts/export.fiddle.lua`
+2. This will connect to DCS fiddle, traverse the namespaces
+3. Assemble a foundation typescript interface
+
+From here you can extend the underlying interface and replace the typing information.
+
+Updating the `packages/tslua-dcs-types/src/index.ts` with a variable where the type is of your extending interface will allow it to be used.
 
 #### Useful Resources
 - https://dcsfiddle.pages.dev/

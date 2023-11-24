@@ -13,7 +13,6 @@
     "build": "rimraf dist && tstl -p tsconfig.tstl.json",
     "build:watch": "tstl -p tsconfig.tstl.json --watch",
     "build:docs": "typedoc",
-    "prestart": "npm run build",
     "test": "jest --coverage"
   },
   "devDependencies": {

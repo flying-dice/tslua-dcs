@@ -1,0 +1,90 @@
+/**
+ * @version 2.9.1.48335
+ **/
+export interface _Unit {
+	getDrawArgumentValue(...args: any[]): unknown;
+	markDisembarkingTask(...args: any[]): unknown;
+	hasCarrier(...args: any[]): unknown;
+	className_: string;
+	parentClass_: {
+		isExist(...args: any[]): unknown;
+		className_: string;
+		parentClass_: { className_: string };
+		getCategory(...args: any[]): unknown;
+		cancelChoosingCargo(...args: any[]): unknown;
+		database_: {};
+		Category: {
+			VOID: number;
+			SCENERY: number;
+			BASE: number;
+			CARGO: number;
+			UNIT: number;
+			STATIC: number;
+			WEAPON: number;
+		};
+		hasAttribute(...args: any[]): unknown;
+		destroy(...args: any[]): unknown;
+		getAttributes(...args: any[]): unknown;
+		tonumber(...args: any[]): unknown;
+		getName(...args: any[]): unknown;
+		getPoint(...args: any[]): unknown;
+		getPosition(...args: any[]): unknown;
+		getVelocity(...args: any[]): unknown;
+		inAir(...args: any[]): unknown;
+		getTypeName(...args: any[]): unknown;
+	};
+	getCategory(...args: any[]): unknown;
+	enableEmission(...args: any[]): unknown;
+	getGroup(...args: any[]): unknown;
+	Category: {
+		AIRPLANE: number;
+		HELICOPTER: number;
+		STRUCTURE: number;
+		GROUND_UNIT: number;
+		SHIP: number;
+	};
+	getPlayerName(...args: any[]): unknown;
+	RadarType: { AS: number; SS: number };
+	getLife(...args: any[]): unknown;
+	tonumber(...args: any[]): unknown;
+	getLife0(...args: any[]): unknown;
+	getAirbase(...args: any[]): unknown;
+	isActive(...args: any[]): unknown;
+	hasSensors(...args: any[]): unknown;
+	getDescentOnBoard(...args: any[]): unknown;
+	getForcesName(...args: any[]): unknown;
+	UnloadCargo(...args: any[]): unknown;
+	canShipLanding(...args: any[]): unknown;
+	getSeats(...args: any[]): unknown;
+	getNearestCargos(...args: any[]): unknown;
+	getID(...args: any[]): unknown;
+	getCommunicator(...args: any[]): unknown;
+	OpticType: { TV: number; IR: number; LLTV: number };
+	getDesc(...args: any[]): unknown;
+	getCallsign(...args: any[]): unknown;
+	getSensors(...args: any[]): unknown;
+	getCargosOnBoard(...args: any[]): unknown;
+	disembarking(...args: any[]): unknown;
+	getNumber(...args: any[]): unknown;
+	getNearestCargosForAircraft(...args: any[]): unknown;
+	openRamp(...args: any[]): unknown;
+	getFuelLowState(...args: any[]): unknown;
+	checkOpenRamp(...args: any[]): unknown;
+	OldCarrierMenuShow(...args: any[]): unknown;
+	LoadOnBoard(...args: any[]): unknown;
+	vtolableLA(...args: any[]): unknown;
+	getAmmo(...args: any[]): unknown;
+	getObjectID(...args: any[]): unknown;
+	RefuelingSystem: { PROBE_AND_DROGUE: number; BOOM_AND_RECEPTACLE: number };
+	getDescByName(...args: any[]): unknown;
+	getCoalition(...args: any[]): unknown;
+	SensorType: { RWR: number; RADAR: number; IRST: number; OPTIC: number };
+	getRadar(...args: any[]): unknown;
+	getController(...args: any[]): unknown;
+	getByName(...args: any[]): unknown;
+	getDescentCapacity(...args: any[]): unknown;
+	getTypeName(...args: any[]): unknown;
+	getFuel(...args: any[]): unknown;
+	getName(...args: any[]): unknown;
+	getCountry(...args: any[]): unknown;
+}

@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "lib": ["ESNext"],
+        "moduleResolution": "Node",
+        "types": ["lua-types/5.1", "jest", "@flying-dice/tslua-dcs-types"],
+        "strict": true,
+        "outDir": "dist",
+        "declaration": true,
+        "esModuleInterop": true
+    }
+}
