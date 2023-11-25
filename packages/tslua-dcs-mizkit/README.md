@@ -49,7 +49,4 @@ Contributions are welcome! Please read our contributing guidelines for more info
 
 ## License
 
-This project is ISC licensed. See the LICENSE file for details.
-```
-
-This README provides a basic overview of the project, including a description, installation and usage instructions, build commands, and other relevant information. You can tailor it to fit the specifics of your project, such as adding more detailed usage examples, contribution guidelines, and any other information you deem necessary.
+Thisss project is ISC licensed. See the LICENSE file for details.
