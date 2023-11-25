@@ -1,7 +1,5 @@
 # tslua-mizkit
 
-## Description
-
 tslua-mizkit is a DCS World Mission Kit, which utilizes `tslua-dcs` and `TypescriptToLua` for enhancing the mission development experience in DCS World. 
 
 This project aims to provide a robust and efficient way to build DCS World scripts using typescript.
