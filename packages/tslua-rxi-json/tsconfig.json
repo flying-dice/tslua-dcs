@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "lib": ["ESNext"],
+        "moduleResolution": "Node",
+        "strict": true,
+        "declaration": true,
+        "esModuleInterop": true,
+        "emitDeclarationOnly": true,
+        "removeComments": false
+    }
+}

@@ -1,5 +1,5 @@
 import { HttpRequest, HttpResponse, HttpStatus } from "@flying-dice/tslua-http";
-import { Application } from "./index";
+import { AppHttpResponse, Application } from "./index";
 
 const app = new Application("127.0.0.1", 3000);
 
@@ -17,44 +17,42 @@ const users: Record<
 	},
 };
 
-app.get("/api/users", (req: HttpRequest, res: HttpResponse) => {
-	res.body = Object.values(users)
-		.map((it) => it.name)
-		.join(", ");
-	return res;
+app.get("/api/users", (req: HttpRequest, res: AppHttpResponse) => {
+	res.send(
+		Object.values(users)
+			.map((it) => it.name)
+			.join(", "),
+	);
 });
 
-app.get("/api/users/:id", (req: HttpRequest, res: HttpResponse) => {
+app.get("/api/users/:id", (req: HttpRequest, res: AppHttpResponse) => {
 	if (!users[req.parameters.id]) {
-		res.status = HttpStatus.NOT_FOUND;
-		return res;
+		return res.status(HttpStatus.NOT_FOUND).send("Not Found");
 	}
 
-	res.body = `name: ${users[req.parameters.id].name}`;
-
-	return res;
+	res.send(`name: ${users[req.parameters.id].name}`);
 });
 
 app.get(
 	"/api/users/:id/comments/:commentId",
-	(req: HttpRequest, res: HttpResponse) => {
+	(req: HttpRequest, res: AppHttpResponse) => {
 		if (
 			!users[req.parameters.id] ||
 			!users[req.parameters.id].comments[req.parameters.commentId]
 		) {
-			res.status = HttpStatus.NOT_FOUND;
-			return res;
+			return res.status(HttpStatus.NOT_FOUND).send("Not Found");
 		}
 
-		res.body = users[req.parameters.id].comments[req.parameters.commentId];
-
-		return res;
+		res.send(users[req.parameters.id].comments[req.parameters.commentId]);
 	},
 );
 
-app.post("/api/users", (req: HttpRequest, res: HttpResponse) => {
-	res.body = req.body;
-	return res;
+app.post("/api/users", (req: HttpRequest, res: AppHttpResponse) => {
+	res.send(req.body as string);
+});
+
+app.get("/health", (req, res) => {
+	res.json({ status: "OK" });
 });
 
 do {

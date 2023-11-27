@@ -1,9 +1,10 @@
+import { HttpStatus } from "./constants";
 import { HttpResponse, assembleResponseString } from "./response";
 
 describe("assembleResponseString", () => {
 	it("should assemble a response string with body", () => {
 		const response: HttpResponse = {
-			status: 200,
+			status: HttpStatus.OK,
 			body: "Hello, world!",
 			headers: {
 				"Content-Type": "text/plain",
@@ -21,7 +22,7 @@ Hello, world!"
 
 	it("should assemble a response string without body", () => {
 		const response: HttpResponse = {
-			status: 404,
+			status: HttpStatus.NOT_FOUND,
 			headers: {
 				"Content-Type": "text/plain",
 			},

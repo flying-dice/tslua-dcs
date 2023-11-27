@@ -59,4 +59,12 @@ describe("Application Routing", () => {
 				expect(res.data).toEqual("Example Body");
 			});
 	});
+
+	it("should return json response", async () => {
+		await axios.get("http://127.0.0.1:3000/health").then((res) => {
+			expect(res.status).toEqual(200);
+			expect(res.headers["content-type"]).toEqual("application/json");
+			expect(res.data).toEqual({ status: "OK" });
+		});
+	});
 });

@@ -1,4 +1,4 @@
-import { CRLF, EMPTY_LINE, StatusText } from "./constants";
+import { CRLF, EMPTY_LINE, HttpStatus, StatusText } from "./constants";
 
 /**
  * Represents an HTTP response to be sent to a client.
@@ -22,7 +22,7 @@ import { CRLF, EMPTY_LINE, StatusText } from "./constants";
  */
 export type HttpResponse = {
 	/** A numeric HTTP status code */
-	status: keyof typeof StatusText;
+	status: HttpStatus;
 
 	/** A string containing the body of the response. Optional. */
 	body?: string;

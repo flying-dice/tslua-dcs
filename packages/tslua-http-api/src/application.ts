@@ -3,9 +3,36 @@ import {
 	HttpResponse,
 	HttpServer,
 	HttpStatus,
-	RequestHandler,
 } from "@flying-dice/tslua-http";
+import * as json from "@flying-dice/tslua-rxi-json";
 import { getPathParameters, isMatch } from "./path";
+
+export class AppHttpResponse {
+	constructor(public readonly res: HttpResponse) {}
+
+	status(status: HttpStatus): this {
+		this.res.status = +status;
+		return this;
+	}
+
+	send(data: string): this {
+		this.res.headers["Content-Type"] = "text/plain";
+		this.res.body = data;
+		return this;
+	}
+
+	json(value: any): this {
+		this.res.headers["Content-Type"] = "application/json";
+		this.res.body = json.encode(value);
+		return this;
+	}
+}
+
+export type AppRequestHandler = (
+	req: HttpRequest,
+	res: AppHttpResponse,
+	next: (err?: Error) => void,
+) => void;
 
 /**
  * A class representing a web application, extending the functionality of HttpServer.
@@ -14,7 +41,7 @@ export class Application extends HttpServer {
 	protected requestHandlers: {
 		route: string;
 		method?: string;
-		requestHandler: RequestHandler;
+		requestHandler: AppRequestHandler;
 	}[];
 
 	/**
@@ -34,7 +61,7 @@ export class Application extends HttpServer {
 	 * @param route The route pattern to match.
 	 * @param requestHandler The handler function to execute.
 	 */
-	use(route: string, requestHandler: RequestHandler) {
+	use(route: string, requestHandler: AppRequestHandler) {
 		this.requestHandlers.push({ route, requestHandler });
 	}
 
@@ -43,42 +70,42 @@ export class Application extends HttpServer {
 	/**
 	 * Registers a GET request handler.
 	 */
-	get(route: string, requestHandler: RequestHandler) {
+	get(route: string, requestHandler: AppRequestHandler) {
 		this.requestHandlers.push({ route, requestHandler, method: "GET" });
 	}
 
 	/**
 	 * Registers a PUT request handler.
 	 */
-	put(route: string, requestHandler: RequestHandler) {
+	put(route: string, requestHandler: AppRequestHandler) {
 		this.requestHandlers.push({ route, requestHandler, method: "PUT" });
 	}
 
 	/**
 	 * Registers a POST request handler.
 	 */
-	post(route: string, requestHandler: RequestHandler) {
+	post(route: string, requestHandler: AppRequestHandler) {
 		this.requestHandlers.push({ route, requestHandler, method: "POST" });
 	}
 
 	/**
 	 * Registers a DELETE request handler.
 	 */
-	delete(route: string, requestHandler: RequestHandler) {
+	delete(route: string, requestHandler: AppRequestHandler) {
 		this.requestHandlers.push({ route, requestHandler, method: "DELETE" });
 	}
 
 	/**
 	 * Registers a PATCH request handler.
 	 */
-	patch(route: string, requestHandler: RequestHandler) {
+	patch(route: string, requestHandler: AppRequestHandler) {
 		this.requestHandlers.push({ route, requestHandler, method: "PATCH" });
 	}
 
 	/**
 	 * Registers an OPTIONS request handler.
 	 */
-	options(route: string, requestHandler: RequestHandler) {
+	options(route: string, requestHandler: AppRequestHandler) {
 		this.requestHandlers.push({ route, requestHandler, method: "OPTIONS" });
 	}
 
@@ -104,12 +131,19 @@ export class Application extends HttpServer {
 			res.status = HttpStatus.OK;
 		}
 
-		// Executes each handler in the stack.
-		stack.forEach((it) => {
-			req.parameters = getPathParameters(it.route, req.path);
-			it.requestHandler(req, res);
-		});
+		const appResponse = new AppHttpResponse(res);
 
-		return res;
+		const runStackItem = (idx: number) => {
+			if (idx < stack.length) {
+				req.parameters = getPathParameters(stack[idx].route, req.path);
+				stack[idx].requestHandler(req, appResponse, () =>
+					runStackItem(idx + 1),
+				);
+			}
+		};
+
+		if (stack.length > 0) runStackItem(0);
+
+		return appResponse.res;
 	}
 }
