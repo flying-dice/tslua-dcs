@@ -8,6 +8,14 @@
     "json",
     "rxi/json"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:flying-dice/tslua-dcs.git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "license": "ISC",
   "scripts": {
     "build:docs": "typedoc"
@@ -15,5 +23,5 @@
   "devDependencies": {
     "typescript": "^5.2.2"
   },
-  "gitHead": "04c156cf07394b062224615c8b85332551dc0f63"
+  "gitHead": "2bcf7fe2ce2f467bdc9b03420a4672769bc3364c"
 }

@@ -4,6 +4,14 @@
   "workspaces": [
     "packages/*"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:flying-dice/tslua-dcs.git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "_install": "npm i",
     "prepare": "husky install",
