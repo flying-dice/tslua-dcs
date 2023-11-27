@@ -5,7 +5,8 @@
 		"packages/tslua-dcs-types",
 		"packages/tslua-http",
 		"packages/tslua-http-api",
-		"packages/tslua-rxi-json"
+		"packages/tslua-rxi-json",
+		"packages/tslua-base64"
 	],
 	"entryPointStrategy": "packages",
 	"out": "./docs",

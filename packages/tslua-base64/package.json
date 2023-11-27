@@ -1,0 +1,26 @@
+{
+  "name": "@flying-dice/tslua-base64",
+  "version": "0.4.0",
+  "description": "Base64 library with typings",
+  "keywords": [
+    "lua",
+    "dcs",
+    "base64"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flying-dice/tslua-dcs.git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "license": "ISC",
+  "scripts": {
+    "build:docs": "typedoc"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  },
+  "gitHead": "a6ae4c01c5f5796bcc1c0e88d4b790d83de03340"
+}
