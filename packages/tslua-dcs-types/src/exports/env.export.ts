@@ -928,8 +928,8 @@ export interface _env {
 				};
 				eventlist: string;
 				comment: string;
-				predicate: string;
 				actions: { 1: { predicate: string; file: string } };
+				predicate: string;
 			};
 		};
 		forcedOptions: {};

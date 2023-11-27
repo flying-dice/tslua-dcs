@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 describe("Application Routing", () => {
 	it("should route to get endpoint with no params", async () => {
-		await axios.get("http://127.0.0.1:3000/api/users").then((res) => {
+		await axios.get("http://127.0.0.1:29293/api/users").then((res) => {
 			expect(res.status).toEqual(200);
 			expect(res.data).toMatch("John Doe");
 			expect(res.data).toMatch("Jane Gray");
@@ -11,7 +11,7 @@ describe("Application Routing", () => {
 	});
 
 	it("should route to get endpoint with 1 param", async () => {
-		await axios.get("http://127.0.0.1:3000/api/users/JOHN").then((res) => {
+		await axios.get("http://127.0.0.1:29293/api/users/JOHN").then((res) => {
 			expect(res.status).toEqual(200);
 			expect(res.data).toEqual("name: John Doe");
 		});
@@ -19,7 +19,7 @@ describe("Application Routing", () => {
 
 	it("should route to nested get endpoint with 2 params", async () => {
 		await axios
-			.get("http://127.0.0.1:3000/api/users/JOHN/comments/JOHN_C_1")
+			.get("http://127.0.0.1:29293/api/users/JOHN/comments/JOHN_C_1")
 			.then((res) => {
 				expect(res.status).toEqual(200);
 				expect(res.data).toEqual("Hello World!");
@@ -28,7 +28,7 @@ describe("Application Routing", () => {
 
 	it("should route to nested get endpoint with 2 params", async () => {
 		await axios
-			.get("http://127.0.0.1:3000/api/users/JANE/comments/JANE_C_2")
+			.get("http://127.0.0.1:29293/api/users/JANE/comments/JANE_C_2")
 			.then((res) => {
 				expect(res.status).toEqual(200);
 				expect(res.data).toEqual("Janes second comment.");
@@ -37,7 +37,7 @@ describe("Application Routing", () => {
 
 	it("should return 404 for a non existent user", async () => {
 		await axios
-			.get("http://127.0.0.1:3000/api/users/DAVE", { validateStatus: null })
+			.get("http://127.0.0.1:29293/api/users/DAVE", { validateStatus: null })
 			.then((res) => {
 				expect(res.status).toEqual(404);
 			});
@@ -45,7 +45,7 @@ describe("Application Routing", () => {
 
 	it("should return 404 for a non existent route", async () => {
 		await axios
-			.get("http://127.0.0.1:3000/api/invalid-path", { validateStatus: null })
+			.get("http://127.0.0.1:29293/api/invalid-path", { validateStatus: null })
 			.then((res) => {
 				expect(res.status).toEqual(404);
 			});
@@ -53,7 +53,7 @@ describe("Application Routing", () => {
 
 	it("should echo body of reques for post", async () => {
 		await axios
-			.post("http://127.0.0.1:3000/api/users", "Example Body", {
+			.post("http://127.0.0.1:29293/api/users", "Example Body", {
 				validateStatus: null,
 			})
 			.then((res) => {
@@ -63,7 +63,7 @@ describe("Application Routing", () => {
 	});
 
 	it("should return json response", async () => {
-		await axios.get("http://127.0.0.1:3000/health").then((res) => {
+		await axios.get("http://127.0.0.1:29293/health").then((res) => {
 			expect(res.status).toEqual(200);
 			expect(res.headers["content-type"]).toEqual("application/json");
 			expect(res.data).toEqual({ status: "OK" });
@@ -72,7 +72,7 @@ describe("Application Routing", () => {
 
 	it("should reject access to secure endpoint without auth", async () => {
 		await axios
-			.get("http://127.0.0.1:3000/secure", { validateStatus: null })
+			.get("http://127.0.0.1:29293/secure", { validateStatus: null })
 			.then((res) => {
 				expect(res.status).toEqual(401);
 				expect(res.data).toEqual("Unauthorized");
@@ -81,7 +81,7 @@ describe("Application Routing", () => {
 
 	it("should grant access to secure endpoint with auth", async () => {
 		await axios
-			.get("http://127.0.0.1:3000/secure", {
+			.get("http://127.0.0.1:29293/secure", {
 				validateStatus: null,
 				headers: { Authorization: "Bearer 123" },
 			})

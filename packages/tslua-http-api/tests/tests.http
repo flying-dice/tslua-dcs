@@ -1,0 +1,53 @@
+### Get Users
+GET http://127.0.0.1:29293/api/users
+
+###
+
+### Get User by Name (John)
+GET http://127.0.0.1:29293/api/users/JOHN
+
+###
+
+### Get Comments of User John
+GET http://127.0.0.1:29293/api/users/JOHN/comments/JOHN_C_1
+
+###
+
+### Get Comments of User Jane
+GET http://127.0.0.1:29293/api/users/JANE/comments/JANE_C_2
+
+###
+
+### Attempt to Get Non-existent User (Dave)
+GET http://127.0.0.1:29293/api/users/DAVE
+
+###
+
+### Attempt to Access Non-existent Route
+GET http://127.0.0.1:29293/api/invalid-path
+
+###
+
+### Post and Echo Request Body
+POST http://127.0.0.1:29293/api/users
+Content-Type: text/plain
+
+Example Body
+
+###
+
+### Get Health Status
+GET http://127.0.0.1:29293/health
+
+###
+
+### Access Secure Endpoint without Authorization
+GET http://127.0.0.1:29293/secure
+
+###
+
+### Access Secure Endpoint with Authorization
+GET http://127.0.0.1:29293/secure
+Authorization: Bearer 123
+
+###

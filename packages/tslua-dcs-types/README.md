@@ -43,6 +43,8 @@ From here you can extend the underlying interface and replace the typing informa
 
 Updating the `packages/tslua-dcs-types/src/index.d.ts` with a variable where the type is of your extending interface will allow it to be used.
 
+To add new namespaces to be exported update the `.exporttc.yaml` and run the `npm run export` again.
+
 #### Useful Resources
 - https://dcsfiddle.pages.dev/
 - https://www.digitalcombatsimulator.com/en/support/faq/1249/

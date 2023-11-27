@@ -1,0 +1,69 @@
+/**
+ * @version 2.9.1.48335
+ * @noSelf
+ **/
+export interface _net {
+	dostring_in(...args: any[]): unknown;
+	log(...args: any[]): unknown;
+	PS_EXTRA_ALLY_AAA: number;
+	CHAT_ALL: number;
+	ERR_SERVER_FULL: number;
+	GAME_MODE_LAST_MAN_STANDING: number;
+	PS_EXTRA_ENEMY_TRANSPORTS: number;
+	json2lua(...args: any[]): unknown;
+	PS_LAND: number;
+	PS_EXTRA_ENEMY_TROOPS: number;
+	CHAT_TEAM: number;
+	ERR_DENIED_TRIAL_ONLY: number;
+	trace(...args: any[]): unknown;
+	get_server_host(...args: any[]): unknown;
+	ERR_CONNECT_FAILED: number;
+	get_player_list(...args: any[]): unknown;
+	ERR_INVALID_ADDRESS: number;
+	ERR_INVALID_PASSWORD: number;
+	get_server_id(...args: any[]): unknown;
+	ERR_REFUSED: number;
+	PS_SHIP: number;
+	set_name(...args: any[]): unknown;
+	ERR_KICKED: number;
+	ERR_TAINTED_CLIENT: number;
+	PS_EXTRA_ENEMY_FIGHTERS: number;
+	get_name(...args: any[]): unknown;
+	ERR_BAD_CALLSIGN: number;
+	kick(...args: any[]): unknown;
+	is_loopback_address(...args: any[]): unknown;
+	get_stat(...args: any[]): unknown;
+	ERR_THATS_OKAY: number;
+	GAME_MODE_CONQUEST: number;
+	send_chat_to(...args: any[]): unknown;
+	PS_EJECT: number;
+	ERR_PROTOCOL_ERROR: number;
+	PS_EXTRA_ALLY_TRANSPORTS: number;
+	ERR_WRONG_VERSION: number;
+	RESUME_WITH_CLIENTS: number;
+	is_private_address(...args: any[]): unknown;
+	RESUME_MANUAL: number;
+	GAME_MODE_MISSION: number;
+	send_chat(...args: any[]): unknown;
+	PS_EXTRA_ALLY_TROOPS: number;
+	PS_EXTRA_ALLY_SAM: number;
+	PS_CAR: number;
+	set_slot(...args: any[]): unknown;
+	ERR_TIMEOUT: number;
+	PS_EXTRA_ALLY_FIGHTERS: number;
+	PS_PLANE: number;
+	PS_PING: number;
+	recv_chat(...args: any[]): unknown;
+	lua2json(...args: any[]): unknown;
+	get_player_info(...args: any[]): unknown;
+	PS_EXTRA_ENEMY_SAM: number;
+	PS_EXTRA_ENEMY_AAA: number;
+	ERR_BANNED: number;
+	ERR_NOT_ALLOWED: number;
+	get_slot(...args: any[]): unknown;
+	PS_SCORE: number;
+	force_player_slot(...args: any[]): unknown;
+	PS_CRASH: number;
+	get_my_player_id(...args: any[]): unknown;
+	RESUME_ON_LOAD: number;
+}

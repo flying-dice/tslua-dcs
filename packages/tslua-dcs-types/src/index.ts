@@ -12,6 +12,7 @@ import { Icoord } from "./coord";
 import { Ienv } from "./env";
 import { Iland } from "./land";
 import { ImissionCommands } from "./missionCommands";
+import { Inet } from "./net";
 import { Iradio } from "./radio";
 import { Itimer } from "./timer";
 import { Itrigger } from "./trigger";
@@ -68,6 +69,9 @@ declare global {
 
 	/** @noSelf **/
 	const missionCommands: ImissionCommands;
+
+	/** @noSelf **/
+	const net: Inet;
 
 	/** @noSelf **/
 	const radio: Iradio;

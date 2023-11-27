@@ -1,7 +1,7 @@
 import { HttpRequest, HttpStatus } from "@flying-dice/tslua-http";
 import { AppHttpResponse, AppMiddleware, Application } from "./index";
 
-const app = new Application("127.0.0.1", 3000);
+const app = new Application("127.0.0.1", 29293);
 
 const users: Record<
 	string,

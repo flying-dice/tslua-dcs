@@ -1,4 +1,26 @@
 scripts: 
   - fiddlescript: scripts/export.fiddle.lua
     outdir: "src/exports"
-    namespaces: [ "Warehouse", "Airbase", "Object", "Unit", "StaticObject", "Weapon", "Unit", "Group", "Controller", "atmosphere", "env", "timer", "land", "atmosphere", "world", "coalition", "trigger", "coord", "radio", "missionCommands", "AI"]
+    namespaces:
+      - AI
+      - Airbase
+      - atmosphere
+      - atmosphere
+      - coalition
+      - Controller
+      - coord
+      - env
+      - Group
+      - land
+      - missionCommands
+      - net
+      - Object
+      - radio
+      - StaticObject
+      - timer
+      - trigger
+      - Unit
+      - Unit
+      - Warehouse
+      - Weapon
+      - world
