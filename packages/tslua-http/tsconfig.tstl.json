@@ -4,7 +4,6 @@
 	"exclude": ["**/*.test.ts"],
 	"tstl": {
 		"luaLibImport": "inline",
-		"sourceMapTraceback": true,
-		"noResolvePaths": ["socket"]
+		"sourceMapTraceback": true
 	}
 }

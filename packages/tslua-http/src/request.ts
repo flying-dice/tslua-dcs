@@ -19,7 +19,7 @@ import { getQueryParams } from "./query-params";
  *     body: '{"name": "John Doe"}'
  * };
  */
-export type HttpRequest = {
+export type HttpRequest<PARAMS = Record<string, string>> = {
 	/** The HTTP headers as a record of key-value pairs. */
 	headers: Record<string, string>;
 
@@ -36,7 +36,7 @@ export type HttpRequest = {
 	path: string;
 
 	/** Query parameters parsed from the URL as a record of key-value pairs. */
-	parameters: Record<string, string>;
+	parameters: PARAMS;
 
 	/** Optional body of the request. */
 	body?: string;

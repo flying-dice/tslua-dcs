@@ -3,3 +3,5 @@ node_modules
 dist
 build
 coverage
+/lerna-debug.log
+*.log

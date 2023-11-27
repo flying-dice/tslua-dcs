@@ -1,3 +1,4 @@
+/** @noResolution */
 declare module "socket" {
 	type TCPRecvPattern = number | "*l" | "*a";
 

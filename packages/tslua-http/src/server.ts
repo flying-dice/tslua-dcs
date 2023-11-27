@@ -4,6 +4,11 @@ import { CRLF } from "./constants";
 import { HttpRequest, readRequestHead } from "./request";
 import { HttpResponse, assembleResponseString } from "./response";
 
+export type RequestHandler = (
+	req: HttpRequest,
+	res: HttpResponse,
+) => HttpResponse;
+
 /**
  * Represents an HTTP server.
  * This class encapsulates the functionality required for creating and
@@ -28,15 +33,12 @@ export class HttpServer {
 	 * Creates an instance of a HTTP server.
 	 * @param {string} bindAddress - The IP address or hostname the server will bind to.
 	 * @param {number} port - The port number the server will listen on.
-	 * @param {( req: HttpRequest, res: HttpResponse ) => HttpResponse} handler - The request handler to be used when serving requests
+	 * @param {RequestHandler} handler - The request handler to be used when serving requests
 	 */
 	constructor(
 		bindAddress: string,
 		port: number,
-		protected readonly handler: (
-			req: HttpRequest,
-			res: HttpResponse,
-		) => HttpResponse,
+		protected readonly handler: RequestHandler,
 	) {
 		this.server = socket.bind(bindAddress, port);
 		this.server.settimeout(0);

@@ -1,0 +1,10 @@
+{
+	"$schema": "https://raw.githubusercontent.com/TypeScriptToLua/TypeScriptToLua/master/tsconfig-schema.json",
+	"extends": "./tsconfig.json",
+	"exclude": ["**/*.test.ts", "**/__mocks__/**/*"],
+	"tstl": {
+		"luaLibImport": "inline",
+		"sourceMapTraceback": true,
+		"noResolvePaths": ["socket"]
+	}
+}

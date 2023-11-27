@@ -13,7 +13,7 @@
     "build": "rimraf dist bundle && tstl -p tsconfig.tstl.json && tstl -p tsconfig.tstl-bundle.json",
     "build:watch": "tstl -p tsconfig.tstl.json --watch",
     "build:docs": "typedoc",
-    "test": "jest --coverage"
+    "test": "jest --coverage --passWithNoTests"
   },
   "dependencies": {
     "@flying-dice/tslua-dcs-types": "0.1.0"

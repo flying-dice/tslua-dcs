@@ -41,7 +41,7 @@ This will
 
 From here you can extend the underlying interface and replace the typing information.
 
-Updating the `packages/tslua-dcs-types/src/index.ts` with a variable where the type is of your extending interface will allow it to be used.
+Updating the `packages/tslua-dcs-types/src/index.d.ts` with a variable where the type is of your extending interface will allow it to be used.
 
 #### Useful Resources
 - https://dcsfiddle.pages.dev/
