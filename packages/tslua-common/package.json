@@ -1,10 +1,11 @@
 {
-  "name": "@flying-dice/tslua-http",
+  "name": "@flying-dice/tslua-common",
   "version": "0.1.0",
-  "description": "LUA HTTP Server written in Typescript Transpiled to lua using TypeScriptToLua",
+  "description": "Common Utils Library",
   "keywords": [
     "lua",
-    "http"
+    "dcs",
+    "logger"
   ],
   "license": "ISC",
   "types": "./dist/index.d.ts",
@@ -13,9 +14,6 @@
     "build": "rimraf dist && tsc -p tsconfig.tstl.json && tstl -p tsconfig.tstl.json",
     "build:docs": "typedoc",
     "test": "vitest run --coverage"
-  },
-  "dependencies": {
-    "@flying-dice/tslua-common": "^0.1.0"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^0.34.6",
