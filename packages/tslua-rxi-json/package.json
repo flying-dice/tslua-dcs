@@ -10,7 +10,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:flying-dice/tslua-dcs.git"
+    "url": "https://github.com/flying-dice/tslua-dcs.git"
   },
   "publishConfig": {
     "access": "public",
@@ -23,5 +23,5 @@
   "devDependencies": {
     "typescript": "^5.2.2"
   },
-  "gitHead": "2381af8395904270567cbd484788e9648f729946"
+  "gitHead": "a6ae4c01c5f5796bcc1c0e88d4b790d83de03340"
 }
