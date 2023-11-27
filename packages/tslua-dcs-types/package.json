@@ -22,5 +22,6 @@
     "lua-types": "^2.13.1",
     "typescript": "^5.3.2",
     "typescript-to-lua": "^1.22.0"
-  }
+  },
+  "gitHead": "d2e45de611919a3cb0682fd60abd7b5d06cf5f77"
 }
