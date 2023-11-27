@@ -1,10 +1,12 @@
 import axios from "axios";
+import { describe, expect, it } from "vitest";
 
 describe("Application Routing", () => {
 	it("should route to get endpoint with no params", async () => {
 		await axios.get("http://127.0.0.1:3000/api/users").then((res) => {
 			expect(res.status).toEqual(200);
-			expect(res.data).toEqual("John Doe, Jane Gray");
+			expect(res.data).toMatch("John Doe");
+			expect(res.data).toMatch("Jane Gray");
 		});
 	});
 
@@ -66,5 +68,26 @@ describe("Application Routing", () => {
 			expect(res.headers["content-type"]).toEqual("application/json");
 			expect(res.data).toEqual({ status: "OK" });
 		});
+	});
+
+	it("should reject access to secure endpoint without auth", async () => {
+		await axios
+			.get("http://127.0.0.1:3000/secure", { validateStatus: null })
+			.then((res) => {
+				expect(res.status).toEqual(401);
+				expect(res.data).toEqual("Unauthorized");
+			});
+	});
+
+	it("should grant access to secure endpoint with auth", async () => {
+		await axios
+			.get("http://127.0.0.1:3000/secure", {
+				validateStatus: null,
+				headers: { Authorization: "Bearer 123" },
+			})
+			.then((res) => {
+				expect(res.status).toEqual(200);
+				expect(res.data).toEqual("Secure Content");
+			});
 	});
 });

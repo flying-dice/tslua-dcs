@@ -3,5 +3,3 @@ export const _string = {
 	match: string.match,
 	gmatch: string.gmatch,
 };
-
-export const _print = print;

@@ -1,0 +1,7 @@
+{
+	"$schema": "https://raw.githubusercontent.com/TypeScriptToLua/TypeScriptToLua/master/tsconfig-schema.json",
+	"extends": "./tsconfig.base.json",
+	"tstl": {
+		"sourceMapTraceback": true
+	}
+}

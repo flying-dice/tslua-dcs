@@ -65,12 +65,11 @@ export function assembleResponseString(response: HttpResponse): string {
 	const startLine = `HTTP/1.1 ${response.status} ${
 		StatusText[response.status] || "Unknown Status"
 	}`;
-	const headers = [
-		"Server: Lua HTTP/1.1",
-		...Object.entries(response.headers).map(
-			([name, value]) => `${name}: ${value}`,
-		),
-	];
+	const headers = ["Server: Lua HTTP/1.1"];
+
+	Object.keys(response.headers).forEach((key) => {
+		headers.push(`${key}: ${response.headers[key]}`);
+	});
 
 	let responseString: string;
 

@@ -1,12 +1,7 @@
 {
+    "extends": "../../tsconfig.base.json",
+    "include": ["src/**/*", "types/**/*"],
     "compilerOptions": {
-        "target": "ESNext",
-        "lib": ["ESNext"],
-        "moduleResolution": "Node",
-        "types": ["lua-types/5.1", "jest"],
-        "strict": true,
-        "outDir": "dist",
-        "declaration": true,
-        "esModuleInterop": true
+        "outDir": "dist"
     }
 }

@@ -1,0 +1,12 @@
+{
+	"compilerOptions": {
+		"target": "ES6",
+		"lib": ["ES6"],
+		"moduleResolution": "Node",
+		"types": ["lua-types/5.1"],
+		"strict": true,
+		"declaration": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true
+	}
+}

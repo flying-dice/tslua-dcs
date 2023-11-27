@@ -1,3 +1,4 @@
+import { Logger } from "@flying-dice/tslua-common";
 import * as socket from "socket";
 import { TCP } from "socket";
 import { CRLF } from "./constants";
@@ -29,6 +30,8 @@ export class HttpServer {
 	 */
 	protected server: TCP;
 
+	protected logger: Logger;
+
 	/**
 	 * Creates an instance of a HTTP server.
 	 * @param {string} bindAddress - The IP address or hostname the server will bind to.
@@ -40,6 +43,8 @@ export class HttpServer {
 		port: number,
 		protected readonly handler: RequestHandler,
 	) {
+		this.logger = new Logger("HttpServer");
+
 		this.server = socket.bind(bindAddress, port);
 		this.server.settimeout(0);
 	}

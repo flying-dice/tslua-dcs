@@ -1,13 +1,17 @@
+import { Logger } from "@flying-dice/tslua-common";
 import {
 	HttpRequest,
 	HttpResponse,
 	HttpServer,
 	HttpStatus,
+	StatusText,
 } from "@flying-dice/tslua-http";
 import * as json from "@flying-dice/tslua-rxi-json";
 import { getPathParameters, isMatch } from "./path";
 
 export class AppHttpResponse {
+	protected logger = new Logger("AppHttpResponse");
+
 	constructor(public readonly res: HttpResponse) {}
 
 	status(status: HttpStatus): this {
@@ -28,10 +32,16 @@ export class AppHttpResponse {
 	}
 }
 
-export type AppRequestHandler = (
+export type AppMiddleware = (
 	req: HttpRequest,
 	res: AppHttpResponse,
 	next: (err?: Error) => void,
+) => void;
+
+export type AppErrorMiddleware = <T = Error>(
+	err: T,
+	req: HttpRequest,
+	res: AppHttpResponse,
 ) => void;
 
 /**
@@ -41,8 +51,12 @@ export class Application extends HttpServer {
 	protected requestHandlers: {
 		route: string;
 		method?: string;
-		requestHandler: AppRequestHandler;
+		middleware: AppMiddleware;
 	}[];
+
+	protected errorMiddleware: AppErrorMiddleware;
+
+	protected logger: Logger;
 
 	/**
 	 * Constructs a new Application instance.
@@ -53,16 +67,28 @@ export class Application extends HttpServer {
 		super(bindAddress, port, (req: HttpRequest, res: HttpResponse) =>
 			this.handleRequest(req, res),
 		);
+		this.logger = new Logger(Application.name);
 		this.requestHandlers = [];
+		this.errorMiddleware = (err, req, res) => {
+			res
+				.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.send(StatusText[HttpStatus.INTERNAL_SERVER_ERROR]);
+		};
 	}
 
 	/**
 	 * Registers a request handler for all HTTP methods on a specific route.
 	 * @param route The route pattern to match.
-	 * @param requestHandler The handler function to execute.
+	 * @param middleware The handler function to execute.
 	 */
-	use(route: string, requestHandler: AppRequestHandler) {
-		this.requestHandlers.push({ route, requestHandler });
+	use(route: string, ...middleware: AppMiddleware[]) {
+		middleware.forEach((it) =>
+			this.requestHandlers.push({ route, middleware: it }),
+		);
+	}
+
+	useGlobalErrorHandler(middleware: AppErrorMiddleware) {
+		this.errorMiddleware = middleware;
 	}
 
 	// Below methods are similar, they register a request handler for a specific HTTP method.
@@ -70,43 +96,55 @@ export class Application extends HttpServer {
 	/**
 	 * Registers a GET request handler.
 	 */
-	get(route: string, requestHandler: AppRequestHandler) {
-		this.requestHandlers.push({ route, requestHandler, method: "GET" });
+	get(route: string, ...middleware: AppMiddleware[]) {
+		middleware.forEach((it) =>
+			this.requestHandlers.push({ route, middleware: it, method: "GET" }),
+		);
 	}
 
 	/**
 	 * Registers a PUT request handler.
 	 */
-	put(route: string, requestHandler: AppRequestHandler) {
-		this.requestHandlers.push({ route, requestHandler, method: "PUT" });
+	put(route: string, ...middleware: AppMiddleware[]) {
+		middleware.forEach((it) =>
+			this.requestHandlers.push({ route, middleware: it, method: "PUT" }),
+		);
 	}
 
 	/**
 	 * Registers a POST request handler.
 	 */
-	post(route: string, requestHandler: AppRequestHandler) {
-		this.requestHandlers.push({ route, requestHandler, method: "POST" });
+	post(route: string, ...middleware: AppMiddleware[]) {
+		middleware.forEach((it) =>
+			this.requestHandlers.push({ route, middleware: it, method: "POST" }),
+		);
 	}
 
 	/**
 	 * Registers a DELETE request handler.
 	 */
-	delete(route: string, requestHandler: AppRequestHandler) {
-		this.requestHandlers.push({ route, requestHandler, method: "DELETE" });
+	delete(route: string, ...middleware: AppMiddleware[]) {
+		middleware.forEach((it) =>
+			this.requestHandlers.push({ route, middleware: it, method: "DELETE" }),
+		);
 	}
 
 	/**
 	 * Registers a PATCH request handler.
 	 */
-	patch(route: string, requestHandler: AppRequestHandler) {
-		this.requestHandlers.push({ route, requestHandler, method: "PATCH" });
+	patch(route: string, ...middleware: AppMiddleware[]) {
+		middleware.forEach((it) =>
+			this.requestHandlers.push({ route, middleware: it, method: "PATCH" }),
+		);
 	}
 
 	/**
 	 * Registers an OPTIONS request handler.
 	 */
-	options(route: string, requestHandler: AppRequestHandler) {
-		this.requestHandlers.push({ route, requestHandler, method: "OPTIONS" });
+	options(route: string, ...middleware: AppMiddleware[]) {
+		middleware.forEach((it) =>
+			this.requestHandlers.push({ route, middleware: it, method: "OPTIONS" }),
+		);
 	}
 
 	/**
@@ -116,7 +154,7 @@ export class Application extends HttpServer {
 	 * @returns The HttpResponse object after processing.
 	 */
 	private handleRequest(req: HttpRequest, res: HttpResponse): HttpResponse {
-		print("Handling Request");
+		this.logger.debug("Handling Request");
 
 		// Filters the request handlers to match the current request's path and method.
 		const stack = this.requestHandlers.filter(
@@ -124,7 +162,7 @@ export class Application extends HttpServer {
 				(!it.method || it.method === req.method) && isMatch(it.route, req.path),
 		);
 
-		print(`Found ${stack.length} handlers to process`);
+		this.logger.debug(`Found ${stack.length} handlers to process`);
 
 		// Sets OK status if any handlers are found.
 		if (stack.length > 0) {
@@ -133,16 +171,24 @@ export class Application extends HttpServer {
 
 		const appResponse = new AppHttpResponse(res);
 
-		const runStackItem = (idx: number) => {
-			if (idx < stack.length) {
-				req.parameters = getPathParameters(stack[idx].route, req.path);
-				stack[idx].requestHandler(req, appResponse, () =>
-					runStackItem(idx + 1),
-				);
-			}
-		};
+		try {
+			const runStackItem = (idx: number) => {
+				if (idx < stack.length) {
+					req.parameters = getPathParameters(stack[idx].route, req.path);
+					stack[idx].middleware(req, appResponse, (err) => {
+						if (!err) {
+							runStackItem(idx + 1);
+						} else {
+							throw err;
+						}
+					});
+				}
+			};
 
-		if (stack.length > 0) runStackItem(0);
+			if (stack.length > 0) runStackItem(0);
+		} catch (e) {
+			this.errorMiddleware(e, req, appResponse);
+		}
 
 		return appResponse.res;
 	}

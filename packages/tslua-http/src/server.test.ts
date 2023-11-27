@@ -1,20 +1,21 @@
-import { createMock } from "@golevelup/ts-jest";
 import * as socket from "socket";
 import { TCP } from "socket";
+import { Mocked, afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { mock } from "vitest-mock-extended";
 import { CRLF, EMPTY_LINE } from "./constants";
 import { HttpServer } from "./server";
 
-jest.mock("socket", () => ({
-	bind: jest.fn(),
+vi.mock("socket", () => ({
+	bind: vi.fn(),
 }));
 
 describe("HttpServer", () => {
 	let httpServer: HttpServer;
-	let mockTcp: jest.Mocked<TCP>;
+	let mockTcp: Mocked<TCP>;
 
 	beforeAll(() => {
-		mockTcp = createMock<TCP>();
-		jest.mocked(socket.bind).mockReturnValue(mockTcp);
+		mockTcp = mock<TCP>();
+		vi.mocked(socket.bind).mockReturnValue(mockTcp);
 
 		httpServer = new HttpServer("127.0.0.1", 8080, (req, res) => {
 			res.status = 200;
@@ -24,7 +25,7 @@ describe("HttpServer", () => {
 	});
 
 	afterAll(() => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	});
 
 	it("should have been bound to the correct address and port", function () {
@@ -32,7 +33,7 @@ describe("HttpServer", () => {
 	});
 
 	it("should handle client download request line by line and send 200 with hello in body and close", () => {
-		const mockClient = createMock<TCP>();
+		const mockClient = mock<TCP>();
 
 		mockClient.receive.mockReturnValueOnce("GET / HTTP/1.1");
 		mockClient.receive.mockReturnValueOnce("Content-Length: 5");

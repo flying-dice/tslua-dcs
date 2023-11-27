@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import { getQueryParams } from "./query-params";
 
 describe("getQueryParams", () => {

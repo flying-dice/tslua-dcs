@@ -1,21 +1,20 @@
-import { _print, _string } from "./externals";
+import { Logger } from "@flying-dice/tslua-common";
+import { _string } from "./externals";
+
+const logger = new Logger("Path");
 
 export const gSubPathParamsToPattern = (route: string): string => {
-	_print(`Replacing Path Params for Pattern matcher ${route}`);
+	logger.debug(`Replacing Path Params for Pattern matcher ${route}`);
 	const result = _string.gsub(route, ":[%w_]+", "([%%w_]+)");
-	_print(`Replaced Path Params for Pattern matcher ${result[0]}`);
+	logger.debug(`Replaced Path Params for Pattern matcher ${result[0]}`);
 	return result[0];
 };
 
 export const gSubEscapeReservedChars = (route: string): string => {
-	_print(`Escaping Path matcher ${route}`);
+	logger.debug(`Escaping Path matcher ${route}`);
 	// replace all reserved chars with their escaped version including _
-	const [patternRoute] = _string.gsub(
-		route,
-		"([%(%)%.%%%+%-%*%?%[%^%$])",
-		"%%%1",
-	);
-	_print(`Escaping Path matcher ${patternRoute}`);
+	const [patternRoute] = _string.gsub(route, "([%(%)%%%+%-%?%[%^%$])", "%%%1");
+	logger.debug(`Escaping Path matcher ${patternRoute}`);
 	return patternRoute;
 };
 
@@ -26,11 +25,11 @@ export const routeToPattern = (route: string): string => {
 };
 
 export const getParamNames = (route: string): string[] => {
-	_print(`Getting Param names from ${route}`);
+	logger.debug(`Getting Param names from ${route}`);
 	const names: string[] = [];
 
 	for (const [name] of _string.gmatch(route, ":(%w+)")) {
-		_print(`Adding ${name} to params array`);
+		logger.debug(`Adding ${name} to params array`);
 		names.push(name);
 	}
 
@@ -41,17 +40,19 @@ export const getPathParameters = (
 	route: string,
 	path: string,
 ): Record<string, string> => {
-	_print("Getting Param names");
+	logger.debug("Getting Param names");
 	const paramNames = getParamNames(route);
 
-	_print("Getting Route Pattern");
+	logger.debug("Getting Route Pattern");
 	const pattern = routeToPattern(route);
 
-	_print("Assembling Parameters");
+	logger.debug("Assembling Parameters");
 	const matches: Record<string, string> = {};
 
 	_string.match(path, pattern).forEach((match, idx) => {
-		_print(`Adding Parameter ${paramNames[idx] || "nil"} from match ${match}`);
+		logger.debug(
+			`Adding Parameter ${paramNames[idx] || "nil"} from match ${match}`,
+		);
 
 		if (paramNames[idx]) {
 			matches[paramNames[idx]] = match;
@@ -63,7 +64,7 @@ export const getPathParameters = (
 
 export const isMatch = (route: string, path: string): boolean => {
 	const pattern = routeToPattern(route);
-	_print(`checking if "${pattern}" matches "${path}"`);
+	logger.debug(`checking if "${pattern}" matches "${path}"`);
 	const res = _string.match(path, pattern);
 	return res?.[0] !== undefined;
 };

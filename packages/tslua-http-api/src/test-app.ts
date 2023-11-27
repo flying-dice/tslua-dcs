@@ -1,5 +1,5 @@
-import { HttpRequest, HttpResponse, HttpStatus } from "@flying-dice/tslua-http";
-import { AppHttpResponse, Application } from "./index";
+import { HttpRequest, HttpStatus } from "@flying-dice/tslua-http";
+import { AppHttpResponse, AppMiddleware, Application } from "./index";
 
 const app = new Application("127.0.0.1", 3000);
 
@@ -19,8 +19,8 @@ const users: Record<
 
 app.get("/api/users", (req: HttpRequest, res: AppHttpResponse) => {
 	res.send(
-		Object.values(users)
-			.map((it) => it.name)
+		Object.keys(users)
+			.map((it) => users[it].name)
 			.join(", "),
 	);
 });
@@ -53,6 +53,18 @@ app.post("/api/users", (req: HttpRequest, res: AppHttpResponse) => {
 
 app.get("/health", (req, res) => {
 	res.json({ status: "OK" });
+});
+
+const authMiddleware: AppMiddleware = (req, res, next) => {
+	if (req.headers.Authorization !== "Bearer 123") {
+		return res.status(HttpStatus.UNAUTHORIZED).send("Unauthorized");
+	}
+
+	next();
+};
+
+app.get("/secure", authMiddleware, (req, res) => {
+	res.send("Secure Content");
 });
 
 do {
