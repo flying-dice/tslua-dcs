@@ -1,6 +1,11 @@
 {
 	"$schema": "https://typedoc.org/schema.json",
-	"entryPoints": ["packages/tslua-dcs-types", "packages/tslua-http"],
+	"entryPoints": [
+		"packages/tslua-dcs-types",
+		"packages/tslua-http",
+		"packages/tslua-http-api",
+		"packages/tslua-dcs-mizkit"
+	],
 	"entryPointStrategy": "packages",
 	"out": "./docs",
 	"githubPages": true,
