@@ -2,7 +2,7 @@ import { _print, _string } from "./externals";
 
 export const gSubPathParamsToPattern = (route: string): string => {
 	_print(`Replacing Path Params for Pattern matcher ${route}`);
-	const result = _string.gsub(route, ":[%w_]+", "(%[%%w_%]+)");
+	const result = _string.gsub(route, ":[%w_]+", "([%%w_]+)");
 	_print(`Replaced Path Params for Pattern matcher ${result[0]}`);
 	return result[0];
 };
