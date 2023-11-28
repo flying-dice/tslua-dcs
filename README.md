@@ -1,3 +1,6 @@
+[![Discord](https://img.shields.io/discord/738118932937834566?logo=discord&label=Join%20Discord)](https://discord.gg/bT7BEHn5RD) 
+
+
 ## Overview
 
 This repository contains a collection of TypeScript first libraries for DCS World.
