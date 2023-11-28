@@ -9,25 +9,65 @@ import {
 import * as json from "@flying-dice/tslua-rxi-json";
 import { getPathParameters, isMatch } from "./path";
 
+/**
+ * A class representing an HTTP response, extending the functionality of HttpResponse.
+ */
 export class AppHttpResponse {
 	protected logger = new Logger("AppHttpResponse");
 
 	constructor(public readonly res: HttpResponse) {}
 
+	/**
+	 * Sets the HTTP status code.
+	 * @example
+	 * res.status(HttpStatus.OK);
+	 *
+	 * @param status The HTTP status code.
+	 */
 	status(status: HttpStatus): this {
 		this.res.status = +status;
 		return this;
 	}
 
+	/**
+	 * Sends a plain text response.
+	 *
+	 * @example
+	 * res.send("Hello World!");
+	 *
+	 * @param data The data to send.
+	 */
 	send(data: string): this {
 		this.res.headers["Content-Type"] = "text/plain";
 		this.res.body = data;
 		return this;
 	}
 
+	/**
+	 * Sends a JSON response.
+	 *
+	 * @example
+	 * res.json({ status: "OK" });
+	 *
+	 * @param value The value to encode as JSON.
+	 */
 	json(value: any): this {
 		this.res.headers["Content-Type"] = "application/json";
 		this.res.body = json.encode(value);
+		return this;
+	}
+
+	/**
+	 * Sets a header value.
+	 *
+	 * @example
+	 * res.setHeader("X-My-Header", "My Value");
+	 *
+	 * @param key The header key.
+	 * @param value The header value.
+	 */
+	setHeader(key: string, value: string): this {
+		this.res.headers[key] = value;
 		return this;
 	}
 }
