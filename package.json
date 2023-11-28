@@ -20,7 +20,7 @@
     "build:all": "npm run format && npm run build && npm run build:docs",
     "pretest": "npm run build",
     "test": "lerna run test",
-    "posttest": "npm run build:docs"
+    "posttest": "npm run build:docs && npm run format"
   },
   "dependencies": {
     "lua-types": "^2.13.1"

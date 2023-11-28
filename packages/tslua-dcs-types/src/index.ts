@@ -40,6 +40,9 @@ export * from "./Weapon";
 export * from "./world";
 
 declare global {
+	const _APP_VERSION: string;
+	const _ARCHITECTURE: string;
+
 	/** @noSelf **/
 	const AI: IAI;
 
