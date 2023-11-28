@@ -1,5 +1,5 @@
 [![Discord](https://img.shields.io/discord/738118932937834566?logo=discord&label=Join%20Discord)](https://discord.gg/bT7BEHn5RD) 
-
+[![tslua-codebot](https://img.shields.io/badge/CodeBot-tslua%20dcs-blue?logo=openai)](https://chat.openai.com/g/g-6643nUbup-tslua-dcs-codebot)
 
 ## Overview
 
