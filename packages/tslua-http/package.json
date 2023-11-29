@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^0.34.6",
+    "@vitest/ui": "^0.34.6",
     "lua-types": "^2.13.1",
     "typescript": "^5.3.2",
     "typescript-to-lua": "^1.22.0",

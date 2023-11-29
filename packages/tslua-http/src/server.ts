@@ -32,8 +32,6 @@ export class HttpServer {
 
 	protected logger: Logger;
 
-	private currentClient: TCP | undefined;
-
 	/**
 	 * Creates an instance of a HTTP server.
 	 * @param {string} bindAddress - The IP address or hostname the server will bind to.
@@ -52,10 +50,6 @@ export class HttpServer {
 	}
 
 	close() {
-		if (this.currentClient) {
-			this.currentClient.close();
-			this.currentClient = undefined;
-		}
 		this.server.close();
 	}
 
@@ -68,73 +62,74 @@ export class HttpServer {
 	 * httpServer.acceptNextClient();
 	 */
 	acceptNextClient() {
-		if (this.currentClient) return;
-		this.currentClient = this.server.accept();
-		if (this.currentClient) {
-			this.logger.debug("Accepted client");
-			this.handleClient();
+		// if (this.currentClient) return;
+		const client = this.server.accept();
+		if (client) {
+			try {
+				this.logger.debug("Handling client");
+				this.handleClient(client);
+			} catch (e) {
+				this.logger.error(`Error handling client: ${e}`);
+			} finally {
+				this.logger.debug("Closing client");
+				client.close();
+			}
 		}
 	}
 
 	/**
 	 * Handles the client's request.
 	 * Reads the request from the client, processes it, and sends back a response.
+	 *
+	 * @param {TCP} client - The client to handle.
+	 *
 	 * @private
 	 *
 	 * @example
 	 * // Internally used to handle a client's request
-	 * this.handleClient();
+	 * this.handleClient(client);
 	 */
-	private handleClient(): void {
-		try {
-			if (!this.currentClient) return;
-			const requestHeadLines: string[] = [];
-			let lastReceived;
-			this.logger.debug("Handling client");
-			this.currentClient.settimeout(0);
+	private handleClient(client: TCP): void {
+		const requestHeadLines: string[] = [];
+		let lastReceived;
+		this.logger.debug("Handling client");
+		client.settimeout(2);
 
-			do {
-				const received = this.currentClient.receive("*l");
-				if (typeof received === "string") {
-					requestHeadLines.push(received);
-				}
-				lastReceived = received;
-				if (received === undefined) {
-					throw new Error("Client returned unexpected value, terminating");
-				}
-			} while (lastReceived !== "");
-
-			this.currentClient.settimeout(0);
-			this.logger.debug("Received request head");
-			const request = readRequestHead(requestHeadLines.join(CRLF));
-
-			const contentLength = request.headers["Content-Length"];
-			const contentLengthNum = tonumber(contentLength);
-			if (contentLengthNum && contentLengthNum > 0) {
-				this.logger.debug(
-					`Fetching request body ${request.headers["Content-Length"]}`,
-				);
-
-				request.body = this.currentClient.receive(contentLengthNum) as string;
+		do {
+			const received = client.receive("*l");
+			if (typeof received === "string") {
+				requestHeadLines.push(received);
 			}
+			lastReceived = received;
+			if (received === undefined) {
+				throw new Error("Client returned unexpected value, terminating");
+			}
+		} while (lastReceived !== "");
 
-			this.logger.debug("Handling request");
-			const response: HttpResponse = this.handler(request, {
-				status: 404,
-				headers: {},
-			});
+		this.logger.debug("Received request head");
+		const request = readRequestHead(requestHeadLines.join(CRLF));
 
-			this.logger.debug("Assembling response");
-			const responseString = assembleResponseString(response);
+		const contentLength = request.headers["Content-Length"];
+		const contentLengthNum = tonumber(contentLength);
+		if (contentLengthNum && contentLengthNum > 0) {
+			this.logger.debug(
+				`Fetching request body ${request.headers["Content-Length"]}`,
+			);
 
-			this.logger.debug("Sending response");
-			this.currentClient.send(responseString);
-		} catch (e) {
-			this.logger.error(`Error handling client: ${e}`);
-		} finally {
-			this.logger.debug("Closing client");
-			this.currentClient?.close();
-			this.currentClient = undefined;
+			client.settimeout(2);
+			request.body = client.receive(contentLengthNum) as string;
 		}
+
+		this.logger.debug("Handling request");
+		const response: HttpResponse = this.handler(request, {
+			status: 404,
+			headers: {},
+		});
+
+		this.logger.debug("Assembling response");
+		const responseString = assembleResponseString(response);
+
+		this.logger.debug("Sending response");
+		client.send(responseString);
 	}
 }

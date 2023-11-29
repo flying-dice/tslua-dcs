@@ -1,10 +1,20 @@
 import * as socket from "socket";
 import { TCP } from "socket";
-import { Mocked, afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import {
+	Mocked,
+	afterEach,
+	beforeAll,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	vi,
+} from "vitest";
 import { mock } from "vitest-mock-extended";
 import { CRLF, EMPTY_LINE } from "./constants";
 import { HttpServer } from "./server";
 
+vi.mock("@flying-dice/tslua-common");
 vi.mock("socket", () => ({
 	bind: vi.fn(),
 }));
@@ -13,7 +23,9 @@ describe("HttpServer", () => {
 	let httpServer: HttpServer;
 	let mockTcp: Mocked<TCP>;
 
-	beforeAll(() => {
+	beforeEach(() => {
+		global.tonumber = vi.fn().mockImplementation((value) => parseInt(value));
+
 		mockTcp = mock<TCP>();
 		vi.mocked(socket.bind).mockReturnValue(mockTcp);
 
@@ -24,7 +36,7 @@ describe("HttpServer", () => {
 		});
 	});
 
-	afterAll(() => {
+	afterEach(() => {
 		vi.restoreAllMocks();
 	});
 
@@ -40,7 +52,7 @@ describe("HttpServer", () => {
 		mockClient.receive.mockReturnValueOnce(EMPTY_LINE);
 		mockClient.receive.mockReturnValueOnce("Hello");
 
-		mockTcp.accept.mockReturnValue(mockClient);
+		mockTcp.accept.mockReturnValueOnce(mockClient);
 		httpServer.acceptNextClient();
 
 		expect(mockClient.receive).toHaveBeenNthCalledWith(1, "*l");
@@ -53,6 +65,24 @@ describe("HttpServer", () => {
 				CRLF,
 			),
 		);
+
+		expect(mockClient.close).toHaveBeenCalled();
+	});
+
+	it("should close the server after closing active clients", () => {
+		httpServer.close();
+		expect(mockTcp.close).toHaveBeenCalled();
+	});
+
+	it("should exit if received payload is not as expected and close client", () => {
+		const mockClient = mock<TCP>();
+
+		mockClient.receive.mockReturnValueOnce([null, "error", "error"]);
+
+		mockTcp.accept.mockReturnValueOnce(mockClient);
+		httpServer.acceptNextClient();
+
+		expect(mockClient.receive).toHaveBeenNthCalledWith(1, "*l");
 
 		expect(mockClient.close).toHaveBeenCalled();
 	});
