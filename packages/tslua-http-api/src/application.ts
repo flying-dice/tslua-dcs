@@ -51,7 +51,7 @@ export class AppHttpResponse {
 	 *
 	 * @param value The value to encode as JSON.
 	 */
-	json(value: any): this {
+	json<T = any>(value: T): this {
 		this.res.headers["Content-Type"] = "application/json";
 		this.res.body = json.encode(value);
 		return this;
