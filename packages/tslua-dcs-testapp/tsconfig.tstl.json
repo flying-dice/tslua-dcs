@@ -1,0 +1,10 @@
+{
+	"$schema": "https://raw.githubusercontent.com/TypeScriptToLua/TypeScriptToLua/master/tsconfig-schema.json",
+	"extends": "./tsconfig.json",
+	"tstl": {
+		"sourceMapTraceback": true,
+		"luaBundleEntry": "src/index.ts",
+		"luaBundle": "tslua-testapp.lua",
+		"noResolvePaths": ["socket"]
+	}
+}

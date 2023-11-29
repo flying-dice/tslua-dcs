@@ -32,6 +32,8 @@ export class HttpServer {
 
 	protected logger: Logger;
 
+	private currentClient: TCP | undefined;
+
 	/**
 	 * Creates an instance of a HTTP server.
 	 * @param {string} bindAddress - The IP address or hostname the server will bind to.
@@ -49,6 +51,14 @@ export class HttpServer {
 		this.server.settimeout(0);
 	}
 
+	close() {
+		if (this.currentClient) {
+			this.currentClient.close();
+			this.currentClient = undefined;
+		}
+		this.server.close();
+	}
+
 	/**
 	 * Accepts the next client connection.
 	 * When a client connects, it handles the client's request.
@@ -58,46 +68,73 @@ export class HttpServer {
 	 * httpServer.acceptNextClient();
 	 */
 	acceptNextClient() {
-		const client = this.server.accept();
-		if (client) {
-			this.handleClient(client);
+		if (this.currentClient) return;
+		this.currentClient = this.server.accept();
+		if (this.currentClient) {
+			this.logger.debug("Accepted client");
+			this.handleClient();
 		}
 	}
 
 	/**
 	 * Handles the client's request.
 	 * Reads the request from the client, processes it, and sends back a response.
-	 * @param {TCP} client - The client connection to handle.
 	 * @private
 	 *
 	 * @example
 	 * // Internally used to handle a client's request
-	 * this.handleClient(client);
+	 * this.handleClient();
 	 */
-	private handleClient(client: TCP): void {
-		const requestHeadLines: string[] = [];
-		let lastReceived;
-		do {
-			const received = client.receive("*l");
-			if (typeof received === "string") {
-				requestHeadLines.push(received);
-			}
-			lastReceived = received;
-		} while (lastReceived !== "");
+	private handleClient(): void {
+		try {
+			if (!this.currentClient) return;
+			const requestHeadLines: string[] = [];
+			let lastReceived;
+			this.logger.debug("Handling client");
+			this.currentClient.settimeout(0);
 
-		const request = readRequestHead(requestHeadLines.join(CRLF));
-		if (request.headers["Content-Length"]) {
-			client.settimeout(5);
-			request.body = client.receive(
-				+request.headers["Content-Length"],
-			) as string;
+			do {
+				const received = this.currentClient.receive("*l");
+				if (typeof received === "string") {
+					requestHeadLines.push(received);
+				}
+				lastReceived = received;
+				if (received === undefined) {
+					throw new Error("Client returned unexpected value, terminating");
+				}
+			} while (lastReceived !== "");
+
+			this.currentClient.settimeout(0);
+			this.logger.debug("Received request head");
+			const request = readRequestHead(requestHeadLines.join(CRLF));
+
+			const contentLength = request.headers["Content-Length"];
+			const contentLengthNum = tonumber(contentLength);
+			if (contentLengthNum && contentLengthNum > 0) {
+				this.logger.debug(
+					`Fetching request body ${request.headers["Content-Length"]}`,
+				);
+
+				request.body = this.currentClient.receive(contentLengthNum) as string;
+			}
+
+			this.logger.debug("Handling request");
+			const response: HttpResponse = this.handler(request, {
+				status: 404,
+				headers: {},
+			});
+
+			this.logger.debug("Assembling response");
+			const responseString = assembleResponseString(response);
+
+			this.logger.debug("Sending response");
+			this.currentClient.send(responseString);
+		} catch (e) {
+			this.logger.error(`Error handling client: ${e}`);
+		} finally {
+			this.logger.debug("Closing client");
+			this.currentClient?.close();
+			this.currentClient = undefined;
 		}
-		const response: HttpResponse = this.handler(request, {
-			status: 404,
-			headers: {},
-		});
-		const responseString = assembleResponseString(response);
-		client.send(responseString);
-		client.close();
 	}
 }
