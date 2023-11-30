@@ -16,3 +16,29 @@ export interface Icoord extends _coord {
 		alt: number,
 	): { x: number; y: number; z: number };
 }
+
+/**
+ * DCS world has 3-dimensional coordinate system. DCS ground is an infinite plain.
+ *
+ * Main axes:
+ *
+ * x is directed to the north
+ * z is directed to the east
+ * y is directed up
+ *
+ * Vec3 type is a 3D-vector. It is a table that has following format:
+ *
+ *  {
+ *    x: number,
+ *    y: number,
+ *    z: number
+ *  }
+ *
+ * @see https://www.digitalcombatsimulator.com/en/support/faq/1256/
+ */
+/** @noSelf **/
+export interface IVec3 {
+	x: number;
+	y: number;
+	z: number;
+}
