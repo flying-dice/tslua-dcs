@@ -5,6 +5,7 @@ export interface Icoord extends _coord {
 	 * Returns multiple values of a given vec3 point in latitude, longitude, and altitude
 	 *
 	 * @see https://wiki.hoggitworld.com/view/DCS_func_LOtoLL
+	 * @tupleReturn
 	 */
 	LOtoLL(vec3: IVec3): [number, number, number];
 
