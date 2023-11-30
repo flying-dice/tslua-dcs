@@ -1,6 +1,5 @@
 import { _Group } from "./exports/Group.export";
 
-/** @noSelf **/
 export interface IGroup extends _Group {
 	/**
 	 * Returns a number which defines the unique mission id of a given object.
