@@ -1,3 +1,4 @@
+import { IAirbase } from "./Airbase";
 import { IGroup } from "./Group";
 import { _coalition } from "./exports/coalition.export";
 
@@ -16,4 +17,15 @@ export interface Icoalition extends _coalition {
 	 * @param GroupCategory
 	 */
 	getGroups(coalitionId: number, GroupCategory: number): IGroup[];
+
+	/**
+	 * Returns a table of airbase objects belonging to the specified coalition.
+	 * Objects can be ships, static objects(FARP), or airbases on the map.
+	 *
+	 * When the function is run as world.getAirbases() no input values required,
+	 * and the function returns all airbases, ships, and farps on the map.
+	 *
+	 * @param coalitionId
+	 */
+	getAirbases(coalitionId: number): IAirbase[];
 }
