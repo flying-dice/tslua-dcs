@@ -14,9 +14,9 @@ export interface Icoalition extends _coalition {
 	 * @see https://wiki.hoggitworld.com/view/DCS_func_getGroups
 	 *
 	 * @param coalitionId
-	 * @param GroupCategory
+	 * @param groupCategory
 	 */
-	getGroups(coalitionId: number, GroupCategory: number): IGroup[];
+	getGroups(coalitionId: number, groupCategory?: number): IGroup[];
 
 	/**
 	 * Returns a table of airbase objects belonging to the specified coalition.
