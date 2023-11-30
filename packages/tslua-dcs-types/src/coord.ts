@@ -2,6 +2,13 @@ import { _coord } from "./exports/coord.export";
 /** @noSelf **/
 export interface Icoord extends _coord {
 	/**
+	 * Returns multiple values of a given vec3 point in latitude, longitude, and altitude
+	 *
+	 * @see https://wiki.hoggitworld.com/view/DCS_func_LOtoLL
+	 */
+	LOtoLL(vec3: IVec3): [number, number, number];
+
+	/**
 	 * Returns a point from latitude and longitude in the vec3 format.
 	 *
 	 * @see https://wiki.hoggitworld.com/view/DCS_func_LLtoLO
@@ -26,7 +33,7 @@ export interface Icoord extends _coord {
  * z is directed to the east
  * y is directed up
  *
- * Vec3 type is a 3D-vector. It is a table that has following format:
+ * Vec3 type is a 3D-vector. It is a table that has the following format:
  *
  *  {
  *    x: number,
