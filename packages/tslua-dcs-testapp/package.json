@@ -1,6 +1,6 @@
 {
   "name": "@flying-dice/tslua-dcs-testapp",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "Test app for DCS World and tslua-http",
   "private": true,
   "scripts": {
@@ -10,10 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@flying-dice/tslua-base64": "^0.11.0",
-    "@flying-dice/tslua-dcs-types": "^0.11.0",
-    "@flying-dice/tslua-http": "^0.11.0",
-    "@flying-dice/tslua-http-api": "^0.11.0"
+    "@flying-dice/tslua-base64": "^0.12.0",
+    "@flying-dice/tslua-dcs-types": "^0.12.0",
+    "@flying-dice/tslua-http": "^0.12.0",
+    "@flying-dice/tslua-http-api": "^0.12.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.4.0",
