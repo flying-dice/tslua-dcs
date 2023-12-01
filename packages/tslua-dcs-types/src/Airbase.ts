@@ -1,3 +1,4 @@
+import { IWarehouse } from "./Warehouse";
 import { IVec3 } from "./coord";
 import { _Airbase } from "./exports/Airbase.export";
 
@@ -37,4 +38,12 @@ export interface IAirbase extends _Airbase {
 	 * @see https://wiki.hoggitworld.com/view/DCS_func_getCategory
 	 */
 	getCategory(): number;
+
+	/**
+	 * Returns the warehouse object associated with the airbase object.
+	 * Can then be used to call the warehouse class functions to modify the contents of the warehouse.
+	 *
+	 * @see https://wiki.hoggitworld.com/view/DCS_func_getWarehouse
+	 */
+	getWarehouse(): IWarehouse;
 }
