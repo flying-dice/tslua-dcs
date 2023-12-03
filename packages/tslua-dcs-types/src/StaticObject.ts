@@ -15,4 +15,9 @@ export interface l_StaticObject extends _StaticObject {
 	 * @noSelf
 	 */
 	getByName(name: string): l_StaticObject | undefined;
+
+	/**
+	 * Returns an enumerator that defines the country that an object currently belongs to
+	 */
+	getCountry(): number;
 }

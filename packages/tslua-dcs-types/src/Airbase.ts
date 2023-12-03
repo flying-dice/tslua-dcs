@@ -62,4 +62,9 @@ export interface l_Airbase extends _Airbase {
 	 * @noSelf
 	 */
 	getByName(name: string): l_Airbase | undefined;
+
+	/**
+	 * Returns an enumerator that defines the country that an object currently belongs to
+	 */
+	getCountry(): number;
 }

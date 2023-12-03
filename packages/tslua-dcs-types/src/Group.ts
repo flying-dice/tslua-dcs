@@ -1,3 +1,4 @@
+import { l_Controller } from "./Controller";
 import { l_Unit } from "./Unit";
 import { _Group } from "./exports/Group.export";
 
@@ -67,4 +68,12 @@ export interface l_Group extends _Group {
 	 * @noSelf
 	 */
 	getByName(name: string): l_Group | undefined;
+
+	/**
+	 * Returns the controller of the specified object.
+	 * Ships and ground units can only be controlled at a group level.
+	 *
+	 * Airplanes and helicopters can be controlled at both a group and unit level
+	 */
+	getController(): l_Controller;
 }

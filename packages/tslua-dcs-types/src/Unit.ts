@@ -1,3 +1,4 @@
+import { l_Controller } from "./Controller";
 import { IVec3 } from "./coord";
 import { _Unit } from "./exports/Unit.export";
 
@@ -60,4 +61,24 @@ export interface l_Unit extends _Unit {
 	 * @noSelf
 	 */
 	getByName(name: string): l_Unit | undefined;
+
+	/**
+	 * Returns the controller of the specified object.
+	 * Ships and ground units can only be controlled at a group level.
+	 *
+	 * Airplanes and helicopters can be controlled at both a group and unit level
+	 */
+	getController(): l_Controller;
+
+	/**
+	 * Returns an enumerator that defines the country that an object currently belongs to
+	 */
+	getCountry(): number;
+
+	/**
+	 * Returns a percentage of the current fuel remaining in an aircraft's inventory based on the maximum possible fuel load.
+	 * Value ranges from 0.00 to 1.00. If external fuel tanks are present the value may display above 1.0. Fuel is always drained from the external tanks before moving to internal tanks.
+	 * Ground vehicles and ships will always return a value of 1.
+	 */
+	getFuel(): number;
 }
