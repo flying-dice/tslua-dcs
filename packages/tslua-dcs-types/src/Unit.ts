@@ -1,5 +1,5 @@
 import { l_Controller } from "./Controller";
-import { l_Vec3 } from "./coord";
+import { l_Position3, l_Vec3 } from "./coord";
 import { _Unit } from "./exports/Unit.export";
 
 export interface l_Unit extends _Unit {
@@ -24,6 +24,23 @@ export interface l_Unit extends _Unit {
 	 * @see https://wiki.hoggitworld.com/view/DCS_func_getPoint
 	 */
 	getPoint(): l_Vec3;
+
+	/**
+	 * Returns a Position3 table of the objects current position and orientation in 3D space.
+	 * X, Y, Z values are unit vectors defining the objects orientation.
+	 * Coordinates are dependent on the position of the maps origin.
+	 * In the case of the Caucuses theater, the origin is located in the Crimean region of the map.
+	 *
+	 * @see https://wiki.hoggitworld.com/view/DCS_func_getPosition
+	 */
+	getPosition(): l_Position3;
+
+	/**
+	 * Returns a vec3 table of the objects velocity vectors.
+	 *
+	 * @see https://wiki.hoggitworld.com/view/DCS_func_getVelocity
+	 */
+	getVelocity(): l_Vec3;
 
 	/**
 	 * Return a string of the objects type name.
