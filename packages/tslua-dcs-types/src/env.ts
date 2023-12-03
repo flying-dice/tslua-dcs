@@ -1,3 +1,3 @@
 import { _env } from "./exports/env.export";
 /** @noSelf **/
-export interface Ienv extends _env {}
+export interface l_env extends _env {}

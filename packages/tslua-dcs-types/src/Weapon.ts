@@ -1,2 +1,2 @@
 import { _Weapon } from "./exports/Weapon.export";
-export interface IWeapon extends _Weapon {}
+export interface l_Weapon extends _Weapon {}

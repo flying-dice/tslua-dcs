@@ -1,6 +1,6 @@
 import { _coord } from "./exports/coord.export";
 /** @noSelf **/
-export interface Icoord extends _coord {
+export interface l_coord extends _coord {
 	/**
 	 * Returns multiple values of a given vec3 point in latitude, longitude, and altitude
 	 *

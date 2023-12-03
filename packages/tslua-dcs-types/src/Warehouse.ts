@@ -44,7 +44,7 @@ export enum LiquidType {
 	DIESEL = 3,
 }
 
-export interface IWarehouse extends _Warehouse {
+export interface l_Warehouse extends _Warehouse {
 	/**
 	 * Returns a full itemized list of everything currently in a warehouse. If a category is set to unlimited then the table will be returned empty.
 	 * Aircraft and weapons are indexed by strings.
@@ -69,5 +69,5 @@ export interface IWarehouse extends _Warehouse {
 	 *
 	 * @noSelf
 	 */
-	getByName(name: string): IWarehouse | undefined;
+	getByName(name: string): l_Warehouse | undefined;
 }

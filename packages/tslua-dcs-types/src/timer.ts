@@ -1,6 +1,6 @@
 import { _timer } from "./exports/timer.export";
 /** @noSelf **/
-export interface Itimer extends _timer {
+export interface l_timer extends _timer {
 	/**
 	 * Returns the game world time in seconds relative to time the mission started.
 	 * Will always count up from when the mission started.

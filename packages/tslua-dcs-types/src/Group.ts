@@ -1,7 +1,7 @@
-import { IUnit } from "./Unit";
+import { l_Unit } from "./Unit";
 import { _Group } from "./exports/Group.export";
 
-export interface IGroup extends _Group {
+export interface l_Group extends _Group {
 	/**
 	 * Returns a number which defines the unique mission id of a given object.
 	 */
@@ -42,7 +42,7 @@ export interface IGroup extends _Group {
 	 *
 	 * @see https://wiki.hoggitworld.com/view/DCS_func_getUnits
 	 */
-	getUnits(): IUnit[];
+	getUnits(): l_Unit[];
 
 	/**
 	 * Returns the unit object of the specified unitIndex within the group.
@@ -50,7 +50,7 @@ export interface IGroup extends _Group {
 	 *
 	 * @param index
 	 */
-	getUnit(index: number): IUnit | undefined;
+	getUnit(index: number): l_Unit | undefined;
 
 	/**
 	 * Returns an instance of the calling class for the object of a specified name.
@@ -66,5 +66,5 @@ export interface IGroup extends _Group {
 	 *
 	 * @noSelf
 	 */
-	getByName(name: string): IGroup | undefined;
+	getByName(name: string): l_Group | undefined;
 }

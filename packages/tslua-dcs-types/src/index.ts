@@ -1,22 +1,22 @@
-import { IAI } from "./AI";
-import { IAirbase } from "./Airbase";
-import { IController } from "./Controller";
-import { IGroup } from "./Group";
-import { IStaticObject } from "./StaticObject";
-import { IUnit } from "./Unit";
-import { IWarehouse } from "./Warehouse";
-import { IWeapon } from "./Weapon";
-import { Iatmosphere } from "./atmosphere";
-import { Icoalition } from "./coalition";
-import { Icoord } from "./coord";
-import { Ienv } from "./env";
-import { Iland } from "./land";
-import { ImissionCommands } from "./missionCommands";
-import { Inet } from "./net";
-import { Iradio } from "./radio";
-import { Itimer } from "./timer";
-import { Itrigger } from "./trigger";
-import { Iworld } from "./world";
+import { l_AI } from "./AI";
+import { l_Airbase } from "./Airbase";
+import { l_Controller } from "./Controller";
+import { l_Group } from "./Group";
+import { l_StaticObject } from "./StaticObject";
+import { l_Unit } from "./Unit";
+import { l_Warehouse } from "./Warehouse";
+import { l_Weapon } from "./Weapon";
+import { l_atmosphere } from "./atmosphere";
+import { l_coalition } from "./coalition";
+import { l_coord } from "./coord";
+import { l_env } from "./env";
+import { l_land } from "./land";
+import { l_missionCommands } from "./missionCommands";
+import { l_net } from "./net";
+import { l_radio } from "./radio";
+import { l_timer } from "./timer";
+import { l_trigger } from "./trigger";
+import { l_world } from "./world";
 
 export * from "./AI";
 export * from "./Airbase";
@@ -44,59 +44,59 @@ declare global {
 	const _ARCHITECTURE: string;
 
 	/** @noSelf **/
-	const AI: IAI;
+	const AI: l_AI;
 
 	/** @noSelf **/
-	const Airbase: IAirbase;
+	const Airbase: Pick<l_Airbase, "getByName" | "getDescByName">;
 
 	/** @noSelf **/
-	const atmosphere: Iatmosphere;
+	const atmosphere: l_atmosphere;
 
 	/** @noSelf **/
-	const coalition: Icoalition;
+	const coalition: l_coalition;
 
 	/** @noSelf **/
-	const Controller: IController;
+	const Controller: l_Controller;
 
 	/** @noSelf **/
-	const coord: Icoord;
+	const coord: l_coord;
 
 	/** @noSelf **/
-	const env: Ienv;
+	const env: l_env;
 
 	/** @noSelf **/
-	const Group: IGroup;
+	const Group: Pick<l_Group, "getByName">;
 
 	/** @noSelf **/
-	const land: Iland;
+	const land: l_land;
 
 	/** @noSelf **/
-	const missionCommands: ImissionCommands;
+	const missionCommands: l_missionCommands;
 
 	/** @noSelf **/
-	const net: Inet;
+	const net: l_net;
 
 	/** @noSelf **/
-	const radio: Iradio;
+	const radio: l_radio;
 
 	/** @noSelf **/
-	const StaticObject: IStaticObject;
+	const StaticObject: Pick<l_StaticObject, "getByName" | "getDescByName">;
 
 	/** @noSelf **/
-	const timer: Itimer;
+	const timer: l_timer;
 
 	/** @noSelf **/
-	const trigger: Itrigger;
+	const trigger: l_trigger;
 
 	/** @noSelf **/
-	const Unit: IUnit;
+	const Unit: Pick<l_Unit, "getByName" | "getDescByName">;
 
 	/** @noSelf **/
-	const Warehouse: IWarehouse;
+	const Warehouse: Pick<l_Warehouse, "getByName" | "getResourceMap">;
 
 	/** @noSelf **/
-	const Weapon: IWeapon;
+	const Weapon: l_Weapon;
 
 	/** @noSelf **/
-	const world: Iworld;
+	const world: l_world;
 }

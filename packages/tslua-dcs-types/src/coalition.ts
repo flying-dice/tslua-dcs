@@ -1,9 +1,9 @@
-import { IAirbase } from "./Airbase";
-import { IGroup } from "./Group";
+import { l_Airbase } from "./Airbase";
+import { l_Group } from "./Group";
 import { _coalition } from "./exports/coalition.export";
 
 /** @noSelf **/
-export interface Icoalition extends _coalition {
+export interface l_coalition extends _coalition {
 	/**
 	 * Returns a table of group objects belonging to the specified coalition.
 	 * If the groupCategory enumerator is provided the table will only contain groups that belong to the specified category.
@@ -16,7 +16,7 @@ export interface Icoalition extends _coalition {
 	 * @param coalitionId
 	 * @param groupCategory
 	 */
-	getGroups(coalitionId: number, groupCategory?: number): IGroup[];
+	getGroups(coalitionId: number, groupCategory?: number): l_Group[];
 
 	/**
 	 * Returns a table of airbase objects belonging to the specified coalition.
@@ -27,5 +27,5 @@ export interface Icoalition extends _coalition {
 	 *
 	 * @param coalitionId
 	 */
-	getAirbases(coalitionId: number): IAirbase[];
+	getAirbases(coalitionId: number): l_Airbase[];
 }

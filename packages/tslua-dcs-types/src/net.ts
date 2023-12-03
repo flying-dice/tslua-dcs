@@ -1,3 +1,3 @@
 import { _net } from "./exports/net.export";
 /** @noSelf **/
-export interface Inet extends _net {}
+export interface l_net extends _net {}

@@ -1,6 +1,6 @@
 import { _Object } from "./exports/Object.export";
 
-export interface IObject extends _Object {
+export interface l_Object extends _Object {
 	/**
 	 * Returns the category of the object.
 	 *

@@ -1,7 +1,7 @@
 import { IVec3 } from "./coord";
 import { _Unit } from "./exports/Unit.export";
 
-export interface IUnit extends _Unit {
+export interface l_Unit extends _Unit {
 	/**
 	 * Returns a number which defines the unique mission id of a given object.
 	 */
@@ -59,5 +59,5 @@ export interface IUnit extends _Unit {
 	 *
 	 * @noSelf
 	 */
-	getByName(name: string): IUnit | undefined;
+	getByName(name: string): l_Unit | undefined;
 }

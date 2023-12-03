@@ -1,3 +1,3 @@
 import { _missionCommands } from "./exports/missionCommands.export";
 /** @noSelf **/
-export interface ImissionCommands extends _missionCommands {}
+export interface l_missionCommands extends _missionCommands {}

@@ -1,8 +1,8 @@
-import { IWarehouse } from "./Warehouse";
+import { l_Warehouse } from "./Warehouse";
 import { IVec3 } from "./coord";
 import { _Airbase } from "./exports/Airbase.export";
 
-export interface IAirbase extends _Airbase {
+export interface l_Airbase extends _Airbase {
 	/**
 	 * Returns a number which defines the unique mission id of a given object.
 	 */
@@ -45,7 +45,7 @@ export interface IAirbase extends _Airbase {
 	 *
 	 * @see https://wiki.hoggitworld.com/view/DCS_func_getWarehouse
 	 */
-	getWarehouse(): IWarehouse;
+	getWarehouse(): l_Warehouse;
 
 	/**
 	 * Returns an instance of the calling class for the object of a specified name.
@@ -61,5 +61,5 @@ export interface IAirbase extends _Airbase {
 	 *
 	 * @noSelf
 	 */
-	getByName(name: string): IAirbase | undefined;
+	getByName(name: string): l_Airbase | undefined;
 }

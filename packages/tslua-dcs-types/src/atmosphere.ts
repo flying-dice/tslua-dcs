@@ -1,3 +1,3 @@
 import { _atmosphere } from "./exports/atmosphere.export";
 /** @noSelf **/
-export interface Iatmosphere extends _atmosphere {}
+export interface l_atmosphere extends _atmosphere {}

@@ -1,5 +1,5 @@
 import { _StaticObject } from "./exports/StaticObject.export";
-export interface IStaticObject extends _StaticObject {
+export interface l_StaticObject extends _StaticObject {
 	/**
 	 * Returns an instance of the calling class for the object of a specified name.
 	 * The objects name is defined either in the mission editor or within functions that can dynamically spawn objects.
@@ -14,5 +14,5 @@ export interface IStaticObject extends _StaticObject {
 	 *
 	 * @noSelf
 	 */
-	getByName(name: string): IStaticObject | undefined;
+	getByName(name: string): l_StaticObject | undefined;
 }
