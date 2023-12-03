@@ -1,5 +1,5 @@
 import { l_Controller } from "./Controller";
-import { IVec3 } from "./coord";
+import { l_Vec3 } from "./coord";
 import { _Unit } from "./exports/Unit.export";
 
 export interface l_Unit extends _Unit {
@@ -23,7 +23,7 @@ export interface l_Unit extends _Unit {
 	 *
 	 * @see https://wiki.hoggitworld.com/view/DCS_func_getPoint
 	 */
-	getPoint(): IVec3;
+	getPoint(): l_Vec3;
 
 	/**
 	 * Return a string of the objects type name.

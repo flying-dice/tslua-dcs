@@ -1,5 +1,5 @@
 import { l_Warehouse } from "./Warehouse";
-import { IVec3 } from "./coord";
+import { l_Vec3 } from "./coord";
 import { _Airbase } from "./exports/Airbase.export";
 
 export interface l_Airbase extends _Airbase {
@@ -16,7 +16,7 @@ export interface l_Airbase extends _Airbase {
 	 *
 	 * @see https://wiki.hoggitworld.com/view/DCS_func_getPoint
 	 */
-	getPoint(): IVec3;
+	getPoint(): l_Vec3;
 
 	/**
 	 * Returns the name of the airbase.
