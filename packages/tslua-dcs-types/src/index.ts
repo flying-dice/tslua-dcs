@@ -47,7 +47,7 @@ declare global {
 	const AI: l_AI;
 
 	/** @noSelf **/
-	const Airbase: Pick<l_Airbase, "getByName" | "getDescByName">;
+	const Airbase: Pick<l_Airbase, "getByName" | "getDescByName" | "Category">;
 
 	/** @noSelf **/
 	const atmosphere: l_atmosphere;
@@ -65,7 +65,7 @@ declare global {
 	const env: l_env;
 
 	/** @noSelf **/
-	const Group: Pick<l_Group, "getByName">;
+	const Group: Pick<l_Group, "getByName" | "Category">;
 
 	/** @noSelf **/
 	const land: l_land;
@@ -89,7 +89,7 @@ declare global {
 	const trigger: l_trigger;
 
 	/** @noSelf **/
-	const Unit: Pick<l_Unit, "getByName" | "getDescByName">;
+	const Unit: Pick<l_Unit, "getByName" | "getDescByName" | "Category">;
 
 	/** @noSelf **/
 	const Warehouse: Pick<l_Warehouse, "getByName" | "getResourceMap">;
