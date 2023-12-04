@@ -3,9 +3,23 @@ import { _string } from "./externals";
 
 const logger = new Logger("Path");
 
+/**
+ * The set of characters considered "safe" in URLs is defined by the URL specifications, specifically RFC 3986.
+ * According to this specification, the characters that are safe and do not need to be percent-encoded in the path segment of a URL are:
+ *
+ * Alphanumeric characters: A-Z a-z 0-9
+ * Unreserved characters: - _ . ~
+ * Sub-delimiters: ! $ & ' ( ) * + , ; =
+ *
+ * @param route
+ */
 export const gSubPathParamsToPattern = (route: string): string => {
 	logger.debug(`Replacing Path Params for Pattern matcher ${route}`);
-	const result = _string.gsub(route, ":[%w_]+", "([%%w_]+)");
+	const result = _string.gsub(
+		route,
+		":[%w_]+",
+		"([%%w_%%%%-%%.~!$&'()*+,;=]+)",
+	);
 	logger.debug(`Replaced Path Params for Pattern matcher ${result[0]}`);
 	return result[0];
 };
@@ -13,7 +27,11 @@ export const gSubPathParamsToPattern = (route: string): string => {
 export const gSubEscapeReservedChars = (route: string): string => {
 	logger.debug(`Escaping Path matcher ${route}`);
 	// replace all reserved chars with their escaped version including _
-	const [patternRoute] = _string.gsub(route, "([%(%)%%%+%-%?%[%^%$])", "%%%1");
+	const [patternRoute] = _string.gsub(
+		route,
+		"([%%w_%%%%-%%.~!$&'()*+,;=])",
+		"%%%1",
+	);
 	logger.debug(`Escaping Path matcher ${patternRoute}`);
 	return patternRoute;
 };

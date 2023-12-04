@@ -3,7 +3,6 @@ import { TCP } from "socket";
 import {
 	Mocked,
 	afterEach,
-	beforeAll,
 	beforeEach,
 	describe,
 	expect,

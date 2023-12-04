@@ -51,7 +51,7 @@ describe("Application Routing", () => {
 			});
 	});
 
-	it("should echo body of reques for post", async () => {
+	it("should echo body of request for post", async () => {
 		await axios
 			.post("http://127.0.0.1:29293/api/users", "Example Body", {
 				validateStatus: null,
@@ -68,6 +68,97 @@ describe("Application Routing", () => {
 			expect(res.headers["content-type"]).toEqual("application/json");
 			expect(res.data).toEqual({ status: "OK" });
 		});
+	});
+
+	describe("Unsafe encoded URI components tests using :id parameter", () => {
+		const testCases = [
+			["Aerobatics #003"],
+			["Flight&Navigation"],
+			["Weather%Conditions"],
+			["Altitude@10000ft"],
+			["Speed:500knots"],
+			["Direction<North>"],
+			["Landing*Procedure"],
+			["Takeoff(Sequence)"],
+			["Fuel+Capacity"],
+			["Payload,Weight"],
+			["Route;Path"],
+			["Emergency=Protocol"],
+		];
+
+		it.each(testCases)(
+			"should navigate for unsafe encoded string %s",
+			async (param) => {
+				const encodedParam = encodeURIComponent(param);
+				await axios
+					.get(`http://127.0.0.1:29293/complex/${encodedParam}`)
+					.then((res) => {
+						expect(res.status).toEqual(200);
+						expect(res.data).toEqual({ id: encodedParam });
+					});
+			},
+		);
+	});
+
+	describe("Safe URI components tests using dynamic :id parameter", () => {
+		const testCases = [
+			["Ground-1"],
+			["Ground_2"],
+			["Ground~3"],
+			["Ground.4"],
+			["Ground!5"],
+			["Ground$6"],
+			["Ground'7"],
+			["Ground(8)"],
+			["Ground*9"],
+			["Ground+10"],
+			["Ground,11"],
+			["Ground;12"],
+			["Ground=13"],
+		];
+
+		it.each(testCases)("should navigate for safe string %s", async (param) => {
+			await axios.get(`http://127.0.0.1:29293/complex/${param}`).then((res) => {
+				expect(res.status).toEqual(200);
+				expect(res.data).toEqual({ id: param });
+			});
+		});
+	});
+
+	describe("Safe URI components tests using fixed string in app.get", () => {
+		const testCases = [
+			["Ground-1"],
+			["Ground_2"],
+			["Ground~3"],
+			["Ground.4"],
+			["Ground!5"],
+			["Ground$6"],
+			["Ground'7"],
+			["Ground(8)"],
+			["Ground*9"],
+			["Ground+10"],
+			["Ground,11"],
+			["Ground;12"],
+			["Ground=13"],
+		];
+
+		it.each(testCases)("should navigate to fixed-complex/%s", async (id) => {
+			await axios
+				.get(`http://127.0.0.1:29293/fixed-complex/${id}`)
+				.then((res) => {
+					expect(res.status).toEqual(200);
+					expect(res.data).toEqual({ id });
+				});
+		});
+	});
+
+	it("should resolve double parameterized", async () => {
+		await axios
+			.get("http://127.0.0.1:29293/groups/Ground-1/units/Ground-1-1")
+			.then((res) => {
+				expect(res.status).toEqual(200);
+				expect(res.data).toEqual({ groupId: "Ground-1", unitId: "Ground-1-1" });
+			});
 	});
 
 	it("should reject access to secure endpoint without auth", async () => {
