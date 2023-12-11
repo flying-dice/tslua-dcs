@@ -1,5 +1,6 @@
 import { l_Airbase } from "./Airbase";
 import { l_Group } from "./Group";
+import { l_StaticObject } from "./StaticObject";
 import { _coalition } from "./exports/coalition.export";
 
 /** @noSelf **/
@@ -28,4 +29,11 @@ export interface l_coalition extends _coalition {
 	 * @param coalitionId
 	 */
 	getAirbases(coalitionId: number): l_Airbase[];
+
+	/**
+	 * Returns a table of static objects belonging to the specified coalition.
+	 *
+	 * @param coalitionId
+	 */
+	getStaticObjects(coalitionId: number): l_StaticObject[];
 }
