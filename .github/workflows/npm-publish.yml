@@ -28,6 +28,6 @@ jobs:
         run: sudo luarocks install luasocket
       - run: npm ci
       - run: npm test
-      - run: npm publish
+      - run: npm run publish
         env:
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
