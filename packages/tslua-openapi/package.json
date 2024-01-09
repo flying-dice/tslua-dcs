@@ -23,7 +23,9 @@
 		"build": "rimraf dist && tsc -p tsconfig.tstl.json && tstl -p tsconfig.tstl.json",
 		"build:docs": "typedoc"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"@flying-dice/tslua-http": "^0.25.0",
+	},
 	"devDependencies": {
 		"lua-types": "^2.13.1",
 		"typescript": "^5.3.2",
