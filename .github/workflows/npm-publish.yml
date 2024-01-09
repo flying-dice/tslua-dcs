@@ -16,9 +16,16 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 20
-      - uses: leafo/gh-actions-lua@v10.0.0
-        with:
-          luaVersion: 5.1
+      # - uses: leafo/gh-actions-lua@v10.0.0
+      #   with:
+      #     luaVersion: 5.1
+      - name: Install Lua and LuaRocks
+        run: |
+          sudo apt-get update
+          sudo apt-get install lua5.1
+          sudo apt-get install luarocks
+      - name: Install LuaSocket
+        run: sudo luarocks install luasocket
       - run: npm ci
       - run: npm test
       - run: npm publish
