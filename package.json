@@ -13,6 +13,8 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
+    "prepublish": "npm run build:all",
+    "publish": "lerna publish --conventional-commits --yes",
     "format": "biome check --apply .",
     "format:ci": "biome ci .",
     "build": "lerna run build",
