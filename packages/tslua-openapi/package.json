@@ -24,7 +24,7 @@
 		"build:docs": "typedoc"
 	},
 	"dependencies": {
-		"@flying-dice/tslua-http": "^0.25.0",
+		"@flying-dice/tslua-http": "^0.25.0"
 	},
 	"devDependencies": {
 		"lua-types": "^2.13.1",
