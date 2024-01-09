@@ -28,6 +28,9 @@ jobs:
         run: sudo luarocks install luasocket
       - run: npm ci
       - run: npm test
+      - run: |
+          git config user.name "$(git log -n 1 --pretty=format:%an)"
+          git config user.email "$(git log -n 1 --pretty=format:%ae)"
       - run: npm run publish
         env:
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
