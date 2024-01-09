@@ -35,6 +35,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 20
+      - run: npm ci
       - name: Set Git Config
         run: |
           git config user.name "$(git log -n 1 --pretty=format:%an)"
