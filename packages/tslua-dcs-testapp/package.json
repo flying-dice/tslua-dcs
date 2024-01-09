@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@flying-dice/tslua-base64": "^0.25.0",
-    "@flying-dice/tslua-dcs-types": "^0.25.0",
+    "@flying-dice/tslua-dcs-mission-types": "^0.25.0",
     "@flying-dice/tslua-http": "^0.25.0",
     "@flying-dice/tslua-http-api": "^0.25.0"
   },

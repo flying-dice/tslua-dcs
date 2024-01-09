@@ -1,0 +1,33 @@
+{
+	"name": "@flying-dice/tslua-openapi",
+	"version": "0.25.0",
+	"description": "Re-export of https://github.com/metadevpro/openapi3-ts/ library for tslua",
+	"keywords": [
+		"lua",
+		"http",
+		"api",
+		"openapi"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/flying-dice/tslua-dcs.git"
+	},
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
+	"license": "ISC",
+	"types": "./dist/index.d.ts",
+	"main": "./dist/index",
+	"scripts": {
+		"build": "rimraf dist && tsc -p tsconfig.tstl.json && tstl -p tsconfig.tstl.json",
+		"build:docs": "typedoc"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"lua-types": "^2.13.1",
+		"typescript": "^5.3.2",
+		"typescript-to-lua": "^1.22.0"
+	},
+	"gitHead": "a6ae4c01c5f5796bcc1c0e88d4b790d83de03340"
+}

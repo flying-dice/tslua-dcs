@@ -5,3 +5,4 @@ build
 coverage
 /lerna-debug.log
 *.log
+docs

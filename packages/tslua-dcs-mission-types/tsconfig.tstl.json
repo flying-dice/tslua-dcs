@@ -1,0 +1,5 @@
+{
+	"$schema": "https://raw.githubusercontent.com/TypeScriptToLua/TypeScriptToLua/master/tsconfig-schema.json",
+	"extends": ["./tsconfig.json", "../tsconfig.base.tstl.json"],
+	"exclude": ["**/*.test.ts"]
+}
