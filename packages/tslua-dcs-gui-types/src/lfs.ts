@@ -16,7 +16,7 @@ export interface l_lfs extends _lfs {
 	 * Returns the current write directory.
 	 *
 	 * @example
-	 * lfs.writedir() // "C:\\Users\\username\\Saved Games\\DCS.openbeta"
+	 * lfs.writedir() // "C:\\Users\\username\\Saved Games\\DCS.openbeta\\"
 	 */
 	writedir(): string;
 
