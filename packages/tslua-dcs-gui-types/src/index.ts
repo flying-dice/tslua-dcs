@@ -4,6 +4,7 @@ import { l_coalition } from "./coalition";
 import { l_db } from "./db";
 import { l_log } from "./log";
 import { l_net } from "./net";
+import {l_lfs} from "./lfs";
 
 export * from "./coalition";
 export * from "./DCS";
@@ -35,4 +36,7 @@ declare global {
 
 	/** @noSelf **/
 	const net: l_net;
+
+	/** @noSelf **/
+	const lfs: l_lfs;
 }
