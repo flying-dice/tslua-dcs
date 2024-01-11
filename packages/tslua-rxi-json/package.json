@@ -1,6 +1,6 @@
 {
   "name": "@flying-dice/tslua-rxi-json",
-  "version": "0.27.1",
+  "version": "0.27.2",
   "description": "rxi-json library with typings",
   "keywords": [
     "lua",
