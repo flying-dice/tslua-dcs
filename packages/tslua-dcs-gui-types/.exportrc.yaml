@@ -7,3 +7,4 @@ scripts:
       - log
       - coalition
       - net
+      - lfs
