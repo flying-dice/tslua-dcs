@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.28.0 (2024-01-11)
+
+
+### Features
+
+* **tslua-http-api:** add http errors ([14d0c27](https://github.com/flying-dice/tslua-dcs/commit/14d0c273e02266e3c26704ac03bea6d4d1a7d6a8))
+
+
+
+
+
 ## 0.27.2 (2024-01-11)
 
 **Note:** Version bump only for package @flying-dice/tslua-common
