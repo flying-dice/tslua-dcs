@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.29.0 (2024-01-12)
+
+
+### Features
+
+* **tslua-dcs-gui-types:** add terrain module ([0346c92](https://github.com/flying-dice/tslua-dcs/commit/0346c9209bdcd5acb71109da1a79817a4dfc8ef8))
+
+
+
+
+
 ## 0.28.3 (2024-01-12)
 
 
