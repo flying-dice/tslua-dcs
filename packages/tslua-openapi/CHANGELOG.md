@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.28.3 (2024-01-12)
+
+
+### Bug Fixes
+
+* **tslua-http-api:** remove externals def triggering calls to globals without globals needing calling ([faa6e93](https://github.com/flying-dice/tslua-dcs/commit/faa6e9357f30f743b2fbd067b205cffd255c3e99))
+
+
+
+
+
 ## 0.28.2 (2024-01-12)
 
 
