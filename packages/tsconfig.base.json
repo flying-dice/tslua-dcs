@@ -3,7 +3,7 @@
 		"target": "ES6",
 		"lib": ["ES6"],
 		"moduleResolution": "Node",
-		"types": ["lua-types/5.1"],
+		"types": ["lua-types/5.1", "@typescript-to-lua/language-extensions"],
 		"strict": true,
 		"declaration": true,
 		"esModuleInterop": true,

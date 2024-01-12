@@ -5,6 +5,7 @@ import { l_db } from "./db";
 import { l_log } from "./log";
 import { l_net } from "./net";
 import {l_lfs} from "./lfs";
+import {l_terrain} from "./terrain";
 
 export * from "./coalition";
 export * from "./DCS";
@@ -39,4 +40,7 @@ declare global {
 
 	/** @noSelf **/
 	const lfs: l_lfs;
+
+	/** @noSelf **/
+	const terrain: l_terrain;
 }
