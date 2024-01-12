@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.28.2 (2024-01-12)
+
+
+### Bug Fixes
+
+* **tslua-rxi-json:** add stub .js file ([3ed2ba6](https://github.com/flying-dice/tslua-dcs/commit/3ed2ba6e0a0e3402c10abce43cda3473e12c329e))
+
+
+
+
+
 ## 0.28.1 (2024-01-12)
 
 
