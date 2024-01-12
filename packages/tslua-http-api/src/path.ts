@@ -1,5 +1,4 @@
 import { Logger } from "@flying-dice/tslua-common";
-import { _string } from "./externals";
 
 const logger = new Logger("Path");
 
@@ -15,7 +14,7 @@ const logger = new Logger("Path");
  */
 export const gSubPathParamsToPattern = (route: string): string => {
 	logger.debug(`Replacing Path Params for Pattern matcher ${route}`);
-	const result = _string.gsub(
+	const result = string.gsub(
 		route,
 		":[%w_]+",
 		"([%%w_%%%%-%%.~!$&'()*+,;=]+)",
@@ -27,7 +26,7 @@ export const gSubPathParamsToPattern = (route: string): string => {
 export const gSubEscapeReservedChars = (route: string): string => {
 	logger.debug(`Escaping Path matcher ${route}`);
 	// replace all reserved chars with their escaped version including _
-	const [patternRoute] = _string.gsub(
+	const [patternRoute] = string.gsub(
 		route,
 		"([%%w_%%%%-%%.~!$&'()*+,;=])",
 		"%%%1",
@@ -46,7 +45,7 @@ export const getParamNames = (route: string): string[] => {
 	logger.debug(`Getting Param names from ${route}`);
 	const names: string[] = [];
 
-	for (const [name] of _string.gmatch(route, ":(%w+)")) {
+	for (const [name] of string.gmatch(route, ":(%w+)")) {
 		logger.debug(`Adding ${name} to params array`);
 		names.push(name);
 	}
@@ -67,7 +66,7 @@ export const getPathParameters = (
 	logger.debug("Assembling Parameters");
 	const matches: Record<string, string> = {};
 
-	_string.match(path, pattern).forEach((match, idx) => {
+	string.match(path, pattern).forEach((match, idx) => {
 		logger.debug(
 			`Adding Parameter ${paramNames[idx] || "nil"} from match ${match}`,
 		);
@@ -83,6 +82,6 @@ export const getPathParameters = (
 export const isMatch = (route: string, path: string): boolean => {
 	const pattern = routeToPattern(route);
 	logger.debug(`checking if "${pattern}" matches "${path}"`);
-	const res = _string.match(path, pattern);
+	const res = string.match(path, pattern);
 	return res?.[0] !== undefined;
 };
