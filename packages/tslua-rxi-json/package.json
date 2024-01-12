@@ -2,6 +2,8 @@
   "name": "@flying-dice/tslua-rxi-json",
   "version": "0.28.0",
   "description": "rxi-json library with typings",
+  "types": "./index.d.ts",
+  "main": "./index",
   "keywords": [
     "lua",
     "dcs",
