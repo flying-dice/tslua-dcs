@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.28.1 (2024-01-12)
+
+
+### Bug Fixes
+
+* **tslua-rxi-json:** add type definition in package.json ([22b472d](https://github.com/flying-dice/tslua-dcs/commit/22b472db79b6b8b26e973f6a04f70865ad3c3d94))
+
+
+
+
+
 # 0.28.0 (2024-01-11)
 
 
