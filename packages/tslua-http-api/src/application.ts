@@ -1,4 +1,4 @@
-import { Logger } from "@flying-dice/tslua-common";
+import {Logger} from "@flying-dice/tslua-common";
 import {
 	HttpRequest,
 	HttpResponse,
@@ -7,12 +7,112 @@ import {
 	StatusText,
 } from "@flying-dice/tslua-http";
 import * as json from "@flying-dice/tslua-rxi-json";
-import { getPathParameters, isMatch } from "./path";
+import {getPathParameters, isMatch} from "./path";
+import {HttpError} from "./errors";
+
+export class AppHttpRequest<PARAMS = any, QUERY = any, BODY = any> {
+	protected logger = new Logger("AppHttpRequest");
+
+	get query(): QUERY {
+		return this.req.parameters as QUERY;
+	}
+
+	get body(): BODY | undefined {
+		if (!this.req.body) return undefined;
+
+		// Body Parse JSON
+		if (this.getHeaderValue("content-type") === "application/json" || this.getHeaderValue("Content-Type") === "application/json") {
+			try {
+				return json.decode(this.req.body) as BODY;
+			} catch (e) {
+				this.logger.error(`Error parsing JSON: ${e}`);
+				throw new HttpError(HttpStatus.BAD_REQUEST, "Invalid JSON")
+			}
+		}
+
+		return this.req.body as BODY;
+	}
+
+	get params(): PARAMS {
+		return this.__params as PARAMS;
+	}
+
+	__params: Record<string, string>;
+
+	get headers() {
+		return this.req.headers
+	}
+
+	get method() {
+		return this.req.method
+	};
+
+	get originalUrl() {
+		return this.req.originalUrl
+	}
+
+	get protocol() {
+		return this.req.protocol
+	}
+
+	get path() {
+		return this.req.path
+	}
+
+	constructor(public readonly req: HttpRequest, pathParams: Record<string, string>) {
+		this.__params = pathParams;
+
+	}
+
+	getHeaderValue<T>(key: string) {
+		return this.req.headers[key] as T;
+	}
+
+	getHeaderValueOrThrow<T>(key: string, error = new Error("Header is not defined")) {
+		if (this.req.headers[key] === undefined) {
+			throw error
+		}
+		return this.req.headers[key] as T;
+	}
+
+	getBody<T = string>() {
+		return this.body as T;
+	}
+
+	getBodyOrThrow<T = string>(error = new Error("Body is not defined")) {
+		if (this.body === undefined) {
+			throw error
+		}
+		return this.body as T;
+	}
+
+	getQueryParameterValue<T = string>(key: string) {
+		return this.req.parameters[key] as T;
+	}
+
+	getQueryParameterValueOrThrow<T = string>(key: string, error = new Error("Query parameter is not defined")) {
+		if (this.req.parameters[key] === undefined) {
+			throw error
+		}
+		return this.req.parameters[key] as T;
+	}
+
+	getPathParameterValue<T = string>(key: string) {
+		return this.__params[key] as T;
+	}
+
+	getPathParameterValueOrThrow<T = string>(key: string, error = new Error("Path parameter is not defined")) {
+		if (this.__params[key] === undefined) {
+			throw error
+		}
+		return this.__params[key] as T;
+	}
+}
 
 /**
  * A class representing an HTTP response, extending the functionality of HttpResponse.
  */
-export class AppHttpResponse {
+export class AppHttpResponse<RESPONSE = any> {
 	protected logger = new Logger("AppHttpResponse");
 
 	constructor(public readonly res: HttpResponse) {}
@@ -51,7 +151,7 @@ export class AppHttpResponse {
 	 *
 	 * @param value The value to encode as JSON.
 	 */
-	json<T = any>(value: T): this {
+	json<T = RESPONSE>(value: T): this {
 		this.res.headers["Content-Type"] = "application/json";
 		this.res.body = json.encode(value);
 		return this;
@@ -73,14 +173,14 @@ export class AppHttpResponse {
 }
 
 export type AppMiddleware = (
-	req: HttpRequest,
+	req: AppHttpRequest,
 	res: AppHttpResponse,
 	next: (err?: Error) => void,
 ) => void;
 
 export type AppErrorMiddleware = <T = Error>(
 	err: T,
-	req: HttpRequest,
+	req: AppHttpRequest,
 	res: AppHttpResponse,
 ) => void;
 
@@ -209,13 +309,14 @@ export class Application extends HttpServer {
 			res.status = HttpStatus.OK;
 		}
 
+		const appRequest = new AppHttpRequest(req, {});
 		const appResponse = new AppHttpResponse(res);
 
 		try {
 			const runStackItem = (idx: number) => {
 				if (idx < stack.length) {
-					req.parameters = getPathParameters(stack[idx].route, req.path);
-					stack[idx].middleware(req, appResponse, (err) => {
+					appRequest.__params = getPathParameters(stack[idx].route, req.path);
+					stack[idx].middleware(appRequest, appResponse, (err) => {
 						if (!err) {
 							runStackItem(idx + 1);
 						} else {
@@ -227,7 +328,7 @@ export class Application extends HttpServer {
 
 			if (stack.length > 0) runStackItem(0);
 		} catch (e) {
-			this.errorMiddleware(e, req, appResponse);
+			this.errorMiddleware(e, appRequest, appResponse);
 		}
 
 		return appResponse.res;

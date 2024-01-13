@@ -1,5 +1,5 @@
-import { HttpRequest, HttpStatus } from "@flying-dice/tslua-http";
-import { AppHttpResponse, AppMiddleware, Application } from "./index";
+import {HttpStatus} from "@flying-dice/tslua-http";
+import {AppHttpRequest, AppHttpResponse, Application, AppMiddleware} from "./index";
 
 const app = new Application("127.0.0.1", 29293);
 
@@ -17,7 +17,7 @@ const users: Record<
 	},
 };
 
-app.get("/api/users", (req: HttpRequest, res: AppHttpResponse) => {
+app.get("/api/users", (req: AppHttpRequest, res: AppHttpResponse) => {
 	res.send(
 		Object.keys(users)
 			.map((it) => users[it].name)
@@ -25,29 +25,33 @@ app.get("/api/users", (req: HttpRequest, res: AppHttpResponse) => {
 	);
 });
 
-app.get("/api/users/:id", (req: HttpRequest, res: AppHttpResponse) => {
-	if (!users[req.parameters.id]) {
+app.get("/api/users/:id", (req: AppHttpRequest, res: AppHttpResponse) => {
+	const userId = req.getPathParameterValueOrThrow("id")
+	if (!users[userId]) {
 		return res.status(HttpStatus.NOT_FOUND).send("Not Found");
 	}
 
-	res.send(`name: ${users[req.parameters.id].name}`);
+	res.send(`name: ${users[userId].name}`);
 });
 
 app.get(
 	"/api/users/:id/comments/:commentId",
-	(req: HttpRequest, res: AppHttpResponse) => {
+	(req: AppHttpRequest, res: AppHttpResponse) => {
+		const userId = req.getPathParameterValueOrThrow("id")
+		const commentId = req.getPathParameterValueOrThrow("commentId")
+
 		if (
-			!users[req.parameters.id] ||
-			!users[req.parameters.id].comments[req.parameters.commentId]
+			!users[userId] ||
+			!users[userId].comments[commentId]
 		) {
 			return res.status(HttpStatus.NOT_FOUND).send("Not Found");
 		}
 
-		res.send(users[req.parameters.id].comments[req.parameters.commentId]);
+		res.send(users[userId].comments[commentId]);
 	},
 );
 
-app.post("/api/users", (req: HttpRequest, res: AppHttpResponse) => {
+app.post("/api/users", (req: AppHttpRequest, res: AppHttpResponse) => {
 	res.send(req.body as string);
 });
 
@@ -56,7 +60,9 @@ app.get("/health", (req, res) => {
 });
 
 app.get("/complex/:id", (req, res) => {
-	res.json({ id: req.parameters.id });
+	const complexId = req.getPathParameterValueOrThrow("id")
+
+	res.json({id: complexId});
 });
 
 const authMiddleware: AppMiddleware = (req, res, next) => {
@@ -124,8 +130,11 @@ app.get("/fixed-complex/Ground=13", (req, res) => {
 	res.json({ id: "Ground=13" });
 });
 
-app.get("/groups/:groupId/units/:unitId", (req, res) => {
-	res.json({ groupId: req.parameters.groupId, unitId: req.parameters.unitId });
+app.get("/groups/:groupId/units/:unitId", (req: AppHttpRequest<{
+	groupId: string,
+	unitId: string
+}, {}>, res) => {
+	res.json({groupId: req.params.groupId, unitId: req.params.unitId});
 });
 
 do {
