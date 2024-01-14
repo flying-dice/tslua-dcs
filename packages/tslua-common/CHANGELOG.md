@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.29.3 (2024-01-14)
+
+
+### Bug Fixes
+
+* **tslua-http:** add decode-uri-component tests ([f02db76](https://github.com/flying-dice/tslua-dcs/commit/f02db761d6821041e2e53b69911a505b2c8ec909))
+
+
+
+
+
 ## 0.29.2 (2024-01-13)
 
 **Note:** Version bump only for package @flying-dice/tslua-common
