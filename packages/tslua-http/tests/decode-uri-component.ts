@@ -1,91 +1,74 @@
+import { describe, expect, test } from "@flying-dice/tslua-luatest";
 import { decodeUriComponent } from "../src";
 
-// Standard encoding
-assert(
-	decodeUriComponent("Hello%20World") === "Hello World",
-	"Spaces should be decoded correctly",
-);
-assert(
-	decodeUriComponent("%23one") === "#one",
-	"Hash symbols should be decoded correctly",
-);
+describe("decodeUriComponent", () => {
+	test("Spaces should be decoded correctly", () => {
+		expect(decodeUriComponent("Hello%20World")).toBe("Hello World");
+	});
 
-// Edge cases and special characters
-assert(
-	decodeUriComponent("%40email") === "@email",
-	"At symbol should be decoded correctly",
-);
-assert(
-	decodeUriComponent("%24price") === "$price",
-	"Dollar symbol should be decoded correctly",
-);
-assert(
-	decodeUriComponent("%26symbol") === "&symbol",
-	"Ampersand should be decoded correctly",
-);
-assert(
-	decodeUriComponent("%2Bplus") === "+plus",
-	"Plus symbol should be decoded correctly",
-);
-assert(
-	decodeUriComponent("%2Fslash") === "/slash",
-	"Slash should be decoded correctly",
-);
-assert(
-	decodeUriComponent("%3Acolon") === ":colon",
-	"Colon should be decoded correctly",
-);
-assert(
-	decodeUriComponent("%3Bsemicolon") === ";semicolon",
-	"Semicolon should be decoded correctly",
-);
-assert(
-	decodeUriComponent("%3Dequals") === "=equals",
-	"Equals symbol should be decoded correctly",
-);
-assert(
-	decodeUriComponent("%3Fquestion") === "?question",
-	"Question mark should be decoded correctly",
-);
-assert(
-	decodeUriComponent("%40at") === "@at",
-	"At symbol should be decoded correctly",
-);
+	test("Hash symbols should be decoded correctly", () => {
+		expect(decodeUriComponent("%23one")).toBe("#one");
+	});
 
-// Encoding with multiple characters
-assert(
-	decodeUriComponent("Multi%20Word%20Test") === "Multi Word Test",
-	"Multiple encoded spaces should be decoded correctly",
-);
+	test("At symbol should be decoded correctly", () => {
+		expect(decodeUriComponent("%40email")).toBe("@email");
+	});
 
-// Encoding with mixed characters
-assert(
-	decodeUriComponent("Mixed%23%40%2524Symbols") === "Mixed#@%24Symbols",
-	"Mixed special characters should be decoded correctly",
-);
+	test("Dollar symbol should be decoded correctly", () => {
+		expect(decodeUriComponent("%24price")).toBe("$price");
+	});
 
-// Empty string
-assert(
-	decodeUriComponent("") === "",
-	"Empty string should return empty string",
-);
+	test("Ampersand should be decoded correctly", () => {
+		expect(decodeUriComponent("%26symbol")).toBe("&symbol");
+	});
 
-// Numbers
-assert(
-	decodeUriComponent("123%20456") === "123 456",
-	"Encoded spaces in a numeric string should be decoded correctly",
-);
+	test("Plus symbol should be decoded correctly", () => {
+		expect(decodeUriComponent("%2Bplus")).toBe("+plus");
+	});
 
-// Non-encoded string
-assert(
-	decodeUriComponent("NoEncoding") === "NoEncoding",
-	"String without encoding should remain unchanged",
-);
+	test("Slash should be decoded correctly", () => {
+		expect(decodeUriComponent("%2Fslash")).toBe("/slash");
+	});
 
-// Invalid encoding
-try {
-	decodeUriComponent("%ZZ");
-	assert(false, "Invalid encoding should throw an error");
-} catch (e) {
-	assert(true, "Invalid encoding should throw an error");
-}
+	test("Colon should be decoded correctly", () => {
+		expect(decodeUriComponent("%3Acolon")).toBe(":colon");
+	});
+
+	test("Semicolon should be decoded correctly", () => {
+		expect(decodeUriComponent("%3Bsemicolon")).toBe(";semicolon");
+	});
+
+	test("Equals symbol should be decoded correctly", () => {
+		expect(decodeUriComponent("%3Dequals")).toBe("=equals");
+	});
+
+	test("Question mark should be decoded correctly", () => {
+		expect(decodeUriComponent("%3Fquestion")).toBe("?question");
+	});
+
+	test("At symbol should be decoded correctly", () => {
+		expect(decodeUriComponent("%40at")).toBe("@at");
+	});
+
+	test("Multiple encoded spaces should be decoded correctly", () => {
+		expect(decodeUriComponent("Multi%20Word%20Test")).toBe("Multi Word Test");
+	});
+
+	test("Mixed special characters should be decoded correctly", () => {
+		expect(decodeUriComponent("Mixed%23%40%2524Symbols")).toBe(
+			"Mixed#@%24Symbols",
+		);
+	});
+
+	test("Empty string should return empty string", () => {
+		expect(decodeUriComponent("")).toBe("");
+	});
+
+	test("Encoded spaces in a numeric string should be decoded correctly", () => {
+		expect(decodeUriComponent("123%20456")).toBe("123 456");
+	});
+
+	test("String without encoding should remain unchanged", () => {
+		expect(decodeUriComponent("NoEncoding")).toBe("NoEncoding");
+	});
+});
