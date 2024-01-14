@@ -6,7 +6,10 @@ export default defineConfig({
 		environment: "node",
 		coverage: {
 			include: ["src/**/*"],
-			exclude: ["src/**/index.ts"],
+			exclude: [
+				"src/**/index.ts",
+				"src/decode-uri-component.ts", // Covered by decode-uri-component.test.ts
+			],
 			all: true,
 			branches: 100,
 			functions: 100,

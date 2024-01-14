@@ -14,11 +14,7 @@ const logger = new Logger("Path");
  */
 export const gSubPathParamsToPattern = (route: string): string => {
 	logger.debug(`Replacing Path Params for Pattern matcher ${route}`);
-	const result = string.gsub(
-		route,
-		":[%w_]+",
-		"([%%w_%%%%-%%.~!$&'()*+,;=]+)",
-	);
+	const result = string.gsub(route, ":[%w_]+", "([%%w_%%%%-%%.~!$&'()*+,;=]+)");
 	logger.debug(`Replaced Path Params for Pattern matcher ${result[0]}`);
 	return result[0];
 };

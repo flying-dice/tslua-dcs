@@ -1,4 +1,4 @@
-import {Logger} from "@flying-dice/tslua-common";
+import { Logger } from "@flying-dice/tslua-common";
 import {
 	HttpRequest,
 	HttpResponse,
@@ -7,8 +7,8 @@ import {
 	StatusText,
 } from "@flying-dice/tslua-http";
 import * as json from "@flying-dice/tslua-rxi-json";
-import {getPathParameters, isMatch} from "./path";
-import {HttpError} from "./errors";
+import { HttpError } from "./errors";
+import { getPathParameters, isMatch } from "./path";
 
 export class AppHttpRequest<PARAMS = any, QUERY = any, BODY = any> {
 	protected logger = new Logger("AppHttpRequest");
@@ -21,12 +21,15 @@ export class AppHttpRequest<PARAMS = any, QUERY = any, BODY = any> {
 		if (!this.req.body) return undefined;
 
 		// Body Parse JSON
-		if (this.getHeaderValue("content-type") === "application/json" || this.getHeaderValue("Content-Type") === "application/json") {
+		if (
+			this.getHeaderValue("content-type") === "application/json" ||
+			this.getHeaderValue("Content-Type") === "application/json"
+		) {
 			try {
 				return json.decode(this.req.body) as BODY;
 			} catch (e) {
 				this.logger.error(`Error parsing JSON: ${e}`);
-				throw new HttpError(HttpStatus.BAD_REQUEST, "Invalid JSON")
+				throw new HttpError(HttpStatus.BAD_REQUEST, "Invalid JSON");
 			}
 		}
 
@@ -40,37 +43,42 @@ export class AppHttpRequest<PARAMS = any, QUERY = any, BODY = any> {
 	__params: Record<string, string>;
 
 	get headers() {
-		return this.req.headers
+		return this.req.headers;
 	}
 
 	get method() {
-		return this.req.method
-	};
+		return this.req.method;
+	}
 
 	get originalUrl() {
-		return this.req.originalUrl
+		return this.req.originalUrl;
 	}
 
 	get protocol() {
-		return this.req.protocol
+		return this.req.protocol;
 	}
 
 	get path() {
-		return this.req.path
+		return this.req.path;
 	}
 
-	constructor(public readonly req: HttpRequest, pathParams: Record<string, string>) {
+	constructor(
+		public readonly req: HttpRequest,
+		pathParams: Record<string, string>,
+	) {
 		this.__params = pathParams;
-
 	}
 
 	getHeaderValue<T>(key: string) {
 		return this.req.headers[key] as T;
 	}
 
-	getHeaderValueOrThrow<T>(key: string, error = new Error("Header is not defined")) {
+	getHeaderValueOrThrow<T>(
+		key: string,
+		error = new Error("Header is not defined"),
+	) {
 		if (this.req.headers[key] === undefined) {
-			throw error
+			throw error;
 		}
 		return this.req.headers[key] as T;
 	}
@@ -81,7 +89,7 @@ export class AppHttpRequest<PARAMS = any, QUERY = any, BODY = any> {
 
 	getBodyOrThrow<T = string>(error = new Error("Body is not defined")) {
 		if (this.body === undefined) {
-			throw error
+			throw error;
 		}
 		return this.body as T;
 	}
@@ -90,9 +98,12 @@ export class AppHttpRequest<PARAMS = any, QUERY = any, BODY = any> {
 		return this.req.parameters[key] as T;
 	}
 
-	getQueryParameterValueOrThrow<T = string>(key: string, error = new Error("Query parameter is not defined")) {
+	getQueryParameterValueOrThrow<T = string>(
+		key: string,
+		error = new Error("Query parameter is not defined"),
+	) {
 		if (this.req.parameters[key] === undefined) {
-			throw error
+			throw error;
 		}
 		return this.req.parameters[key] as T;
 	}
@@ -101,9 +112,12 @@ export class AppHttpRequest<PARAMS = any, QUERY = any, BODY = any> {
 		return this.__params[key] as T;
 	}
 
-	getPathParameterValueOrThrow<T = string>(key: string, error = new Error("Path parameter is not defined")) {
+	getPathParameterValueOrThrow<T = string>(
+		key: string,
+		error = new Error("Path parameter is not defined"),
+	) {
 		if (this.__params[key] === undefined) {
-			throw error
+			throw error;
 		}
 		return this.__params[key] as T;
 	}

@@ -2,10 +2,10 @@ import { l_DCS } from "./DCS";
 import { l_Export } from "./Export";
 import { l_coalition } from "./coalition";
 import { l_db } from "./db";
+import { l_lfs } from "./lfs";
 import { l_log } from "./log";
 import { l_net } from "./net";
-import {l_lfs} from "./lfs";
-import {l_terrain} from "./terrain";
+import { l_terrain } from "./terrain";
 
 export * from "./coalition";
 export * from "./DCS";

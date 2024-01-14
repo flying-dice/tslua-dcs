@@ -1,5 +1,10 @@
-import {HttpStatus} from "@flying-dice/tslua-http";
-import {AppHttpRequest, AppHttpResponse, Application, AppMiddleware} from "./index";
+import { HttpStatus } from "@flying-dice/tslua-http";
+import {
+	AppHttpRequest,
+	AppHttpResponse,
+	AppMiddleware,
+	Application,
+} from "./index";
 
 const app = new Application("127.0.0.1", 29293);
 
@@ -26,7 +31,7 @@ app.get("/api/users", (req: AppHttpRequest, res: AppHttpResponse) => {
 });
 
 app.get("/api/users/:id", (req: AppHttpRequest, res: AppHttpResponse) => {
-	const userId = req.getPathParameterValueOrThrow("id")
+	const userId = req.getPathParameterValueOrThrow("id");
 	if (!users[userId]) {
 		return res.status(HttpStatus.NOT_FOUND).send("Not Found");
 	}
@@ -37,13 +42,10 @@ app.get("/api/users/:id", (req: AppHttpRequest, res: AppHttpResponse) => {
 app.get(
 	"/api/users/:id/comments/:commentId",
 	(req: AppHttpRequest, res: AppHttpResponse) => {
-		const userId = req.getPathParameterValueOrThrow("id")
-		const commentId = req.getPathParameterValueOrThrow("commentId")
+		const userId = req.getPathParameterValueOrThrow("id");
+		const commentId = req.getPathParameterValueOrThrow("commentId");
 
-		if (
-			!users[userId] ||
-			!users[userId].comments[commentId]
-		) {
+		if (!users[userId] || !users[userId].comments[commentId]) {
 			return res.status(HttpStatus.NOT_FOUND).send("Not Found");
 		}
 
@@ -60,9 +62,9 @@ app.get("/health", (req, res) => {
 });
 
 app.get("/complex/:id", (req, res) => {
-	const complexId = req.getPathParameterValueOrThrow("id")
+	const complexId = req.getPathParameterValueOrThrow("id");
 
-	res.json({id: complexId});
+	res.json({ id: complexId });
 });
 
 const authMiddleware: AppMiddleware = (req, res, next) => {
@@ -130,12 +132,21 @@ app.get("/fixed-complex/Ground=13", (req, res) => {
 	res.json({ id: "Ground=13" });
 });
 
-app.get("/groups/:groupId/units/:unitId", (req: AppHttpRequest<{
-	groupId: string,
-	unitId: string
-}, {}>, res) => {
-	res.json({groupId: req.params.groupId, unitId: req.params.unitId});
-});
+app.get(
+	"/groups/:groupId/units/:unitId",
+	(
+		req: AppHttpRequest<
+			{
+				groupId: string;
+				unitId: string;
+			},
+			{}
+		>,
+		res,
+	) => {
+		res.json({ groupId: req.params.groupId, unitId: req.params.unitId });
+	},
+);
 
 do {
 	app.acceptNextClient();
