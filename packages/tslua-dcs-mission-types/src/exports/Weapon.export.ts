@@ -1,7 +1,8 @@
 /**
- * @version 2.9.1.48335
+ * @version 2.9.9.2474
  **/
 export interface _Weapon {
+	getCategoryEx(...args: any[]): unknown;
 	getDesc(...args: any[]): unknown;
 	className_: string;
 	parentClass_: {
@@ -10,7 +11,7 @@ export interface _Weapon {
 		parentClass_: { className_: string };
 		getCategory(...args: any[]): unknown;
 		cancelChoosingCargo(...args: any[]): unknown;
-		database_: {};
+		database_: { getCategoryEx(...args: any[]): unknown };
 		Category: {
 			VOID: number;
 			SCENERY: number;

@@ -1,5 +1,5 @@
 /**
- * @version 2.9.1.48335
+ * @version 2.9.9.2474
  * @noSelf
  **/
 export interface _AI {
@@ -16,6 +16,7 @@ export interface _AI {
 				PROHIBIT_WP_PASS_REPORT: number;
 				PROHIBIT_AA: number;
 				REACTION_ON_THREAT: number;
+				PREFER_VERTICAL: number;
 				FORCED_ATTACK: number;
 				PROHIBIT_AB: number;
 				RTB_ON_OUT_OF_AMMO: number;
@@ -72,6 +73,7 @@ export interface _AI {
 		};
 		Ground: {
 			id: {
+				EVASION_OF_ARM: number;
 				ALARM_STATE: number;
 				DISPERSE_ON_ATTACK: number;
 				ENGAGE_AIR_WEAPONS: number;

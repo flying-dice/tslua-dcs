@@ -1,7 +1,8 @@
 /**
- * @version 2.9.1.48335
+ * @version 2.9.9.2474
  **/
 export interface _Group {
+	getCategoryEx(...args: any[]): unknown;
 	activate(...args: any[]): unknown;
 	embarking(...args: any[]): unknown;
 	isExist(...args: any[]): unknown;

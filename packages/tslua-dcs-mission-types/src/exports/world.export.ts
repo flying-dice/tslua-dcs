@@ -1,5 +1,5 @@
 /**
- * @version 2.9.1.48335
+ * @version 2.9.9.2474
  * @noSelf
  **/
 export interface _world {
@@ -16,30 +16,34 @@ export interface _world {
 	removeJunk(...args: any[]): unknown;
 	VolumeType: { PYRAMID: number; BOX: number; SEGMENT: number; SPHERE: number };
 	event: {
+		S_EVENT_HUMAN_AIRCRAFT_REPAIR_START: number;
 		S_EVENT_MISSION_END: number;
 		S_EVENT_DAYNIGHT: number;
 		S_EVENT_SHOT: number;
 		S_EVENT_KILL: number;
 		S_EVENT_MARK_ADDED: number;
-		S_EVENT_POSTPONED_TAKEOFF: number;
+		S_EVENT_WEAPON_REARM: number;
+		S_EVENT_HUMAN_AIRCRAFT_REPAIR_FINISH: number;
 		S_EVENT_UNIT_TASK_COMPLETE: number;
 		S_EVENT_SHOOTING_END: number;
 		S_EVENT_BASE_CAPTURED: number;
+		S_EVENT_SIMULATION_UNFREEZE: number;
 		S_EVENT_DEAD: number;
 		S_EVENT_TRIGGER_ZONE: number;
-		S_EVENT_WEAPON_REARM: number;
-		S_EVENT_POSTPONED_LAND: number;
+		S_EVENT_SIMULATION_FREEZE: number;
+		S_EVENT_MAC_LMS_RESTART: number;
+		S_EVENT_RUNWAY_TOUCH: number;
 		S_EVENT_EJECTION: number;
-		S_EVENT_MISSION_WINNER: number;
+		S_EVENT_RUNWAY_TAKEOFF: number;
 		S_EVENT_WEAPON_ADD: number;
-		S_EVENT_MISSION_RESTART: number;
+		S_EVENT_MISSION_WINNER: number;
 		S_EVENT_SHOOTING_START: number;
-		S_EVENT_MAC_EXTRA_SCORE: number;
+		S_EVENT_MISSION_RESTART: number;
 		S_EVENT_UNIT_LOST: number;
 		S_EVENT_INVALID: number;
 		S_EVENT_PLAYER_ENTER_UNIT: number;
 		S_EVENT_EMERGENCY_LANDING: number;
-		S_EVENT_REFUELING: number;
+		S_EVENT_MAC_EXTRA_SCORE: number;
 		S_EVENT_CRASH: number;
 		S_EVENT_UNIT_TASK_STAGE: number;
 		S_EVENT_WEAPON_DROP: number;
@@ -60,7 +64,7 @@ export interface _world {
 		S_EVENT_FLIGHT_TIME: number;
 		S_EVENT_DISCARD_CHAIR_AFTER_EJECTION: number;
 		S_EVENT_TAKEOFF: number;
-		S_EVENT_MAC_SUBTASK_SCORE: number;
+		S_EVENT_REFUELING: number;
 		S_EVENT_PLAYER_CAPTURE_AIRFIELD: number;
 		S_EVENT_PLAYER_COMMENT: number;
 		S_EVENT_SCORE: number;

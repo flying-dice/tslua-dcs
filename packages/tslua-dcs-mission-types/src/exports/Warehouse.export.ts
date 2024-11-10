@@ -1,9 +1,10 @@
 /**
- * @version 2.9.1.48335
+ * @version 2.9.9.2474
  **/
 export interface _Warehouse {
 	setItem(...args: any[]): unknown;
 	getOwner(...args: any[]): unknown;
+	getCargoAsWarehouse(...args: any[]): unknown;
 	className_: string;
 	parentClass_: { className_: string };
 	addLiquid(...args: any[]): unknown;

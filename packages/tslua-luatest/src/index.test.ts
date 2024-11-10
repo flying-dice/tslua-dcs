@@ -46,7 +46,7 @@ describe("Custom Testing Library", () => {
 				expect(() => customExpect(1).toThrow("error")).toThrow(
 					"Expected a function for toThrow matcher",
 				);
-			})
+			});
 
 			test("should pass when the function throws the expected error", () => {
 				expect(() =>

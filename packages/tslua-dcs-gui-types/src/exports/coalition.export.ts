@@ -1,5 +1,5 @@
 /**
- * @version 2.9.2.49940
+ * @version 2.9.9.2474
  * @noSelf
  **/
 export interface _coalition {

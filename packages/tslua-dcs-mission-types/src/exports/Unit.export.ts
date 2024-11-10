@@ -1,5 +1,5 @@
 /**
- * @version 2.9.1.48335
+ * @version 2.9.9.2474
  **/
 export interface _Unit {
 	getDrawArgumentValue(...args: any[]): unknown;
@@ -12,7 +12,7 @@ export interface _Unit {
 		parentClass_: { className_: string };
 		getCategory(...args: any[]): unknown;
 		cancelChoosingCargo(...args: any[]): unknown;
-		database_: {};
+		database_: { getCategoryEx(...args: any[]): unknown };
 		Category: {
 			VOID: number;
 			SCENERY: number;
@@ -51,8 +51,9 @@ export interface _Unit {
 	getAirbase(...args: any[]): unknown;
 	isActive(...args: any[]): unknown;
 	hasSensors(...args: any[]): unknown;
-	getDescentOnBoard(...args: any[]): unknown;
 	getForcesName(...args: any[]): unknown;
+	getDescentOnBoard(...args: any[]): unknown;
+	getCategoryEx(...args: any[]): unknown;
 	UnloadCargo(...args: any[]): unknown;
 	canShipLanding(...args: any[]): unknown;
 	getSeats(...args: any[]): unknown;

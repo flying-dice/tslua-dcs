@@ -1,20 +1,21 @@
 /**
- * @version 2.9.1.48335
+ * @version 2.9.9.2474
  * @noSelf
  **/
 export interface _net {
 	dostring_in(...args: any[]): unknown;
 	log(...args: any[]): unknown;
 	PS_EXTRA_ALLY_AAA: number;
-	CHAT_ALL: number;
 	ERR_SERVER_FULL: number;
+	CHAT_ALL: number;
+	PS_LAND: number;
 	GAME_MODE_LAST_MAN_STANDING: number;
 	PS_EXTRA_ENEMY_TRANSPORTS: number;
 	json2lua(...args: any[]): unknown;
-	PS_LAND: number;
+	ERR_DENIED_TRIAL_ONLY: number;
 	PS_EXTRA_ENEMY_TROOPS: number;
 	CHAT_TEAM: number;
-	ERR_DENIED_TRIAL_ONLY: number;
+	ERR_REFUSED: number;
 	trace(...args: any[]): unknown;
 	get_server_host(...args: any[]): unknown;
 	ERR_CONNECT_FAILED: number;
@@ -22,7 +23,7 @@ export interface _net {
 	ERR_INVALID_ADDRESS: number;
 	ERR_INVALID_PASSWORD: number;
 	get_server_id(...args: any[]): unknown;
-	ERR_REFUSED: number;
+	GAME_MODE_TEAM_DEATH_MATCH: number;
 	PS_SHIP: number;
 	set_name(...args: any[]): unknown;
 	ERR_KICKED: number;

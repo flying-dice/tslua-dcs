@@ -1,5 +1,5 @@
 /**
- * @version 2.9.2.49940
+ * @version 2.9.9.2474
  * @noSelf
  **/
 export interface _net {
@@ -17,6 +17,7 @@ export interface _net {
 	ERR_KICKED: number;
 	ERR_REFUSED: number;
 	PS_EXTRA_ALLY_TROOPS: number;
+	GAME_MODE_TEAM_DEATH_MATCH: number;
 	banlist_remove(...args: any[]): unknown;
 	missionlist_get_installed_theatres(...args: any[]): unknown;
 	spawn_player(...args: any[]): unknown;
