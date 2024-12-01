@@ -1,10 +1,15 @@
 {
 	"name": "@flying-dice/tslua-rxi-json",
-	"version": "0.30.3",
+	"version": "0.30.4",
 	"description": "rxi-json library with typings",
 	"types": "./index.d.ts",
 	"main": "./index",
-	"keywords": ["lua", "dcs", "json", "rxi/json"],
+	"keywords": [
+		"lua",
+		"dcs",
+		"json",
+		"rxi/json"
+	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/flying-dice/tslua-dcs.git"

@@ -1,8 +1,12 @@
 {
 	"name": "@flying-dice/tslua-dcs-gui-types",
-	"version": "0.30.3",
+	"version": "0.30.4",
 	"description": "Typescript type definitions for DCS GUI environment",
-	"keywords": ["lua", "dcs", "gui"],
+	"keywords": [
+		"lua",
+		"dcs",
+		"gui"
+	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/flying-dice/tslua-dcs.git"
