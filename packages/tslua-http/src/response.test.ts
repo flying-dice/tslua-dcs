@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { HttpStatus } from "./constants";
-import { HttpResponse, assembleResponseString } from "./response";
+import { type HttpResponse, assembleResponseString } from "./response";
 
 describe("assembleResponseString", () => {
 	it("should assemble a response string with body", () => {

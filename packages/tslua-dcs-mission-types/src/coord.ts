@@ -1,4 +1,4 @@
-import { _coord } from "./exports/coord.export";
+import type { _coord } from "./exports/coord.export";
 /** @noSelf **/
 export interface l_coord extends _coord {
 	/**

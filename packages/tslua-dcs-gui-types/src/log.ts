@@ -1,4 +1,4 @@
-import { _log } from "./exports/log.export";
+import type { _log } from "./exports/log.export";
 
 /**
  * @noSelf

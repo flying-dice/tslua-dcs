@@ -1,5 +1,5 @@
-import { l_Vec2 } from "./coord";
-import { _land } from "./exports/land.export";
+import type { l_Vec2 } from "./coord";
+import type { _land } from "./exports/land.export";
 
 /** @noSelf **/
 export interface l_land extends _land {

@@ -1,5 +1,5 @@
-import { ServerObject, ServerVariableObject } from "./oas-common";
-import { IExtensionName, IExtensionType } from "./specification-extension";
+import type { ServerObject, ServerVariableObject } from "./oas-common";
+import type { IExtensionName, IExtensionType } from "./specification-extension";
 
 // Server & Server Variable
 export class Server implements ServerObject {

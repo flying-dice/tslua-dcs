@@ -1,19 +1,6 @@
 import axios from "axios";
-import { cosmiconfigSync } from "cosmiconfig";
-import {
-	ensureDir,
-	ensureDirSync,
-	readFileSync,
-	writeFileSync,
-} from "fs-extra";
-
-const result = cosmiconfigSync("export").search();
-
-if (!result) throw new Error("Config Not Found!");
-
-const config: {
-	scripts: { fiddlescript: string; outdir: string; namespaces: string[] }[];
-} = result.config;
+import { ensureDirSync, readFileSync, writeFileSync } from "fs-extra";
+import { config } from "./config";
 
 config.scripts.forEach(({ fiddlescript, outdir, namespaces }) => {
 	axios

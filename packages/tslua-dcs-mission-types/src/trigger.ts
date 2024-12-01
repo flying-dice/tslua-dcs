@@ -1,4 +1,4 @@
-import { _trigger } from "./exports/trigger.export";
+import type { _trigger } from "./exports/trigger.export";
 
 export type TriggerZone = {
 	radius: number;

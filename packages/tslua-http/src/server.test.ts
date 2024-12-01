@@ -1,7 +1,7 @@
 import * as socket from "socket";
-import { TCP } from "socket";
+import type { TCP } from "socket";
 import {
-	Mocked,
+	type Mocked,
 	afterEach,
 	beforeEach,
 	describe,
@@ -23,7 +23,9 @@ describe("HttpServer", () => {
 	let mockTcp: Mocked<TCP>;
 
 	beforeEach(() => {
-		global.tonumber = vi.fn().mockImplementation((value) => parseInt(value));
+		global.tonumber = vi
+			.fn()
+			.mockImplementation((value) => Number.parseInt(value));
 
 		mockTcp = mock<TCP>();
 		vi.mocked(socket.bind).mockReturnValue(mockTcp);
@@ -39,7 +41,7 @@ describe("HttpServer", () => {
 		vi.restoreAllMocks();
 	});
 
-	it("should have been bound to the correct address and port", function () {
+	it("should have been bound to the correct address and port", () => {
 		expect(socket.bind).toHaveBeenCalledWith("127.0.0.1", 8080);
 	});
 

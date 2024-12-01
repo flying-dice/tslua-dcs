@@ -1,8 +1,8 @@
 import { HttpStatus } from "@flying-dice/tslua-http";
 import {
-	AppHttpRequest,
-	AppHttpResponse,
-	AppMiddleware,
+	type AppHttpRequest,
+	type AppHttpResponse,
+	type AppMiddleware,
 	Application,
 } from "./index";
 

@@ -24,6 +24,22 @@ Detailed usage instructions will be added soon.
 
 See the [UPDATING.md](UPDATING.md) file for instructions on updating the definitions.
 
+### Updating Dependencies
+
+To check the dependencies across all monorepo packages, run the following command:
+
+```bash
+ncu
+lerna exec -- ncu
+```
+
+To Update them all, run:
+
+```bash
+ncu -u
+lerna exec -- ncu -u
+```
+
 ### The Good
 
 Using typescript over lua offers some great benefits:

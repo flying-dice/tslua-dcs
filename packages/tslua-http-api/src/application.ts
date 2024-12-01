@@ -1,7 +1,7 @@
 import { Logger } from "@flying-dice/tslua-common";
 import {
-	HttpRequest,
-	HttpResponse,
+	type HttpRequest,
+	type HttpResponse,
 	HttpServer,
 	HttpStatus,
 	StatusText,

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { LogLevel, Logger, LoggerTransports } from "./logger";
+import { LogLevel, Logger, type LoggerTransports } from "./logger";
 
 describe("Logger", () => {
 	let logger: Logger;
@@ -70,7 +70,7 @@ describe("Logger", () => {
 		);
 	});
 
-	it("should not log if level is not active", function () {
+	it("should not log if level is not active", () => {
 		Logger.level = LogLevel.OFF;
 		logger.debug("test");
 		logger.info("test");
@@ -82,7 +82,7 @@ describe("Logger", () => {
 		expect(mockTransports.error).not.toHaveBeenCalled();
 	});
 
-	it("should do nothing when transports are reset", function () {
+	it("should do nothing when transports are reset", () => {
 		Logger.level = LogLevel.DEBUG;
 		Logger.transports = {
 			// @ts-ignore

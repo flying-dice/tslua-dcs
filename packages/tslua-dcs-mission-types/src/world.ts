@@ -1,5 +1,5 @@
-import { l_Airbase } from "./Airbase";
-import { _world } from "./exports/world.export";
+import type { l_Airbase } from "./Airbase";
+import type { _world } from "./exports/world.export";
 
 /** @noSelf **/
 export interface l_world extends _world {

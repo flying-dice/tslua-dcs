@@ -1,4 +1,4 @@
-import { _coalition } from "./exports/coalition.export";
+import type { _coalition } from "./exports/coalition.export";
 
 /**
  * @version 2.9.1.48335

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import {
-	IExtensionName,
-	ISpecificationExtension,
+	type IExtensionName,
+	type ISpecificationExtension,
 	SpecificationExtension,
 } from "./specification-extension";
 

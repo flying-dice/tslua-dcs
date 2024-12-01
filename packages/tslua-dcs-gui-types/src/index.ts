@@ -1,11 +1,11 @@
-import { l_DCS } from "./DCS";
-import { l_Export } from "./Export";
-import { l_coalition } from "./coalition";
-import { l_db } from "./db";
-import { l_lfs } from "./lfs";
-import { l_log } from "./log";
-import { l_net } from "./net";
-import { l_terrain } from "./terrain";
+import type { l_DCS } from "./DCS";
+import type { l_Export } from "./Export";
+import type { l_coalition } from "./coalition";
+import type { l_db } from "./db";
+import type { l_lfs } from "./lfs";
+import type { l_log } from "./log";
+import type { l_net } from "./net";
+import type { l_terrain } from "./terrain";
 
 export * from "./coalition";
 export * from "./DCS";

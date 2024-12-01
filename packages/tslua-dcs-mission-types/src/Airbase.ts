@@ -1,6 +1,6 @@
-import { l_Warehouse } from "./Warehouse";
-import { l_Vec3 } from "./coord";
-import { _Airbase } from "./exports/Airbase.export";
+import type { l_Warehouse } from "./Warehouse";
+import type { l_Vec3 } from "./coord";
+import type { _Airbase } from "./exports/Airbase.export";
 
 export type AirbaseDesc = {
 	life: number;

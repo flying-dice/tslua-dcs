@@ -1,4 +1,4 @@
-import { _timer } from "./exports/timer.export";
+import type { _timer } from "./exports/timer.export";
 /** @noSelf **/
 export interface l_timer extends _timer {
 	/**

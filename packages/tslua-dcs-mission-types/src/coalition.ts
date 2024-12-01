@@ -1,7 +1,7 @@
-import { l_Airbase } from "./Airbase";
-import { l_Group } from "./Group";
-import { l_StaticObject } from "./StaticObject";
-import { _coalition } from "./exports/coalition.export";
+import type { l_Airbase } from "./Airbase";
+import type { l_Group } from "./Group";
+import type { l_StaticObject } from "./StaticObject";
+import type { _coalition } from "./exports/coalition.export";
 
 /** @noSelf **/
 export interface l_coalition extends _coalition {

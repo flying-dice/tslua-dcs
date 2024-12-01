@@ -25,6 +25,7 @@ jobs:
         run: sudo luarocks install luasocket
       - run: npm ci
       - run: npm test
+      - run: npm test:lua
 
   publish:
     runs-on: ubuntu-latest

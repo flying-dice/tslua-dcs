@@ -1,29 +1,24 @@
 {
-  "name": "@flying-dice/tslua-rxi-json",
-  "version": "0.30.3",
-  "description": "rxi-json library with typings",
-  "types": "./index.d.ts",
-  "main": "./index",
-  "keywords": [
-    "lua",
-    "dcs",
-    "json",
-    "rxi/json"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/flying-dice/tslua-dcs.git"
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
-  "license": "ISC",
-  "scripts": {
-    "build:docs": "typedoc"
-  },
-  "devDependencies": {
-    "typescript": "^5.2.2"
-  },
-  "gitHead": "a6ae4c01c5f5796bcc1c0e88d4b790d83de03340"
+	"name": "@flying-dice/tslua-rxi-json",
+	"version": "0.30.3",
+	"description": "rxi-json library with typings",
+	"types": "./index.d.ts",
+	"main": "./index",
+	"keywords": ["lua", "dcs", "json", "rxi/json"],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/flying-dice/tslua-dcs.git"
+	},
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
+	"license": "ISC",
+	"scripts": {
+		"build:docs": "typedoc"
+	},
+	"devDependencies": {
+		"typescript": "^5.7.2"
+	},
+	"gitHead": "a6ae4c01c5f5796bcc1c0e88d4b790d83de03340"
 }

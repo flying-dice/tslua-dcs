@@ -1,4 +1,4 @@
-import { _Export } from "./exports/Export.export";
+import type { _Export } from "./exports/Export.export";
 
 /**
  * @version 2.9.1.48335

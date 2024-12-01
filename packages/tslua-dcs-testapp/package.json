@@ -1,27 +1,27 @@
 {
-  "name": "@flying-dice/tslua-dcs-testapp",
-  "version": "0.30.3",
-  "description": "Test app for DCS World and tslua-http",
-  "private": true,
-  "scripts": {
-    "build": "rimraf dist && tstl -p tsconfig.tstl.json"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@flying-dice/tslua-base64": "^0.30.3",
-    "@flying-dice/tslua-dcs-mission-types": "^0.30.3",
-    "@flying-dice/tslua-http": "^0.30.3",
-    "@flying-dice/tslua-http-api": "^0.30.3"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^1.4.0",
-    "lua-types": "^2.13.1",
-    "prettier": "^3.1.0",
-    "rimraf": "^5.0.5",
-    "typescript": "^5.2.2",
-    "typescript-to-lua": "^1.22.0",
-    "vitest": "^0.34.6"
-  }
+	"name": "@flying-dice/tslua-dcs-testapp",
+	"version": "0.30.3",
+	"description": "Test app for DCS World and tslua-http",
+	"private": true,
+	"scripts": {
+		"build": "rimraf dist && tstl -p tsconfig.tstl.json"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"@flying-dice/tslua-base64": "^0.30.3",
+		"@flying-dice/tslua-dcs-mission-types": "^0.30.3",
+		"@flying-dice/tslua-http": "^0.30.3",
+		"@flying-dice/tslua-http-api": "^0.30.3"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"lua-types": "^2.13.1",
+		"prettier": "^3.4.1",
+		"rimraf": "^6.0.1",
+		"typescript": "^5.7.2",
+		"typescript-to-lua": "^1.28.1",
+		"vitest": "^2.1.6"
+	}
 }
