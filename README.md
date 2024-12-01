@@ -20,6 +20,14 @@ Some useful Docs include:
 
 > TBC
 
+### Updating
+
+To update the type definitions, run the following command:
+
+```bash
+npm run export && npm run build:all
+```
+
 ### The Good
 
 Using typescript over lua offers some great benefits:
