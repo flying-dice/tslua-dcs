@@ -40,21 +40,20 @@ ncu -u
 lerna exec -- ncu -u
 ```
 
-### The Good
+### Pros
+- **Type Safety**: TypeScript provides static type-checking, which helps catch errors at compile time, leading to more robust and maintainable code.
+- **Familiar Syntax**: TypeScript syntax is similar to JavaScript, making it easier for JavaScript developers to transition.
+- **Modern Features**: TypeScript supports modern JavaScript features such as classes, modules, and async/await, which can be transpiled to Lua.
+- **Tooling and IDE Support**: TypeScript has excellent tooling and IDE support, including autocompletion, refactoring, and debugging capabilities.
 
-Using typescript over lua offers some great benefits:
-- Intelligence and type safety
-- JavaScript ecosystem of dev tools, jest, mocks, linters and formatters
-- Great support for both functional and OOP patterns
-
-You can also leverage the amazing power of dependencies with NPM as a package manager.
-
-https://typescripttolua.github.io/docs/external-code
-
-### The Bad
-You are not writing JavaScript you can work like you’re inside the JS ecosystem. Don’t expect NPM libraries to just work. Remember you’re transpiling your TS to Lua. It’s not running on NodeJS. That said if you can find NPM modules that you can lift TS source code from you should be ok and just paste them in a lib folder as long as they don’t use NodeJS or Browser APIs.
+### Cons
+- **Complexity**: The transpilation process can add complexity to the build and deployment pipeline, requiring additional tools and configuration.
+- **Interoperability Issues**: Some Lua features and idioms may not map directly to TypeScript, potentially causing interoperability issues.
+- **Learning Curve**: Developers unfamiliar with TypeScript may face a learning curve, especially with its type system and advanced features.
+- **Debugging**: Debugging transpiled Lua code can be challenging, as the source maps may not always accurately represent the original TypeScript code.
 
 Take note of this list:
+
 https://github.com/TypeScriptToLua/TypeScriptToLua/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+label%3A%22missing+feature%22
 
 ### Contribution
