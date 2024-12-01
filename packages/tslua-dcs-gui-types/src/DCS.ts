@@ -1,4 +1,4 @@
-import { _DCS } from "./exports/DCS.export";
+import type { _DCS } from "./exports/DCS.export";
 
 /**
  * @version 2.9.1.48335

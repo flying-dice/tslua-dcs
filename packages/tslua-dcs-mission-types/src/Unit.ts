@@ -1,6 +1,6 @@
-import { l_Controller } from "./Controller";
-import { l_Position3, l_Vec3 } from "./coord";
-import { _Unit } from "./exports/Unit.export";
+import type { l_Controller } from "./Controller";
+import type { l_Position3, l_Vec3 } from "./coord";
+import type { _Unit } from "./exports/Unit.export";
 
 /**
  * Unit Ammo table from DCS World.

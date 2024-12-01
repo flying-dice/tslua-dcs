@@ -1,5 +1,8 @@
-import { HttpStatus } from "@flying-dice/tslua-http";
-import { ResponseObject, ResponsesObject } from "./openapi3-ts/model/openapi31";
+import type { HttpStatus } from "@flying-dice/tslua-http";
+import type {
+	ResponseObject,
+	ResponsesObject,
+} from "./openapi3-ts/model/openapi31";
 
 export const responses = (
 	responseRefs: Partial<Record<HttpStatus, [ResponseObject, string]>>,
@@ -7,7 +10,7 @@ export const responses = (
 	const res: ResponsesObject = {};
 
 	Object.keys(responseRefs).forEach((key) => {
-		const httpStatus: HttpStatus = parseInt(key);
+		const httpStatus: HttpStatus = Number.parseInt(key);
 		const responseRef = responseRefs[httpStatus];
 		if (!responseRef) return;
 		const [response, ref] = responseRef;

@@ -1,4 +1,4 @@
-import { _terrain } from "./exports/terrain.export";
+import type { _terrain } from "./exports/terrain.export";
 
 /**
  * @noSelf

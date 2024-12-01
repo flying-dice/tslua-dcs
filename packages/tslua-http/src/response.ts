@@ -1,4 +1,4 @@
-import { CRLF, EMPTY_LINE, HttpStatus, StatusText } from "./constants";
+import { CRLF, EMPTY_LINE, type HttpStatus, StatusText } from "./constants";
 
 /**
  * Represents an HTTP response to be sent to a client.

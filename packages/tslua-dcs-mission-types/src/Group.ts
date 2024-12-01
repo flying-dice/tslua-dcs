@@ -1,6 +1,6 @@
-import { l_Controller } from "./Controller";
-import { l_Unit } from "./Unit";
-import { _Group } from "./exports/Group.export";
+import type { l_Controller } from "./Controller";
+import type { l_Unit } from "./Unit";
+import type { _Group } from "./exports/Group.export";
 
 export interface l_Group extends _Group {
 	/**

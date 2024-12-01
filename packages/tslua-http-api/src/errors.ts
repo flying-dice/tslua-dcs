@@ -1,4 +1,4 @@
-import { HttpStatus } from "@flying-dice/tslua-http";
+import type { HttpStatus } from "@flying-dice/tslua-http";
 
 export class HttpError extends Error {
 	constructor(

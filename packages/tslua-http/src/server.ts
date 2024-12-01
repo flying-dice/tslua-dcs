@@ -1,9 +1,9 @@
 import { Logger } from "@flying-dice/tslua-common";
 import * as socket from "socket";
-import { TCP } from "socket";
+import type { TCP } from "socket";
 import { CRLF } from "./constants";
-import { HttpRequest, readRequestHead } from "./request";
-import { HttpResponse, assembleResponseString } from "./response";
+import { type HttpRequest, readRequestHead } from "./request";
+import { type HttpResponse, assembleResponseString } from "./response";
 
 export type RequestHandler = (
 	req: HttpRequest,

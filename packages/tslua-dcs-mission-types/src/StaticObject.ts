@@ -1,5 +1,5 @@
-import { l_Position3, l_Vec3 } from "./coord";
-import { _StaticObject } from "./exports/StaticObject.export";
+import type { l_Position3, l_Vec3 } from "./coord";
+import type { _StaticObject } from "./exports/StaticObject.export";
 
 /**
  * @example

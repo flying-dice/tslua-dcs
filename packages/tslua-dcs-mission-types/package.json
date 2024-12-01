@@ -1,35 +1,30 @@
 {
-  "name": "@flying-dice/tslua-dcs-mission-types",
-  "version": "0.30.3",
-  "description": "Typescript type definitions for DCS",
-  "keywords": [
-    "lua",
-    "dcs",
-    "mission"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/flying-dice/tslua-dcs.git"
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
-  "license": "ISC",
-  "types": "./dist/index.d.ts",
-  "main": "./dist/index",
-  "scripts": {
-    "clean": "rimraf dist",
-    "export": "tsx scripts/export.ts",
-    "build": "rimraf dist && tsc -p tsconfig.tstl.json && tstl -p tsconfig.tstl.json",
-    "test": "vitest run --coverage --passWithNoTests"
-  },
-  "devDependencies": {
-    "@types/fs-extra": "^11.0.4",
-    "cosmiconfig": "^8.3.6",
-    "fs-extra": "^11.1.1",
-    "lua-types": "^2.13.1",
-    "typescript": "^5.2.2",
-    "typescript-to-lua": "^1.22.0"
-  }
+	"name": "@flying-dice/tslua-dcs-mission-types",
+	"version": "0.30.3",
+	"description": "Typescript type definitions for DCS",
+	"keywords": ["lua", "dcs", "mission"],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/flying-dice/tslua-dcs.git"
+	},
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
+	"license": "ISC",
+	"types": "./dist/index.d.ts",
+	"main": "./dist/index",
+	"scripts": {
+		"clean": "rimraf dist",
+		"export": "tsx scripts/export.ts",
+		"build": "rimraf dist && tsc -p tsconfig.tstl.json && tstl -p tsconfig.tstl.json",
+		"test": "vitest run --coverage --passWithNoTests"
+	},
+	"devDependencies": {
+		"@types/fs-extra": "^11.0.4",
+		"fs-extra": "^11.2.0",
+		"lua-types": "^2.13.1",
+		"typescript": "^5.7.2",
+		"typescript-to-lua": "^1.28.1"
+	}
 }

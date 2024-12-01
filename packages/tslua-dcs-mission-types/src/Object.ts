@@ -1,4 +1,4 @@
-import { _Object } from "./exports/Object.export";
+import type { _Object } from "./exports/Object.export";
 
 export interface l_Object extends _Object {
 	/**

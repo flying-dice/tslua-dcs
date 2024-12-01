@@ -3,9 +3,9 @@
 // Typed interfaces for OpenAPI 3.1.0
 // see https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md
 
-import { ServerObject } from "./oas-common";
+import type { ServerObject } from "./oas-common";
 import {
-	ISpecificationExtension,
+	type ISpecificationExtension,
 	SpecificationExtension,
 } from "./specification-extension";
 

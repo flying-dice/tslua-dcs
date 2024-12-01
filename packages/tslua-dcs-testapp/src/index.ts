@@ -3,9 +3,7 @@ _G.print = env.info;
 import { HttpServer } from "@flying-dice/tslua-http";
 
 declare global {
-	//   biome-ignore lint/style/useConst: It is re-assigned :/
 	let functionId: number;
-	//   biome-ignore lint/style/useConst: It is re-assigned :/
 	let app: HttpServer;
 }
 

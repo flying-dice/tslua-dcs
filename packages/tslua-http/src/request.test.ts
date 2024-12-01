@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { HttpRequest, readRequestHead } from "./request";
+import { type HttpRequest, readRequestHead } from "./request";
 
 describe("readRequestHead", () => {
 	it("should correctly parse a simple GET request", () => {

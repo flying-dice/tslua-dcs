@@ -1,4 +1,4 @@
-import { _Warehouse } from "./exports/Warehouse.export";
+import type { _Warehouse } from "./exports/Warehouse.export";
 
 /**
  * Warehouse inventory object containing the current inventory of a warehouse.

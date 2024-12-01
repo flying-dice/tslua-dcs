@@ -1,4 +1,4 @@
-import { _lfs } from "./exports/lfs.export";
+import type { _lfs } from "./exports/lfs.export";
 
 /**
  * @noSelf
