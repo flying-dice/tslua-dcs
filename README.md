@@ -18,15 +18,11 @@ Some useful Docs include:
 
 ### Usage
 
-> TBC
+Detailed usage instructions will be added soon.
 
 ### Updating
 
-To update the type definitions, run the following command:
-
-```bash
-npm run export && npm run build:all
-```
+See the [UPDATING.md](UPDATING.md) file for instructions on updating the definitions.
 
 ### The Good
 
