@@ -1,6 +1,6 @@
 {
 	"name": "@flying-dice/tslua-rxi-json",
-	"version": "0.30.7",
+	"version": "0.30.8",
 	"description": "rxi-json library with typings",
 	"types": "./index.d.ts",
 	"main": "./index",

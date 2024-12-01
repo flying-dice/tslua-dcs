@@ -1,6 +1,6 @@
 {
 	"name": "@flying-dice/tslua-dcs-mission-types",
-	"version": "0.30.7",
+	"version": "0.30.8",
 	"description": "Typescript type definitions for DCS",
 	"keywords": [
 		"lua",
