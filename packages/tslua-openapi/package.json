@@ -1,8 +1,13 @@
 {
 	"name": "@flying-dice/tslua-openapi",
-	"version": "0.30.11",
+	"version": "0.31.0",
 	"description": "Re-export of https://github.com/metadevpro/openapi3-ts/ library for tslua",
-	"keywords": ["lua", "http", "api", "openapi"],
+	"keywords": [
+		"lua",
+		"http",
+		"api",
+		"openapi"
+	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/flying-dice/tslua-dcs.git"
@@ -19,7 +24,7 @@
 		"build:docs": "typedoc"
 	},
 	"dependencies": {
-		"@flying-dice/tslua-http": "^0.30.11"
+		"@flying-dice/tslua-http": "^0.31.0"
 	},
 	"devDependencies": {
 		"lua-types": "^2.13.1",

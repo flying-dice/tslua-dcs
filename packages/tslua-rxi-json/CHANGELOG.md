@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.31.0 (2024-12-02)
+
+
+### Features
+
+* **tslua-http-api:** add error tracking within Application and support for JSON encode errors ([43e66f0](https://github.com/flying-dice/tslua-dcs/commit/43e66f08bb764d97c471f8c1a14356ee96d3c870))
+
+
+
+
+
 ## 0.30.11 (2024-12-02)
 
 **Note:** Version bump only for package @flying-dice/tslua-rxi-json
