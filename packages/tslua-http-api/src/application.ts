@@ -63,6 +63,7 @@ export class AppHttpRequest<PARAMS = any, QUERY = any, BODY = any> {
 	}
 
 	constructor(
+		private readonly app: Application,
 		public readonly req: HttpRequest,
 		pathParams: Record<string, string>,
 	) {
@@ -129,7 +130,10 @@ export class AppHttpRequest<PARAMS = any, QUERY = any, BODY = any> {
 export class AppHttpResponse<RESPONSE = any> {
 	protected logger = new Logger("AppHttpResponse");
 
-	constructor(public readonly res: HttpResponse) {}
+	constructor(
+		private readonly app: Application,
+		public readonly res: HttpResponse,
+	) {}
 
 	/**
 	 * Sets the HTTP status code.
@@ -167,8 +171,13 @@ export class AppHttpResponse<RESPONSE = any> {
 	 */
 	json<T = RESPONSE>(value: T): this {
 		this.res.headers["Content-Type"] = "application/json";
-		this.res.body = json.encode(value);
-		return this;
+		try {
+			this.res.body = json.encode(value);
+			return this;
+		} catch (e) {
+			this.app.errors.push({ error: e as Error, value });
+			throw e;
+		}
 	}
 
 	/**
@@ -202,6 +211,8 @@ export type AppErrorMiddleware = <T = Error>(
  * A class representing a web application, extending the functionality of HttpServer.
  */
 export class Application extends HttpServer {
+	public errors: { error: Error; [key: string]: any }[] = [];
+
 	protected requestHandlers: {
 		route: string;
 		method?: string;
@@ -323,8 +334,8 @@ export class Application extends HttpServer {
 			res.status = HttpStatus.OK;
 		}
 
-		const appRequest = new AppHttpRequest(req, {});
-		const appResponse = new AppHttpResponse(res);
+		const appRequest = new AppHttpRequest(this, req, {});
+		const appResponse = new AppHttpResponse(this, res);
 
 		try {
 			const runStackItem = (idx: number) => {

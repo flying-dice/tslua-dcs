@@ -2,11 +2,7 @@
 	"name": "@flying-dice/tslua-http-api",
 	"version": "0.30.11",
 	"description": "LUA HTTP API Server written in Typescript Transpiled to lua using TypeScriptToLua",
-	"keywords": [
-		"lua",
-		"http",
-		"api"
-	],
+	"keywords": ["lua", "http", "api"],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/flying-dice/tslua-dcs.git"
@@ -27,9 +23,7 @@
 	},
 	"nodemonConfig": {
 		"verbose": true,
-		"watch": [
-			"dist"
-		],
+		"watch": ["dist"],
 		"ext": "lua",
 		"exec": "npm run dev"
 	},

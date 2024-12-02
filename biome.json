@@ -5,6 +5,10 @@
 		"ignore": ["node_modules", "docs"],
 		"maxSize": 5000000
 	},
+	"formatter": {
+		"enabled": true,
+		"lineEnding": "crlf"
+	},
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
