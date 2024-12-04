@@ -14,8 +14,18 @@ export type AirbaseDesc = {
 export interface l_Airbase extends _Airbase {
 	/**
 	 * Returns a number which defines the unique mission id of a given object.
+	 *
+	 * Aerodrome IDs are Number type. Each are safely unique.
+	 *
+	 * Helipads are string type.
+	 *
+	 * Ships are string type.
+	 *
+	 * If different types i.e. Ship and Helipad are present they will have overlapping IDs as the ID is unique based on the type.
+	 *
+	 * @see https://wiki.hoggitworld.com/view/DCS_func_getID
 	 */
-	getID(): number;
+	getID(): number | string;
 
 	/**
 	 * Returns a vec3 table of the x, y, and z coordinates for the position of the given object in 3D space.
