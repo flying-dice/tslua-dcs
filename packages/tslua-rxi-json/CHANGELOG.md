@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.32.4 (2024-12-04)
+
+
+### Bug Fixes
+
+* **tslua-dcs-mission-types:** Fix type errors for airbase ([36d3a2a](https://github.com/flying-dice/tslua-dcs/commit/36d3a2a0d5eca7d25d4cad49e27606ee67fb6951))
+
+
+
+
+
 ## 0.32.3 (2024-12-04)
 
 **Note:** Version bump only for package @flying-dice/tslua-rxi-json
