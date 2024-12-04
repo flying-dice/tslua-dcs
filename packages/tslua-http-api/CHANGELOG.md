@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.32.0 (2024-12-04)
+
+
+### Features
+
+* **tslua-dcs-mission-types:** add LLtoMGRS and MGRStoLL function signatures ([a21098c](https://github.com/flying-dice/tslua-dcs/commit/a21098cefed41aeb3fcdd055ed5ffbdaf3d36b28))
+
+
+
+
+
 # 0.31.0 (2024-12-02)
 
 
