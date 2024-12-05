@@ -1,5 +1,5 @@
 /**
- * @version 2.9.9.2474
+ * @version 2.9.10.3948
  **/
 export interface _Warehouse {
 	setItem(...args: any[]): unknown;

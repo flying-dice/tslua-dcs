@@ -31,8 +31,7 @@ export interface l_coord extends _coord {
 	 * @param lat
 	 * @param lon
 	 */
-	LLtoMGRS(lat: number, lon: number): l_MGRS
-
+	LLtoMGRS(lat: number, lon: number): l_MGRS;
 
 	/**
 	 * Returns multiple values of a given MGRS point in latitude, longitude, and altitude

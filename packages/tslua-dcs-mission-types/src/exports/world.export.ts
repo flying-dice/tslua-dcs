@@ -1,5 +1,5 @@
 /**
- * @version 2.9.9.2474
+ * @version 2.9.10.3948
  * @noSelf
  **/
 export interface _world {
@@ -83,8 +83,15 @@ export interface _world {
 	eventHandlers: {};
 	removeEventHandler(...args: any[]): unknown;
 	addEventHandler(...args: any[]): unknown;
-	getMarkPanels(...args: any[]): unknown;
 	searchObjects(...args: any[]): unknown;
+	getMarkPanels(...args: any[]): unknown;
+	weather: {
+		setFogThickness(...args: any[]): unknown;
+		getFogVisibilityDistance(...args: any[]): unknown;
+		getFogThickness(...args: any[]): unknown;
+		setFogVisibilityDistance(...args: any[]): unknown;
+		setFogAnimation(...args: any[]): unknown;
+	};
 	getPlayer(...args: any[]): unknown;
 	getAirbases(...args: any[]): unknown;
 }

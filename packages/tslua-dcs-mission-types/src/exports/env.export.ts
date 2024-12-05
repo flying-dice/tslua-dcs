@@ -1,5 +1,5 @@
 /**
- * @version 2.9.9.2474
+ * @version 2.9.10.3948
  * @noSelf
  **/
 export interface _env {
@@ -489,7 +489,7 @@ export interface _env {
 		date: { Day: number; Year: number; Month: number };
 		start_time: number;
 		maxDictId: number;
-		theatre: string;
+		descriptionNeutralsTask: string;
 		pictureFileNameN: {};
 		failures: {};
 		currentKey: number;
@@ -502,18 +502,18 @@ export interface _env {
 				atGround: { speed: number; dir: number };
 			};
 			enable_fog: boolean;
-			dust_density: number;
+			visibility: { distance: number };
 			halo: { preset: string };
-			enable_dust: boolean;
+			fog: { visibility: number; thickness: number };
 			season: { temperature: number };
 			type_weather: number;
 			qnh: number;
 			cyclones: {};
 			name: string;
-			fog: { thickness: number; visibility: number };
-			groundTurbulence: number;
+			dust_density: number;
 			modifiedTime: boolean;
-			visibility: { distance: number };
+			groundTurbulence: number;
+			enable_dust: boolean;
 			clouds: {
 				thickness: number;
 				density: number;
@@ -646,9 +646,9 @@ export interface _env {
 		};
 		descriptionText: string;
 		pictureFileNameR: {};
-		triggers: { zones: {} };
+		theatre: string;
 		version: number;
-		goals: {};
+		triggers: { zones: {} };
 		coalition: {
 			neutrals: {
 				bullseye: { y: number; x: number };
@@ -672,7 +672,7 @@ export interface _env {
 		pictureFileNameB: {};
 		sortie: string;
 		descriptionBlueTask: string;
-		descriptionNeutralsTask: string;
+		goals: {};
 		descriptionRedTask: string;
 		trigrules: {};
 		forcedOptions: {};
