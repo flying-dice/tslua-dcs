@@ -2,11 +2,7 @@
 	"name": "@flying-dice/tslua-common",
 	"version": "0.32.4",
 	"description": "Common Utils Library",
-	"keywords": [
-		"lua",
-		"dcs",
-		"logger"
-	],
+	"keywords": ["lua", "dcs", "logger"],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/flying-dice/tslua-dcs.git"
@@ -24,11 +20,11 @@
 		"test": "vitest run --coverage"
 	},
 	"devDependencies": {
-		"@vitest/coverage-v8": "^2.1.6",
+		"@vitest/coverage-v8": "^2.1.8",
 		"lua-types": "^2.13.1",
 		"typescript": "^5.7.2",
 		"typescript-to-lua": "^1.28.1",
-		"vitest": "^2.1.6",
+		"vitest": "^2.1.8",
 		"vitest-mock-extended": "^2.0.2"
 	},
 	"gitHead": "a6ae4c01c5f5796bcc1c0e88d4b790d83de03340"
