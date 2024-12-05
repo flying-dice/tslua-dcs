@@ -1,5 +1,5 @@
 /**
- * @version 2.9.9.2474
+ * @version 2.9.10.3948
  * @noSelf
  **/
 export interface _DCS {
@@ -32,6 +32,7 @@ export interface _DCS {
 	getTaintedFiles(...args: any[]): unknown;
 	spawnPlayer(...args: any[]): unknown;
 	getPause(...args: any[]): unknown;
+	activateGroup(...args: any[]): unknown;
 	setViewPause(...args: any[]): unknown;
 	sendRCD_Callback(...args: any[]): unknown;
 	dispatchDigitalAction(...args: any[]): unknown;
@@ -42,7 +43,7 @@ export interface _DCS {
 	getMoonAzimuthElevationPhase(...args: any[]): unknown;
 	S_EVENT_HUMAN_FAILURE: number;
 	LMSSetWaitForMinimalPlayers(...args: any[]): unknown;
-	LMSRestart(...args: any[]): unknown;
+	UIRequestOverlayWidgetPosition(...args: any[]): unknown;
 	getDefaultFOV(...args: any[]): unknown;
 	S_EVENT_RUNWAY_TOUCH: number;
 	S_EVENT_UNIT_CREATE_TASK: number;
@@ -126,7 +127,7 @@ export interface _DCS {
 	S_EVENT_MARK_CHANGE: number;
 	takeTrackControl(...args: any[]): unknown;
 	S_EVENT_MARK_ADDED: number;
-	UNIT_MISSION_ID: number;
+	UNIT_RUNTIME_ID: number;
 	S_EVENT_PLAYER_COMMENT: number;
 	S_EVENT_PLAYER_LEAVE_UNIT: number;
 	S_EVENT_ENGINE_SHUTDOWN: number;
@@ -158,7 +159,7 @@ export interface _DCS {
 	dModeWork: number;
 	dModePostStart: number;
 	UNIT_NAME: number;
-	getInstalledTheatres(...args: any[]): unknown;
+	getServerStartTimeRemain(...args: any[]): unknown;
 	getAirdromesCoalition(...args: any[]): unknown;
 	UNIT_ROLE: number;
 	UNIT_COALITION: number;
@@ -174,38 +175,38 @@ export interface _DCS {
 	S_EVENT_BDA: number;
 	UNIT_TYPE: number;
 	create_client_aircraft(...args: any[]): unknown;
-	UIRequestOverlayWidgetPosition(...args: any[]): unknown;
+	UNIT_MISSION_ID: number;
 	S_EVENT_SHOOTING_START: number;
-	UNIT_RUNTIME_ID: number;
-	getModelTime(...args: any[]): unknown;
 	getAchievementsUiInfo(...args: any[]): unknown;
-	setScreenShotExt(...args: any[]): unknown;
+	getModelTime(...args: any[]): unknown;
 	getPlayerCoalition(...args: any[]): unknown;
+	setScreenShotExt(...args: any[]): unknown;
+	lockKeyboardInput(...args: any[]): unknown;
 	getPilotStatistics(...args: any[]): unknown;
 	getUnitType(...args: any[]): unknown;
-	lockKeyboardInput(...args: any[]): unknown;
+	getInstalledTheatres(...args: any[]): unknown;
 	getGeneratedParams(...args: any[]): unknown;
 	isHumanSeatAvailable(...args: any[]): unknown;
 	UNIT_INVISIBLE_MAP_ICON: number;
-	getServerStartTimeRemain(...args: any[]): unknown;
+	setUserCallbacks(...args: any[]): unknown;
 	getPilotAchievements(...args: any[]): unknown;
 	getConfigValue(...args: any[]): unknown;
 	restartMission(...args: any[]): unknown;
 	S_EVENT_PILOT_DEAD: number;
-	setUserCallbacks(...args: any[]): unknown;
+	setViewRearmAnimationTime(...args: any[]): unknown;
 	getUserOptions(...args: any[]): unknown;
 	setMaxFPS(...args: any[]): unknown;
 	isServer(...args: any[]): unknown;
-	setViewRearmAnimationTime(...args: any[]): unknown;
 	onShowStatusBar(...args: any[]): unknown;
-	unsetViewRearm(...args: any[]): unknown;
 	selfKillPilot(...args: any[]): unknown;
+	unsetViewRearm(...args: any[]): unknown;
 	add_dyn_group(...args: any[]): unknown;
-	UNIT_GROUPCATEGORY: number;
 	writeDebriefing(...args: any[]): unknown;
+	UNIT_GROUPCATEGORY: number;
 	MACSavePSData(...args: any[]): unknown;
 	setDefaultFOV(...args: any[]): unknown;
 	getPlayerUnitType(...args: any[]): unknown;
+	LMSRestart(...args: any[]): unknown;
 	setBoardNumResourcesDialogData(...args: any[]): unknown;
 	reloadOptions(...args: any[]): unknown;
 	isSteamVersion(...args: any[]): unknown;
