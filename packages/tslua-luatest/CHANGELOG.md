@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.32.5 (2024-12-05)
+
+**Note:** Version bump only for package @flying-dice/tslua-luatest
+
+
+
+
+
 ## 0.32.4 (2024-12-04)
 
 

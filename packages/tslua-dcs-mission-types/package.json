@@ -1,8 +1,12 @@
 {
 	"name": "@flying-dice/tslua-dcs-mission-types",
-	"version": "0.32.4",
+	"version": "0.32.5",
 	"description": "Typescript type definitions for DCS",
-	"keywords": ["lua", "dcs", "mission"],
+	"keywords": [
+		"lua",
+		"dcs",
+		"mission"
+	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/flying-dice/tslua-dcs.git"
