@@ -1,8 +1,11 @@
 {
 	"name": "@flying-dice/tslua-http",
-	"version": "0.32.6",
+	"version": "0.32.7",
 	"description": "LUA HTTP Server written in Typescript Transpiled to lua using TypeScriptToLua",
-	"keywords": ["lua", "http"],
+	"keywords": [
+		"lua",
+		"http"
+	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/flying-dice/tslua-dcs.git"
@@ -21,10 +24,10 @@
 		"test:lua": "tstl -p tsconfig.tstl-tests.json && lua ./.test/tests.lua"
 	},
 	"dependencies": {
-		"@flying-dice/tslua-common": "^0.32.6"
+		"@flying-dice/tslua-common": "^0.32.7"
 	},
 	"devDependencies": {
-		"@flying-dice/tslua-luatest": "^0.32.6",
+		"@flying-dice/tslua-luatest": "^0.32.7",
 		"@vitest/coverage-v8": "^2.1.8",
 		"@vitest/ui": "^2.1.8",
 		"lua-types": "^2.13.1",
