@@ -214,7 +214,7 @@ export class Application extends HttpServer {
 	public errors: { error: Error; [key: string]: any }[] = [];
 
 	protected requestHandlers: {
-		route: string;
+		route?: string;
 		method?: string;
 		middleware: AppMiddleware;
 	}[];
@@ -250,6 +250,10 @@ export class Application extends HttpServer {
 		middleware.forEach((it) =>
 			this.requestHandlers.push({ route, middleware: it }),
 		);
+	}
+
+	useMiddleware(middleware: AppMiddleware) {
+		this.requestHandlers.push({ middleware });
 	}
 
 	useGlobalErrorHandler(middleware: AppErrorMiddleware) {
@@ -322,15 +326,18 @@ export class Application extends HttpServer {
 		this.logger.debug("Handling Request");
 
 		// Filters the request handlers to match the current request's path and method.
-		const stack = this.requestHandlers.filter(
-			(it) =>
-				(!it.method || it.method === req.method) && isMatch(it.route, req.path),
-		);
+		const stack = this.requestHandlers.filter((it) => {
+			if (!it.method && !it.route) return true; // No method or route specified.
+			if (!it.method && it.route) return isMatch(it.route, req.path); // No method specified.
+			if (it.method && !it.route) return it.method === req.method; // No route specified.
+			if (it.method && it.route)
+				return isMatch(it.route, req.path) && it.method === req.method; // Both method and route specified.
+		});
 
 		this.logger.debug(`Found ${stack.length} handlers to process`);
 
-		// Sets OK status if any handlers are found.
-		if (stack.length > 0) {
+		// Sets OK status if any handlers are found with a valid route (i.e. not just general middleware).
+		if (stack.filter((it) => it.route).length > 0) {
 			res.status = HttpStatus.OK;
 		}
 
@@ -340,7 +347,10 @@ export class Application extends HttpServer {
 		try {
 			const runStackItem = (idx: number) => {
 				if (idx < stack.length) {
-					appRequest.__params = getPathParameters(stack[idx].route, req.path);
+					appRequest.__params = getPathParameters(
+						stack[idx].route || "/",
+						req.path,
+					);
 					stack[idx].middleware(appRequest, appResponse, (err) => {
 						if (!err) {
 							runStackItem(idx + 1);

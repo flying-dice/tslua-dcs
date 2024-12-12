@@ -2,6 +2,13 @@ import axios from "axios";
 import { describe, expect, it } from "vitest";
 
 describe("Application Routing", () => {
+	it("should add header to each request due to wildcard middleware", async () => {
+		await axios.get("http://127.0.0.1:29293/api/users").then((res) => {
+			expect(res.status).toEqual(200);
+			expect(res.headers["x-request-id"]).toEqual("123");
+		});
+	});
+
 	it("should route to get endpoint with no params", async () => {
 		await axios.get("http://127.0.0.1:29293/api/users").then((res) => {
 			expect(res.status).toEqual(200);

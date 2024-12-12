@@ -2,11 +2,7 @@
 	"name": "@flying-dice/tslua-base64",
 	"version": "0.32.6",
 	"description": "Base64 library with typings",
-	"keywords": [
-		"lua",
-		"dcs",
-		"base64"
-	],
+	"keywords": ["lua", "dcs", "base64"],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/flying-dice/tslua-dcs.git"

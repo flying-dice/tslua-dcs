@@ -2,11 +2,7 @@
 	"name": "@flying-dice/tslua-http-api",
 	"version": "0.32.6",
 	"description": "LUA HTTP API Server written in Typescript Transpiled to lua using TypeScriptToLua",
-	"keywords": [
-		"lua",
-		"http",
-		"api"
-	],
+	"keywords": ["lua", "http", "api"],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/flying-dice/tslua-dcs.git"
@@ -21,17 +17,10 @@
 	"scripts": {
 		"build": "rimraf dist && tsc -p tsconfig.tstl.json && tstl -p tsconfig.tstl.json",
 		"dev": "cd dist && lua test-app.lua",
-		"dev:watch": "nodemon",
+		"dev:watch": "nodemon -e ts --watch src --exec \"npm run build && npm run dev\"",
 		"build:docs": "typedoc",
-		"test": "concurrently -k -s first \"npm run dev > .test-app.log\" \"vitest run\""
-	},
-	"nodemonConfig": {
-		"verbose": true,
-		"watch": [
-			"dist"
-		],
-		"ext": "lua",
-		"exec": "npm run dev"
+		"test": "concurrently -k -s first \"npm run dev > .test-app.log\" \"vitest run\"",
+		"test:lua": "tstl -p tsconfig.tstl-tests.json && lua ./.test/tests.lua"
 	},
 	"dependencies": {
 		"@flying-dice/tslua-common": "^0.32.6",
@@ -39,6 +28,7 @@
 		"@flying-dice/tslua-rxi-json": "^0.32.6"
 	},
 	"devDependencies": {
+		"@flying-dice/tslua-luatest": "^0.32.6",
 		"@vitest/coverage-v8": "^2.1.8",
 		"axios": "^1.7.9",
 		"lua-types": "^2.13.1",

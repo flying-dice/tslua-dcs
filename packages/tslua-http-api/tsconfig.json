@@ -1,8 +1,10 @@
 {
 	"extends": "../../tsconfig.base.json",
-	"include": ["src/**/*", "types/**/*"],
+	"include": ["src/**/*"],
 	"compilerOptions": {
 		"outDir": "dist",
-		"rootDir": "src"
+		"rootDir": "src",
+		"types": ["lua-types/5.1", "@typescript-to-lua/language-extensions"],
+		"downlevelIteration": true
 	}
 }

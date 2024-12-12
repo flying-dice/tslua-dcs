@@ -1,4 +1,5 @@
 import { HttpStatus } from "@flying-dice/tslua-http";
+
 import {
 	type AppHttpRequest,
 	type AppHttpResponse,
@@ -7,6 +8,11 @@ import {
 } from "./index";
 
 const app = new Application("127.0.0.1", 29293);
+
+app.useMiddleware((req, res, next) => {
+	res.setHeader("X-Request-Id", "123");
+	next();
+});
 
 const users: Record<
 	string,
