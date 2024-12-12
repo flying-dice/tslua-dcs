@@ -2,11 +2,7 @@
 	"name": "@flying-dice/tslua-luatest",
 	"version": "0.32.6",
 	"description": "tslua testing library",
-	"keywords": [
-		"lua",
-		"dcs",
-		"test"
-	],
+	"keywords": ["lua", "dcs", "test"],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/flying-dice/tslua-dcs.git"

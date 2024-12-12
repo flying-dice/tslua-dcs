@@ -7,3 +7,4 @@ coverage
 *.log
 docs
 /packages/tslua-http/.test/
+/packages/tslua-http-api/.test/

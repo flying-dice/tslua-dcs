@@ -2,11 +2,7 @@
 	"name": "@flying-dice/tslua-common",
 	"version": "0.32.6",
 	"description": "Common Utils Library",
-	"keywords": [
-		"lua",
-		"dcs",
-		"logger"
-	],
+	"keywords": ["lua", "dcs", "logger"],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/flying-dice/tslua-dcs.git"

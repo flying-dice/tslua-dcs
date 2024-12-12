@@ -1,7 +1,6 @@
 {
 	"compilerOptions": {
-		"target": "ES6",
-		"lib": ["ES6"],
+		"lib": ["esnext"],
 		"moduleResolution": "Node",
 		"types": ["lua-types/5.1"],
 		"strict": true,
