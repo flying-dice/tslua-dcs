@@ -1,6 +1,6 @@
 {
 	"name": "@flying-dice/tslua-http-api",
-	"version": "0.32.8",
+	"version": "0.32.9",
 	"description": "LUA HTTP API Server written in Typescript Transpiled to lua using TypeScriptToLua",
 	"keywords": [
 		"lua",
@@ -27,12 +27,12 @@
 		"test:lua": "tstl -p tsconfig.tstl-tests.json && lua ./.test/tests.lua"
 	},
 	"dependencies": {
-		"@flying-dice/tslua-common": "^0.32.8",
-		"@flying-dice/tslua-http": "^0.32.8",
-		"@flying-dice/tslua-rxi-json": "^0.32.8"
+		"@flying-dice/tslua-common": "^0.32.9",
+		"@flying-dice/tslua-http": "^0.32.9",
+		"@flying-dice/tslua-rxi-json": "^0.32.9"
 	},
 	"devDependencies": {
-		"@flying-dice/tslua-luatest": "^0.32.8",
+		"@flying-dice/tslua-luatest": "^0.32.9",
 		"@vitest/coverage-v8": "^2.1.8",
 		"axios": "^1.7.9",
 		"lua-types": "^2.13.1",

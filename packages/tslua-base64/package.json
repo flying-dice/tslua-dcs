@@ -1,6 +1,6 @@
 {
 	"name": "@flying-dice/tslua-base64",
-	"version": "0.32.8",
+	"version": "0.32.9",
 	"description": "Base64 library with typings",
 	"keywords": [
 		"lua",
