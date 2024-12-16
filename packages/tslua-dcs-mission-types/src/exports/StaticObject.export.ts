@@ -1,5 +1,5 @@
 /**
- * @version 2.9.10.3948
+ * @version 2.9.10.4160
  **/
 export interface _StaticObject {
 	getDrawArgumentValue(...args: any[]): unknown;

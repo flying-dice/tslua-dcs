@@ -2,10 +2,7 @@
 	"name": "@flying-dice/tslua-http",
 	"version": "0.32.11",
 	"description": "LUA HTTP Server written in Typescript Transpiled to lua using TypeScriptToLua",
-	"keywords": [
-		"lua",
-		"http"
-	],
+	"keywords": ["lua", "http"],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/flying-dice/tslua-dcs.git"
