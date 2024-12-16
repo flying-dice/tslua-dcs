@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.32.12 (2024-12-16)
+
+
+### Bug Fixes
+
+* support DCS 2.9.10.3948 ([35992b7](https://github.com/flying-dice/tslua-dcs/commit/35992b7d134d6e15dd5ec87258b2ed7c7272ebfd))
+
+
+
+
+
 ## 0.32.11 (2024-12-16)
 
 **Note:** Version bump only for package root
