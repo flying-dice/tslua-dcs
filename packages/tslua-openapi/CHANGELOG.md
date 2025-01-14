@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.32.16 (2025-01-14)
+
+
+### Bug Fixes
+
+* normalize header keys to lowercase in HTTP modules ([828c284](https://github.com/flying-dice/tslua-dcs/commit/828c2847c3f32a48258377ff717ec510346362dd))
+
+
+
+
+
 ## 0.32.15 (2024-12-31)
 
 **Note:** Version bump only for package @flying-dice/tslua-openapi
