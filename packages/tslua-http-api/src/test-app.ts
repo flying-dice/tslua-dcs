@@ -74,7 +74,7 @@ app.get("/complex/:id", (req, res) => {
 });
 
 const authMiddleware: AppMiddleware = (req, res, next) => {
-	if (req.headers.Authorization !== "Bearer 123") {
+	if (req.getHeaderValue("Authorization") !== "Bearer 123") {
 		return res.status(HttpStatus.UNAUTHORIZED).send("Unauthorized");
 	}
 

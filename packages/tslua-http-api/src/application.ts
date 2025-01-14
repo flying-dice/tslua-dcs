@@ -13,18 +13,21 @@ import { getPathParameters, isMatch } from "./path";
 export class AppHttpRequest<PARAMS = any, QUERY = any, BODY = any> {
 	protected logger = new Logger("AppHttpRequest");
 
+	/**
+	 * @deprecated Use getQueryParameterValue and getQueryParameterValueOrThrow
+	 */
 	get query(): QUERY {
 		return this.req.parameters as QUERY;
 	}
 
+	/**
+	 * @deprecated Use getBody and getBodyOrThrow
+	 */
 	get body(): BODY | undefined {
 		if (!this.req.body) return undefined;
 
 		// Body Parse JSON
-		if (
-			this.getHeaderValue("content-type") === "application/json" ||
-			this.getHeaderValue("Content-Type") === "application/json"
-		) {
+		if (this.getHeaderValue("content-type") === "application/json") {
 			try {
 				return json.decode(this.req.body) as BODY;
 			} catch (e) {
@@ -36,12 +39,18 @@ export class AppHttpRequest<PARAMS = any, QUERY = any, BODY = any> {
 		return this.req.body as BODY;
 	}
 
+	/**
+	 * @deprecated Use getPathParameterValue and getPathParameterValueOrThrow
+	 */
 	get params(): PARAMS {
 		return this.__params as PARAMS;
 	}
 
 	__params: Record<string, string>;
 
+	/**
+	 * @deprecated Use getHeaderValue and getHeaderValueOrThrow
+	 */
 	get headers() {
 		return this.req.headers;
 	}
@@ -71,17 +80,17 @@ export class AppHttpRequest<PARAMS = any, QUERY = any, BODY = any> {
 	}
 
 	getHeaderValue<T>(key: string) {
-		return this.req.headers[key] as T;
+		return this.req.headers[key.toLowerCase()] as T;
 	}
 
 	getHeaderValueOrThrow<T>(
 		key: string,
 		error = new Error("Header is not defined"),
 	) {
-		if (this.req.headers[key] === undefined) {
+		if (this.req.headers[key.toLowerCase()] === undefined) {
 			throw error;
 		}
-		return this.req.headers[key] as T;
+		return this.req.headers[key.toLowerCase()] as T;
 	}
 
 	getBody<T = string>() {

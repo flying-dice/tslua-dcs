@@ -2,11 +2,7 @@
 	"name": "@flying-dice/tslua-http-api",
 	"version": "0.32.15",
 	"description": "LUA HTTP API Server written in Typescript Transpiled to lua using TypeScriptToLua",
-	"keywords": [
-		"lua",
-		"http",
-		"api"
-	],
+	"keywords": ["lua", "http", "api"],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/flying-dice/tslua-dcs.git"

@@ -109,12 +109,10 @@ export class HttpServer {
 		this.logger.debug("Received request head");
 		const request = readRequestHead(requestHeadLines.join(CRLF));
 
-		const contentLength = request.headers["Content-Length"];
+		const contentLength = request.headers["content-length"];
 		const contentLengthNum = tonumber(contentLength);
 		if (contentLengthNum && contentLengthNum > 0) {
-			this.logger.debug(
-				`Fetching request body ${request.headers["Content-Length"]}`,
-			);
+			this.logger.debug(`Fetching request body ${contentLength}`);
 
 			client.settimeout(2);
 			request.body = client.receive(contentLengthNum) as string;

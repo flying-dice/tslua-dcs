@@ -8,7 +8,7 @@ describe("readRequestHead", () => {
 			method: "GET",
 			originalUrl: "/home",
 			protocol: "HTTP/1.1",
-			headers: { Host: "example.com" },
+			headers: { host: "example.com" },
 			path: "/home",
 			parameters: {},
 		};
@@ -23,7 +23,7 @@ describe("readRequestHead", () => {
 			method: "POST",
 			originalUrl: "/submit",
 			protocol: "HTTP/1.1",
-			headers: { Host: "example.com", "Content-Type": "application/json" },
+			headers: { host: "example.com", "content-type": "application/json" },
 			path: "/submit",
 			parameters: {},
 		};
@@ -38,7 +38,7 @@ describe("readRequestHead", () => {
 			method: "GET",
 			originalUrl: "/search?q=test",
 			protocol: "HTTP/1.1",
-			headers: { Host: "example.com" },
+			headers: { host: "example.com" },
 			path: "/search",
 			parameters: { q: "test" },
 		};

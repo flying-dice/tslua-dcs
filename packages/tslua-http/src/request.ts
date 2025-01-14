@@ -74,7 +74,7 @@ export const readRequestHead = (requestPayload: string): HttpRequest => {
 	for (const headerLine of headerLines) {
 		if (headerLine === "") break;
 		const [key, value] = headerLine.split(":");
-		httpRequest.headers[key.trim()] = value.trim();
+		httpRequest.headers[key.trim().toLowerCase()] = value.trim();
 	}
 
 	return httpRequest;
