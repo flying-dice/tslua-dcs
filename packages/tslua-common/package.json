@@ -1,6 +1,6 @@
 {
 	"name": "@flying-dice/tslua-common",
-	"version": "0.32.27",
+	"version": "0.32.28",
 	"description": "Common Utils Library",
 	"keywords": [
 		"lua",
