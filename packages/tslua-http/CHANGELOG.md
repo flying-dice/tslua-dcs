@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.32.36 (2025-06-16)
+
+**Note:** Version bump only for package @flying-dice/tslua-http
+
+
+
+
+
 ## 0.32.35 (2025-06-09)
 
 **Note:** Version bump only for package @flying-dice/tslua-http
