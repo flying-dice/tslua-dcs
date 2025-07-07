@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.32.39 (2025-07-07)
+
+**Note:** Version bump only for package @flying-dice/tslua-rxi-json
+
+
+
+
+
 ## 0.32.38 (2025-06-30)
 
 **Note:** Version bump only for package @flying-dice/tslua-rxi-json
