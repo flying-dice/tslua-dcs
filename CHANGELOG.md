@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.32.40 (2025-07-14)
+
+**Note:** Version bump only for package root
+
+
+
+
+
 ## 0.32.39 (2025-07-07)
 
 **Note:** Version bump only for package root
