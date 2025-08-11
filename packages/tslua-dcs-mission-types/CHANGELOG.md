@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.32.44 (2025-08-11)
+
+**Note:** Version bump only for package @flying-dice/tslua-dcs-mission-types
+
+
+
+
+
 ## 0.32.43 (2025-08-04)
 
 **Note:** Version bump only for package @flying-dice/tslua-dcs-mission-types
