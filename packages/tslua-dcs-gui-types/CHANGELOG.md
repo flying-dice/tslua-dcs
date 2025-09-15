@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.32.48 (2025-09-15)
+
+**Note:** Version bump only for package @flying-dice/tslua-dcs-gui-types
+
+
+
+
+
 ## 0.32.47 (2025-09-08)
 
 **Note:** Version bump only for package @flying-dice/tslua-dcs-gui-types
