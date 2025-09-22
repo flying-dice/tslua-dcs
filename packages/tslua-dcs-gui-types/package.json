@@ -1,6 +1,6 @@
 {
 	"name": "@flying-dice/tslua-dcs-gui-types",
-	"version": "0.32.48",
+	"version": "0.32.49",
 	"description": "Typescript type definitions for DCS GUI environment",
 	"keywords": [
 		"lua",

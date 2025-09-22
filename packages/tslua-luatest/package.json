@@ -1,6 +1,6 @@
 {
 	"name": "@flying-dice/tslua-luatest",
-	"version": "0.32.48",
+	"version": "0.32.49",
 	"description": "tslua testing library",
 	"keywords": [
 		"lua",
