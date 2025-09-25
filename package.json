@@ -29,7 +29,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
 		"concurrently": "^9.1.0",
-		"lerna": "^8.1.9",
+		"lerna": "^9.0.0",
 		"nodemon": "^3.1.7",
 		"npm-check-updates": "^17.1.11",
 		"rimraf": "^6.0.1",
