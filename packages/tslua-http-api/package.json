@@ -33,12 +33,12 @@
 	},
 	"devDependencies": {
 		"@flying-dice/tslua-luatest": "^0.32.49",
-		"@vitest/coverage-v8": "^2.1.8",
+		"@vitest/coverage-v8": "^4.0.0",
 		"axios": "^1.7.9",
 		"lua-types": "^2.13.1",
 		"typescript": "^5.7.2",
 		"typescript-to-lua": "^1.28.1",
-		"vitest": "^2.1.8",
+		"vitest": "^4.0.0",
 		"vitest-mock-extended": "^2.0.2"
 	},
 	"gitHead": "a6ae4c01c5f5796bcc1c0e88d4b790d83de03340"
