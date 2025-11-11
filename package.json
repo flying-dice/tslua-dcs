@@ -27,7 +27,7 @@
 		"lua-types": "^2.13.1"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
+		"@biomejs/biome": "2.3.5",
 		"concurrently": "^9.1.0",
 		"lerna": "^8.1.9",
 		"nodemon": "^3.1.7",
