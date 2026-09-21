@@ -18,12 +18,14 @@
 	"scripts": {
 		"release:version": "lerna version --conventional-commits",
 		"publish": "npm run build && lerna publish from-package --yes",
-		"format": "biome check --write .",
-		"format:ci": "biome ci .",
+		"format": "biome format --write .",
+		"format:ci": "biome format .",
+		"lint": "biome lint .",
+		"check": "biome check .",
 		"export": "lerna run export",
 		"build": "lerna run build",
 		"build:docs": "lerna run build:docs && typedoc",
-		"build:all": "npm run format && npm run build && npm run build:docs",
+		"build:all": "npm run build && npm run build:docs",
 		"pretest": "npm run build",
 		"test": "lerna run test",
 		"test:lua": "lerna run test:lua",
@@ -31,7 +33,7 @@
 		"test:dcs:gui": "npm run test:dcs --workspace=@flying-dice/tslua-dcs-gui-types-test",
 		"test:dcs": "npm run test:dcs:mission && npm run test:dcs:gui",
 		"audit:dcs-types": "tsx scripts/audit-dcs-type-coverage.ts",
-		"posttest": "npm run build:docs && npm run format"
+		"posttest": "npm run build:docs"
 	},
 	"dependencies": {
 		"lua-types": "^2.14.1"
