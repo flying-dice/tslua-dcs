@@ -35,6 +35,9 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
 
+      - name: Build packages
+        run: npm run build
+
       - name: Build documentation
         run: npm run build:docs
 
