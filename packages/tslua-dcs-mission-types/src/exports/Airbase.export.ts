@@ -1,61 +1,119 @@
 /**
- * @version 2.9.10.4160
- **/
+ * @version 2.9.29.27468
+ */
 export interface _Airbase {
-	getWarehouse(...args: any[]): unknown;
-	className_: string;
+	Category: {
+		AIRDROME: number;
+		HELIPAD: number;
+		SHIP: number;
+	};
+	autoCapture(...args: any[]): unknown;
 	autoCaptureIsOn(...args: any[]): unknown;
-	getParking(...args: any[]): unknown;
-	getCategory(...args: any[]): unknown;
-	Category: { AIRDROME: number; HELIPAD: number; SHIP: number };
-	getForcesName(...args: any[]): unknown;
-	getNearest(...args: any[]): unknown;
-	getCategoryEx(...args: any[]): unknown;
-	getID(...args: any[]): unknown;
-	setCoalition(...args: any[]): unknown;
-	getDesc(...args: any[]): unknown;
+	className_: string;
+	getByName(...args: any[]): unknown;
 	getCallsign(...args: any[]): unknown;
-	setRadioSilentMode(...args: any[]): unknown;
+	getCategory(...args: any[]): unknown;
+	getCategoryEx(...args: any[]): unknown;
+	getCoalition(...args: any[]): unknown;
+	getCommunicator(...args: any[]): unknown;
+	getCountry(...args: any[]): unknown;
+	getDesc(...args: any[]): unknown;
+	getDescByName(...args: any[]): unknown;
+	getDispatcherTowerPos(...args: any[]): unknown;
+	getForcesName(...args: any[]): unknown;
+	getID(...args: any[]): unknown;
+	getLife(...args: any[]): unknown;
+	getName(...args: any[]): unknown;
+	getNearest(...args: any[]): unknown;
+	getParking(...args: any[]): unknown;
+	getRadioSilentMode(...args: any[]): unknown;
+	getRunways(...args: any[]): unknown;
+	getTypeName(...args: any[]): unknown;
+	getUnit(...args: any[]): unknown;
+	getWarehouse(...args: any[]): unknown;
+	getWorldID(...args: any[]): unknown;
 	parentClass_: {
-		isExist(...args: any[]): unknown;
-		className_: string;
-		parentClass_: { className_: string };
-		getCategory(...args: any[]): unknown;
-		cancelChoosingCargo(...args: any[]): unknown;
-		database_: { getCategoryEx(...args: any[]): unknown };
 		Category: {
-			VOID: number;
-			SCENERY: number;
 			BASE: number;
 			CARGO: number;
-			UNIT: number;
+			SCENERY: number;
 			STATIC: number;
+			UNIT: number;
+			VOID: number;
 			WEAPON: number;
 		};
-		hasAttribute(...args: any[]): unknown;
+		cancelChoosingCargo(...args: any[]): unknown;
+		className_: string;
+		database_: {
+			Batumi: {
+				_origin: string;
+				attributes: {
+					Airfields: boolean;
+				};
+				category: number;
+				displayName: string;
+				life: number;
+				typeName: string;
+			};
+			"Leopard-2": {
+				Kmax: number;
+				RCS: number;
+				_origin: string;
+				attributes: {
+					All: boolean;
+					"AntiAir Armed Vehicles": boolean;
+					"Armed ground units": boolean;
+					"Armed vehicles": boolean;
+					"Armored vehicles": boolean;
+					"Ground Units": boolean;
+					"Ground Units Non Airdefence": boolean;
+					"Ground vehicles": boolean;
+					HeavyArmoredUnits: boolean;
+					"Modern Tanks": boolean;
+					Tanks: boolean;
+					Vehicles: boolean;
+				};
+				box: {
+					max: {
+						x: number;
+						y: number;
+						z: number;
+					};
+					min: {
+						x: number;
+						y: number;
+						z: number;
+					};
+				};
+				category: number;
+				displayName: string;
+				life: number;
+				massEmpty: number;
+				maxSlopeAngle: number;
+				riverCrossing: boolean;
+				speedMax: number;
+				speedMaxOffRoad: number;
+				typeName: string;
+			};
+			getCategoryEx(...args: any[]): unknown;
+		};
 		destroy(...args: any[]): unknown;
 		getAttributes(...args: any[]): unknown;
-		tonumber(...args: any[]): unknown;
+		getCategory(...args: any[]): unknown;
 		getName(...args: any[]): unknown;
 		getPoint(...args: any[]): unknown;
 		getPosition(...args: any[]): unknown;
-		getVelocity(...args: any[]): unknown;
-		inAir(...args: any[]): unknown;
 		getTypeName(...args: any[]): unknown;
+		getVelocity(...args: any[]): unknown;
+		hasAttribute(...args: any[]): unknown;
+		inAir(...args: any[]): unknown;
+		isExist(...args: any[]): unknown;
+		parentClass_: {
+			className_: string;
+		};
+		tonumber(...args: any[]): unknown;
 	};
-	autoCapture(...args: any[]): unknown;
+	setCoalition(...args: any[]): unknown;
+	setRadioSilentMode(...args: any[]): unknown;
 	tonumber(...args: any[]): unknown;
-	getCommunicator(...args: any[]): unknown;
-	getRunways(...args: any[]): unknown;
-	getWorldID(...args: any[]): unknown;
-	getDescByName(...args: any[]): unknown;
-	getName(...args: any[]): unknown;
-	getDispatcherTowerPos(...args: any[]): unknown;
-	getRadioSilentMode(...args: any[]): unknown;
-	getByName(...args: any[]): unknown;
-	getLife(...args: any[]): unknown;
-	getTypeName(...args: any[]): unknown;
-	getCoalition(...args: any[]): unknown;
-	getCountry(...args: any[]): unknown;
-	getUnit(...args: any[]): unknown;
 }

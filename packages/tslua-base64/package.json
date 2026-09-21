@@ -1,6 +1,6 @@
 {
 	"name": "@flying-dice/tslua-base64",
-	"version": "0.32.49",
+	"version": "0.33.0",
 	"description": "Base64 library with typings",
 	"keywords": [
 		"lua",
@@ -20,7 +20,7 @@
 		"build:docs": "typedoc"
 	},
 	"devDependencies": {
-		"typescript": "^5.7.2"
+		"typescript": "6.0.2"
 	},
 	"gitHead": "a6ae4c01c5f5796bcc1c0e88d4b790d83de03340"
 }

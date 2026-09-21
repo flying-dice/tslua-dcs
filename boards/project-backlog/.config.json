@@ -1,0 +1,66 @@
+{
+  "name": "Project Backlog",
+  "columns": [
+    {
+      "id": "backlog",
+      "name": "Backlog",
+      "color": "#7d828b"
+    },
+    {
+      "id": "todo",
+      "name": "To Do",
+      "color": "#4c8bf5"
+    },
+    {
+      "id": "doing",
+      "name": "In Progress",
+      "color": "#5cd68a",
+      "wip": 3
+    },
+    {
+      "id": "review",
+      "name": "In Review",
+      "color": "#d99a30"
+    },
+    {
+      "id": "done",
+      "name": "Done",
+      "color": "#3fb27f"
+    }
+  ],
+  "labels": {
+    "backend": {
+      "name": "backend",
+      "color": "#3fb27f"
+    },
+    "frontend": {
+      "name": "frontend",
+      "color": "#4c8bf5"
+    },
+    "bug": {
+      "name": "bug",
+      "color": "#e5534b"
+    },
+    "infra": {
+      "name": "infra",
+      "color": "#d99a30"
+    },
+    "docs": {
+      "name": "docs",
+      "color": "#9a7bd6"
+    },
+    "dcs-live": {
+      "name": "dcs-live",
+      "color": "#e5534b"
+    },
+    "verification": {
+      "name": "verification",
+      "color": "#4c8bf5"
+    },
+    "perf": {
+      "name": "perf",
+      "color": "#c9a227"
+    }
+  },
+  "fields": []
+}

@@ -10,8 +10,14 @@
 		"access": "public",
 		"registry": "https://registry.npmjs.org/"
 	},
+	"overrides": {
+		"js-yaml": "^4.3.2",
+		"pacote": "^21.5.1",
+		"smol-toml": "^1.8.0"
+	},
 	"scripts": {
-		"publish": "npm run build && lerna publish --conventional-commits --yes",
+		"release:version": "lerna version --conventional-commits",
+		"publish": "npm run build && lerna publish from-package --yes",
 		"format": "biome check --write .",
 		"format:ci": "biome ci .",
 		"export": "lerna run export",
@@ -21,20 +27,29 @@
 		"pretest": "npm run build",
 		"test": "lerna run test",
 		"test:lua": "lerna run test:lua",
+		"test:dcs:mission": "npm run test:dcs --workspace=@flying-dice/tslua-dcs-mission-types-test",
+		"test:dcs:gui": "npm run test:dcs --workspace=@flying-dice/tslua-dcs-gui-types-test",
+		"test:dcs": "npm run test:dcs:mission && npm run test:dcs:gui",
+		"audit:dcs-types": "tsx scripts/audit-dcs-type-coverage.ts",
 		"posttest": "npm run build:docs && npm run format"
 	},
 	"dependencies": {
-		"lua-types": "^2.13.1"
+		"lua-types": "^2.14.1"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
-		"concurrently": "^9.1.0",
-		"lerna": "^8.1.9",
-		"nodemon": "^3.1.7",
-		"npm-check-updates": "^17.1.11",
-		"rimraf": "^6.0.1",
-		"tsx": "^4.19.2",
-		"typedoc": "^0.27.3",
-		"vitest": "^2.1.8"
+		"@biomejs/biome": "2.5.14",
+		"concurrently": "^10.0.5",
+		"lerna": "^10.0.1",
+		"nodemon": "^3.1.14",
+		"npm-check-updates": "^22.2.9",
+		"rimraf": "^6.1.3",
+		"tsx": "^4.23.15",
+		"typedoc": "^0.28.20",
+		"vite": "^7.3.6",
+		"vitest": "^4.1.11"
+	},
+	"allowScripts": {
+		"esbuild@0.28.2": true,
+		"nx@23.2.1": true
 	}
 }

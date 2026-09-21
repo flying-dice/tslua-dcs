@@ -43,60 +43,104 @@ declare global {
 	const _APP_VERSION: string;
 	const _ARCHITECTURE: string;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const AI: l_AI;
 
-	/** @noSelf **/
-	const Airbase: Pick<l_Airbase, "getByName" | "getDescByName" | "Category">;
+	/**
+	 * @noSelf
+	 */
+	const Airbase: Pick<
+		l_Airbase,
+		"getByName" | "getDescByName" | "getNearest" | "Category"
+	>;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const atmosphere: l_atmosphere;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const coalition: l_coalition;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const Controller: l_Controller;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const coord: l_coord;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const env: l_env;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const Group: Pick<l_Group, "getByName" | "Category">;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const land: l_land;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const missionCommands: l_missionCommands;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const net: l_net;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const radio: l_radio;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const StaticObject: Pick<l_StaticObject, "getByName" | "getDescByName">;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const timer: l_timer;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const trigger: l_trigger;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const Unit: Pick<l_Unit, "getByName" | "getDescByName" | "Category">;
 
-	/** @noSelf **/
-	const Warehouse: Pick<l_Warehouse, "getByName" | "getResourceMap">;
+	/**
+	 * @noSelf
+	 */
+	const Warehouse: Pick<
+		l_Warehouse,
+		"getByName" | "getCargoAsWarehouse" | "getResourceMap"
+	>;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const Weapon: l_Weapon;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const world: l_world;
 }

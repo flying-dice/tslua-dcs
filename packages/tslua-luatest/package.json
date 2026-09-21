@@ -1,6 +1,6 @@
 {
 	"name": "@flying-dice/tslua-luatest",
-	"version": "0.32.49",
+	"version": "0.33.0",
 	"description": "tslua testing library",
 	"keywords": [
 		"lua",
@@ -18,18 +18,23 @@
 	"license": "ISC",
 	"types": "./dist/index.d.ts",
 	"main": "./dist/index",
+	"files": [
+		"dist",
+		"README.md",
+		"CHANGELOG.md"
+	],
 	"scripts": {
 		"build": "rimraf dist && tsc -p tsconfig.tstl.json && tstl -p tsconfig.tstl.json",
 		"build:docs": "typedoc",
 		"test": "vitest run --coverage"
 	},
 	"devDependencies": {
-		"@vitest/coverage-v8": "^2.1.8",
-		"lua-types": "^2.13.1",
-		"typescript": "^5.7.2",
-		"typescript-to-lua": "^1.28.1",
-		"vitest": "^2.1.8",
-		"vitest-mock-extended": "^2.0.2"
+		"@vitest/coverage-v8": "^4.1.11",
+		"lua-types": "^2.14.1",
+		"typescript": "6.0.2",
+		"typescript-to-lua": "^1.37.1",
+		"vitest": "^4.1.11",
+		"vitest-mock-extended": "^5.1.1"
 	},
 	"gitHead": "a6ae4c01c5f5796bcc1c0e88d4b790d83de03340"
 }

@@ -1,0 +1,18 @@
+{
+	"extends": "../tsconfig.base.tstl.json",
+	"include": ["src/**/*.ts"],
+	"compilerOptions": {
+		"baseUrl": ".",
+		"declaration": false,
+		"outDir": ".test",
+		"rootDir": "..",
+		"paths": {
+			"@flying-dice/tslua-luatest": ["../tslua-luatest/src/index.ts"]
+		}
+	},
+	"tstl": {
+		"luaTarget": "5.1",
+		"luaBundleEntry": "src/index.ts",
+		"luaBundle": "gui-tests.lua"
+	}
+}

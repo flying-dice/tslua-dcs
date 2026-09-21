@@ -1,0 +1,22 @@
+{
+	"excluded": {
+		"Airbase.parentClass_.cancelChoosingCargo": "Internal inherited implementation table, not a mission scripting API.",
+		"Airbase.parentClass_.tonumber": "Internal inherited implementation helper.",
+		"Airbase.tonumber": "Internal implementation helper.",
+		"Controller.tonumber": "Internal implementation helper.",
+		"Group.tonumber": "Internal implementation helper.",
+		"Object.database_.getCategoryEx": "Internal database implementation table.",
+		"Object.tonumber": "Internal implementation helper.",
+		"StaticObject.parentClass_.cancelChoosingCargo": "Internal inherited implementation table.",
+		"StaticObject.parentClass_.database_.getCategoryEx": "Internal inherited database implementation table.",
+		"StaticObject.parentClass_.tonumber": "Internal inherited implementation helper.",
+		"StaticObject.tonumber": "Internal implementation helper.",
+		"Unit.parentClass_.cancelChoosingCargo": "Internal inherited implementation table.",
+		"Unit.parentClass_.tonumber": "Internal inherited implementation helper.",
+		"Unit.tonumber": "Internal implementation helper.",
+		"Warehouse.tonumber": "Internal implementation helper.",
+		"Weapon.parentClass_.cancelChoosingCargo": "Internal inherited implementation table.",
+		"Weapon.parentClass_.tonumber": "Internal inherited implementation helper.",
+		"Weapon.tonumber": "Internal implementation helper."
+	}
+}

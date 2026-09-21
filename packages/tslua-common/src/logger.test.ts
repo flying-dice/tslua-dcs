@@ -12,6 +12,7 @@ describe("Logger", () => {
 	};
 
 	beforeEach(() => {
+		vi.clearAllMocks();
 		Logger.level = LogLevel.DEBUG;
 		Logger.transports = mockTransports;
 		logger = new Logger("TestLogger");

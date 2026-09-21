@@ -1,3 +1,5 @@
 import type { _AI } from "./exports/AI.export";
-/** @noSelf **/
+/**
+ * @noSelf
+ */
 export interface l_AI extends _AI {}

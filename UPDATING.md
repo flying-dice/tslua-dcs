@@ -1,84 +1,17 @@
-# Updating Type Definitions for DCS World Mission Scripting
+# Updating DCS type definitions
 
-Type definitions act as a bridge between the scripting environment of DCS World and the typescript-to-lua transpiler. 
+Exports use the DCS Studio bridges; this repository no longer installs or talks to DCS Fiddle. Install DCS Studio, select the intended DCS and Saved Games profile, then run `dcs.bridge.inject` and `dcs.bridge.launch`. Injection deploys bridge files, so restart DCS when Studio asks you to.
 
-They enable features like code completion and error checking, making it easier to write scripts for DCS missions without having constant documentation of the entire LUA APIs.
+The GUI exporter uses `http://127.0.0.1:25569` and must be run with DCS at the main menu. The mission exporter uses `http://127.0.0.1:25570` and needs a trusted development mission actively running and unpaused. Open the MissionScripting panel in Studio, use its desanitize action if the mission bridge requires it, and restart/reload as directed. Desanitizing permits filesystem/OS access in mission Lua: restore sanitization afterwards. The exporter never changes DCS lifecycle or sanitization itself.
 
-This guide will help you regularly update these definitions, which is important because the scripting environment evolves over time. By keeping these files up-to-date, even those with minimal exposure can benefit from a smoother and more reliable scripting workflow.
+Run `npm run export` from the repository root, or a package's `npm run export`. The exporter checks `/health`, `rpc.discover`, DCS runtime version, and every configured namespace before it writes anything. It stages all generated files and publishes only after the package succeeds; a failed later namespace leaves existing exports intact.
 
-This guide explains the step-by-step process to update type definition files for the DCS World scripting environment, leveraging the provided update script.
+Use `DCS_STUDIO_GUI_URL` or `DCS_STUDIO_MISSION_URL` for a different local bridge address. Time budgets are `DCS_EXPORT_HEALTH_TIMEOUT_MS` (3s), `DCS_EXPORT_RPC_TIMEOUT_MS` (35s), and `DCS_EXPORT_TIMEOUT_MS` (120s). Normally the generated `@version` comes from `_APP_VERSION`; if that runtime value is unavailable, set `DCS_EXPORT_DCS_VERSION` explicitly. That value is maintainer-supplied DCS provenance, never a bridge or npm version.
 
-## Prerequisites
+If a bridge is unavailable, verify Studio injection/launch and its `/health` identity. A stalled mission bridge requires a running, unpaused mission; wrong namespace reports should be investigated in that selected Lua environment rather than sourced from another one. Remove any old DCS Fiddle hook from Saved Games manually—repository cleanup cannot remove external installed files.
 
-Before proceeding, ensure you have the following:
+## Preparing a release
 
-1. **Node.js and npm installed** on your system.
-2. **DCS Fiddle Server** set up and running. Refer to the [DCS Fiddle documentation](https://dcsfiddle.pages.dev/) if needed.
-3. The `dcs-fiddle-server.lua` script installed in your DCS Saved Games folder:
-   ```
-   %USERPROFILE%\Saved Games\DCS\Scripts\Hooks\dcs-fiddle-server.lua
-   ```
-4. The `require` and `package` modules de-sanitized in your DCS configuration.
+Run `npm run release:version` when Lerna should calculate the next version from conventional commits, or update all workspace manifests and `lerna.json` to the same explicit version. Commit the prepared versions before publishing.
 
-## Updating Steps
-
-Follow these steps to update the type definitions:
-
-### Step 1: Start the DCS World with Fiddle Server
-
-1. Open DCS and launch a new mission in the Mission Editor.
-2. Confirm the server is running and listening both should reply with `{"result":"UP"}`
-   ```shell
-   curl http://127.0.0.1:12080/cmV0dXJuICJVUCI=?env=default
-   curl http://127.0.0.1:12081/cmV0dXJuICJVUCI=?env=default
-   ```
-3. Verify an alert in DCS indicates that DCS Fiddle is active.
-
-### Step 3: Run the Update Script
-
-Run the update script to fetch and generate the definition files:
-
-```bash
-npm run export
-```
-
-### Step 4: Verify Output
-
-Check the output directory for the newly generated definition files. These files provide type definitions for the DCS World mission scripting environment, enabling TypeScript-to-Lua transpilation.
-
-```text
-packages
- tslua-dcs-gui-types
-  src
-   exports
-    DCS.export.ts
-    ...
-```
-
-Each file contains the extracted type definitions for the DCS World scripting environment, which can be used in your TypeScript projects.
-
-Ensure the version of the definitions matches the version of the DCS Fiddle server.
-
-```text
-/**
- * @version 2.9.9.2474 <<<< Should align to the DCS version
- * @noSelf
- **/
-export interface _DCS {
-	RCD_selectMenuItem(...args: any[]): unknown;
-	exitProcess(...args: any[]): unknown;
-```
-
-## Additional Commands
-
-To rebuild all project files after exporting:
-```bash
-npm run build:all
-```
-
-This ensures all docs and definitions are up-to-date and ready for use in projects.
-
----
-
-For further questions or issues, open an issue on the repository: [https://github.com/flying-dice/tslua-dcs](https://github.com/flying-dice/tslua-dcs).
-
+Run `npm run publish` to build the repository and publish exactly the versions recorded in the package manifests. Publishing does not calculate or apply an additional version bump.

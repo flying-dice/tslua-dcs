@@ -62,10 +62,9 @@ Contributions to this project are welcome. If you find an issue or have suggesti
 
 There are various ways to datamine dcs and of course the docs are a great source of information.
 
-This project has relied heavily on DCSFiddle and the explore window which can help with exploring tables.
+Type exports are maintained through DCS Studio. See [UPDATING.md](UPDATING.md) for bridge setup, mission prerequisites, and troubleshooting.
 
 #### Useful Resources
-- https://dcsfiddle.pages.dev/
 - https://www.digitalcombatsimulator.com/en/support/faq/1249/
 - https://wiki.hoggitworld.com/view/Simulator_Scripting_Engine_Documentation
 

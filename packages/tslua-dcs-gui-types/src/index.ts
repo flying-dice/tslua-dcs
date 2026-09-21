@@ -13,6 +13,8 @@ export * from "./Export";
 export * from "./log";
 export * from "./db";
 export * from "./net";
+export * from "./lfs";
+export * from "./terrain";
 
 declare global {
 	const __DCS_VERSION__: string;
@@ -20,27 +22,43 @@ declare global {
 	const _APP_VERSION: string;
 	const _ARCHITECTURE: string;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const coalition: l_coalition;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const DCS: l_DCS;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const Export: l_Export;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const log: l_log;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const db: l_db;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const net: l_net;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const lfs: l_lfs;
 
-	/** @noSelf **/
+	/**
+	 * @noSelf
+	 */
 	const terrain: l_terrain;
 }

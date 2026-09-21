@@ -1,142 +1,170 @@
 /**
- * @version 2.9.10.4160
+ * @version 2.9.29.27468
  * @noSelf
- **/
+ */
 export interface _AI {
 	Option: {
 		Air: {
 			id: {
-				JETT_TANKS_IF_EMPTY: number;
-				SILENCE: number;
-				ROE: number;
-				RADAR_USING: number;
-				OPTION_RADIO_USAGE_ENGAGE: number;
-				PROHIBIT_AG: number;
+				ALLOW_FORMATION_SIDE_SWAP: number;
+				ALLOW_LINE_UP_RW: number;
+				DISENGAGE_AND_RTB: number;
 				ECM_USING: number;
-				PROHIBIT_WP_PASS_REPORT: number;
-				PROHIBIT_AA: number;
-				REACTION_ON_THREAT: number;
-				PREFER_VERTICAL: number;
-				FORCED_ATTACK: number;
-				PROHIBIT_AB: number;
-				RTB_ON_OUT_OF_AMMO: number;
-				MISSILE_ATTACK: number;
-				PROHIBIT_JETT: number;
-				OPTION_RADIO_USAGE_CONTACT: number;
 				FLARE_USING: number;
-				OPTION_RADIO_USAGE_KILL: number;
+				FORCED_ATTACK: number;
 				FORMATION: number;
-				RTB_ON_BINGO: number;
+				JETT_TANKS_IF_EMPTY: number;
+				LANDING_OPTIONS: number;
+				MISSILE_ATTACK: number;
 				NO_OPTION: number;
+				OPTION_RADIO_USAGE_CONTACT: number;
+				OPTION_RADIO_USAGE_ENGAGE: number;
+				OPTION_RADIO_USAGE_KILL: number;
+				PREFER_VERTICAL: number;
+				PROHIBIT_AA: number;
+				PROHIBIT_AB: number;
+				PROHIBIT_AG: number;
+				PROHIBIT_JETT: number;
+				PROHIBIT_WP_PASS_REPORT: number;
+				RADAR_USING: number;
+				REACTION_ON_THREAT: number;
+				ROE: number;
+				RTB_ON_BINGO: number;
+				RTB_ON_OUT_OF_AMMO: number;
+				SILENCE: number;
 			};
 			val: {
-				FLARE_USING: {
-					WHEN_FLYING_NEAR_ENEMIES: number;
-					WHEN_FLYING_IN_SAM_WEZ: number;
-					AGAINST_FIRED_MISSILE: number;
-					NEVER: number;
-				};
-				RADAR_USING: {
-					FOR_ATTACK_ONLY: number;
-					FOR_SEARCH_IF_REQUIRED: number;
-					NEVER: number;
-					FOR_CONTINUOUS_SEARCH: number;
-				};
-				REACTION_ON_THREAT: {
-					BYPASS_AND_ESCAPE: number;
-					EVADE_FIRE: number;
-					NO_REACTION: number;
-					PASSIVE_DEFENCE: number;
-					ALLOW_ABORT_MISSION: number;
-				};
-				MISSILE_ATTACK: {
-					HALF_WAY_RMAX_NEZ: number;
-					MAX_RANGE: number;
-					TARGET_THREAT_EST: number;
-					RANDOM_RANGE: number;
-					NEZ_RANGE: number;
-				};
 				ECM_USING: {
 					ALWAYS_USE: number;
 					NEVER_USE: number;
 					USE_IF_DETECTED_LOCK_BY_RADAR: number;
 					USE_IF_ONLY_LOCK_BY_RADAR: number;
 				};
+				FLARE_USING: {
+					AGAINST_FIRED_MISSILE: number;
+					NEVER: number;
+					WHEN_FLYING_IN_SAM_WEZ: number;
+					WHEN_FLYING_NEAR_ENEMIES: number;
+				};
+				MISSILE_ATTACK: {
+					HALF_WAY_RMAX_NEZ: number;
+					MAX_RANGE: number;
+					NEZ_RANGE: number;
+					RANDOM_RANGE: number;
+					TARGET_THREAT_EST: number;
+				};
+				RADAR_USING: {
+					FOR_ATTACK_ONLY: number;
+					FOR_CONTINUOUS_SEARCH: number;
+					FOR_SEARCH_IF_REQUIRED: number;
+					NEVER: number;
+				};
+				REACTION_ON_THREAT: {
+					ALLOW_ABORT_MISSION: number;
+					BYPASS_AND_ESCAPE: number;
+					EVADE_FIRE: number;
+					NO_REACTION: number;
+					PASSIVE_DEFENCE: number;
+				};
 				ROE: {
-					WEAPON_FREE: number;
-					RETURN_FIRE: number;
 					OPEN_FIRE: number;
-					WEAPON_HOLD: number;
 					OPEN_FIRE_WEAPON_FREE: number;
+					RETURN_FIRE: number;
+					WEAPON_FREE: number;
+					WEAPON_HOLD: number;
 				};
 			};
 		};
 		Ground: {
 			id: {
-				EVASION_OF_ARM: number;
+				AC_ENGAGEMENT_RANGE_RESTRICTION: number;
 				ALARM_STATE: number;
 				DISPERSE_ON_ATTACK: number;
 				ENGAGE_AIR_WEAPONS: number;
-				AC_ENGAGEMENT_RANGE_RESTRICTION: number;
+				EVASION_OF_ARM: number;
 				FORMATION: number;
-				ROE: number;
 				NO_OPTION: number;
+				ROE: number;
 			};
 			val: {
-				ALARM_STATE: { AUTO: number; GREEN: number; RED: number };
-				ROE: { OPEN_FIRE: number; WEAPON_HOLD: number; RETURN_FIRE: number };
+				ALARM_STATE: {
+					AUTO: number;
+					GREEN: number;
+					RED: number;
+				};
+				ROE: {
+					OPEN_FIRE: number;
+					RETURN_FIRE: number;
+					WEAPON_HOLD: number;
+				};
 			};
 		};
 		Naval: {
-			id: { ROE: number; NO_OPTION: number };
+			id: {
+				NO_OPTION: number;
+				ROE: number;
+			};
 			val: {
-				ROE: { OPEN_FIRE: number; WEAPON_HOLD: number; RETURN_FIRE: number };
+				ROE: {
+					OPEN_FIRE: number;
+					RETURN_FIRE: number;
+					WEAPON_HOLD: number;
+				};
 			};
 		};
 	};
-	Task: {
-		OrbitPattern: { RACE_TRACK: string; CIRCLE: string };
-		Designation: {
-			WP: string;
-			NO: string;
-			LASER: string;
-			IR_POINTER: string;
-			AUTO: string;
-		};
-		TurnMethod: { FLY_OVER_POINT: string; FIN_POINT: string };
-		VehicleFormation: {
-			VEE: string;
-			ECHELON_RIGHT: string;
-			OFF_ROAD: string;
-			RANK: string;
-			ECHELON_LEFT: string;
-			ON_ROAD: string;
-			CONE: string;
-			DIAMOND: string;
-		};
-		AltitudeType: { RADIO: string; BARO: string };
-		WaypointType: {
-			TAKEOFF: string;
-			TAKEOFF_PARKING: string;
-			TURNING_POINT: string;
-			TAKEOFF_PARKING_HOT: string;
-			LAND: string;
-		};
-		WeaponExpend: {
-			QUARTER: string;
-			TWO: string;
-			ONE: string;
-			FOUR: string;
-			HALF: string;
-			ALL: string;
-		};
-	};
 	Skill: {
-		PLAYER: string;
 		AVERAGE: string;
-		HIGH: string;
+		CLIENT: string;
 		EXCELLENT: string;
 		GOOD: string;
-		CLIENT: string;
+		HIGH: string;
+		PLAYER: string;
+	};
+	Task: {
+		AltitudeType: {
+			BARO: string;
+			RADIO: string;
+		};
+		Designation: {
+			AUTO: string;
+			IR_POINTER: string;
+			LASER: string;
+			NO: string;
+			WP: string;
+		};
+		OrbitPattern: {
+			CIRCLE: string;
+			RACE_TRACK: string;
+		};
+		TurnMethod: {
+			FIN_POINT: string;
+			FLY_OVER_POINT: string;
+		};
+		VehicleFormation: {
+			CONE: string;
+			DIAMOND: string;
+			ECHELON_LEFT: string;
+			ECHELON_RIGHT: string;
+			OFF_ROAD: string;
+			ON_ROAD: string;
+			RANK: string;
+			VEE: string;
+		};
+		WaypointType: {
+			LAND: string;
+			TAKEOFF: string;
+			TAKEOFF_PARKING: string;
+			TAKEOFF_PARKING_HOT: string;
+			TURNING_POINT: string;
+		};
+		WeaponExpend: {
+			ALL: string;
+			FOUR: string;
+			HALF: string;
+			ONE: string;
+			QUARTER: string;
+			TWO: string;
+		};
 	};
 }

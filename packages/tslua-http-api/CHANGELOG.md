@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.33.0 (2026-09-21)
+
+- Updated the supported TypeScript, TypeScriptToLua, test, build, and documentation toolchain.
+- Corrected the published package contents so the built dist entry points are included.
+
 ## 0.32.49 (2025-09-22)
 
 **Note:** Version bump only for package @flying-dice/tslua-http-api

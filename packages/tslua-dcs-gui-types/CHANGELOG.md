@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.33.0 (2026-09-21)
+
+- Added complete typed coverage and expanded source-linked documentation for the exposed DCS GUI scripting API.
+- Added an authoritative TypeScript example corpus and a batched live-DCS verification suite.
+- Replaced the legacy DCS Fiddle export path with the DCS Studio bridge exporter.
+- Updated the TypeScriptToLua toolchain and corrected the published package contents.
+
 ## 0.32.49 (2025-09-22)
 
 **Note:** Version bump only for package @flying-dice/tslua-dcs-gui-types

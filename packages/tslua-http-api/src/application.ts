@@ -256,9 +256,9 @@ export class Application extends HttpServer {
 	 * @param middleware The handler function to execute.
 	 */
 	use(route: string, ...middleware: AppMiddleware[]) {
-		middleware.forEach((it) =>
-			this.requestHandlers.push({ route, middleware: it }),
-		);
+		middleware.forEach((it) => {
+			this.requestHandlers.push({ route, middleware: it });
+		});
 	}
 
 	useMiddleware(middleware: AppMiddleware) {
@@ -275,54 +275,54 @@ export class Application extends HttpServer {
 	 * Registers a GET request handler.
 	 */
 	get(route: string, ...middleware: AppMiddleware[]) {
-		middleware.forEach((it) =>
-			this.requestHandlers.push({ route, middleware: it, method: "GET" }),
-		);
+		middleware.forEach((it) => {
+			this.requestHandlers.push({ route, middleware: it, method: "GET" });
+		});
 	}
 
 	/**
 	 * Registers a PUT request handler.
 	 */
 	put(route: string, ...middleware: AppMiddleware[]) {
-		middleware.forEach((it) =>
-			this.requestHandlers.push({ route, middleware: it, method: "PUT" }),
-		);
+		middleware.forEach((it) => {
+			this.requestHandlers.push({ route, middleware: it, method: "PUT" });
+		});
 	}
 
 	/**
 	 * Registers a POST request handler.
 	 */
 	post(route: string, ...middleware: AppMiddleware[]) {
-		middleware.forEach((it) =>
-			this.requestHandlers.push({ route, middleware: it, method: "POST" }),
-		);
+		middleware.forEach((it) => {
+			this.requestHandlers.push({ route, middleware: it, method: "POST" });
+		});
 	}
 
 	/**
 	 * Registers a DELETE request handler.
 	 */
 	delete(route: string, ...middleware: AppMiddleware[]) {
-		middleware.forEach((it) =>
-			this.requestHandlers.push({ route, middleware: it, method: "DELETE" }),
-		);
+		middleware.forEach((it) => {
+			this.requestHandlers.push({ route, middleware: it, method: "DELETE" });
+		});
 	}
 
 	/**
 	 * Registers a PATCH request handler.
 	 */
 	patch(route: string, ...middleware: AppMiddleware[]) {
-		middleware.forEach((it) =>
-			this.requestHandlers.push({ route, middleware: it, method: "PATCH" }),
-		);
+		middleware.forEach((it) => {
+			this.requestHandlers.push({ route, middleware: it, method: "PATCH" });
+		});
 	}
 
 	/**
 	 * Registers an OPTIONS request handler.
 	 */
 	options(route: string, ...middleware: AppMiddleware[]) {
-		middleware.forEach((it) =>
-			this.requestHandlers.push({ route, middleware: it, method: "OPTIONS" }),
-		);
+		middleware.forEach((it) => {
+			this.requestHandlers.push({ route, middleware: it, method: "OPTIONS" });
+		});
 	}
 
 	/**
@@ -341,6 +341,7 @@ export class Application extends HttpServer {
 			if (it.method && !it.route) return it.method === req.method; // No route specified.
 			if (it.method && it.route)
 				return isMatch(it.route, req.path) && it.method === req.method; // Both method and route specified.
+			return false;
 		});
 
 		this.logger.debug(`Found ${stack.length} handlers to process`);

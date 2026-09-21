@@ -1,9 +1,9 @@
 /**
- * @version 2.9.10.4160
+ * @version 2.9.29.27468
  * @noSelf
- **/
+ */
 export interface _coalition {
-	NEUTRAL: number;
 	BLUE: number;
+	NEUTRAL: number;
 	RED: number;
 }

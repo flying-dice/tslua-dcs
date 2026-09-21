@@ -1,8 +1,7 @@
 {
 	"$schema": "node_modules/@biomejs/biome/configuration_schema.json",
 	"files": {
-		"include": ["**/*.ts", "**/*.json"],
-		"ignore": ["node_modules", "docs"],
+		"includes": ["**/*.ts", "**/*.json", "!**/node_modules", "!**/docs"],
 		"maxSize": 5000000
 	},
 	"formatter": {
@@ -14,13 +13,11 @@
 		"clientKind": "git",
 		"useIgnoreFile": true
 	},
-	"organizeImports": {
-		"enabled": true
-	},
+	"assist": { "actions": { "source": { "organizeImports": "on" } } },
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true,
+			"preset": "recommended",
 			"suspicious": {
 				"noImplicitAnyLet": "off",
 				"noExplicitAny": "off",

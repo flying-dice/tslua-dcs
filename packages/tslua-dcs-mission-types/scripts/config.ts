@@ -1,7 +1,8 @@
 export const config = {
 	scripts: [
 		{
-			fiddlescript: "scripts/export.fiddle.lua",
+			env: "mission" as const,
+			luascript: "scripts/export.bridge.lua",
 			outdir: "src/exports",
 			namespaces: [
 				"AI",
@@ -21,7 +22,6 @@ export const config = {
 				"timer",
 				"trigger",
 				"Unit",
-				"Unit", // Duplicate entry
 				"Warehouse",
 				"Weapon",
 				"world",

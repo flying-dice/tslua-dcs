@@ -1,6 +1,7 @@
 export type Config = {
 	scripts: {
-		fiddlescript: string;
+		env: "mission" | "gui";
+		luascript: string;
 		outdir: string;
 		namespaces: string[];
 	}[];
@@ -9,7 +10,8 @@ export type Config = {
 export const config: Config = {
 	scripts: [
 		{
-			fiddlescript: "scripts/export.fiddle.lua",
+			env: "gui",
+			luascript: "scripts/export.bridge.lua",
 			outdir: "src/exports",
 			namespaces: [
 				"DCS",

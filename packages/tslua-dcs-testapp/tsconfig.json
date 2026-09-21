@@ -3,11 +3,13 @@
 		"target": "ES6",
 		"lib": ["ES6"],
 		"moduleResolution": "Node",
+		"ignoreDeprecations": "6.0",
 		"types": ["lua-types/5.1", "@flying-dice/tslua-dcs-mission-types"],
 		"strict": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,
 		"outDir": "dist",
+		"rootDir": "src",
 		"resolveJsonModule": true
 	}
 }

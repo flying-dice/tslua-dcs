@@ -4,7 +4,7 @@ export default defineConfig({
 	test: {
 		globals: true,
 		environment: "node",
-		singleThread: true,
+		fileParallelism: false,
 		isolate: true,
 	},
 });

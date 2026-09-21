@@ -1,6 +1,6 @@
 {
 	"name": "@flying-dice/tslua-dcs-mission-types",
-	"version": "0.32.49",
+	"version": "0.33.0",
 	"description": "Typescript type definitions for DCS",
 	"keywords": [
 		"lua",
@@ -18,17 +18,25 @@
 	"license": "ISC",
 	"types": "./dist/index.d.ts",
 	"main": "./dist/index",
+	"files": [
+		"dist",
+		"README.md",
+		"CHANGELOG.md"
+	],
 	"scripts": {
 		"clean": "rimraf dist",
 		"export": "tsx scripts/export.ts",
+		"typecheck:export": "tsc -p tsconfig.export.json",
+		"test:export": "vitest run scripts --passWithNoTests",
 		"build": "rimraf dist && tsc -p tsconfig.tstl.json && tstl -p tsconfig.tstl.json",
 		"test": "vitest run --coverage --passWithNoTests"
 	},
 	"devDependencies": {
 		"@types/fs-extra": "^11.0.4",
-		"fs-extra": "^11.2.0",
-		"lua-types": "^2.13.1",
-		"typescript": "^5.7.2",
-		"typescript-to-lua": "^1.28.1"
+		"@types/node": "^22.20.4",
+		"fs-extra": "^11.4.0",
+		"lua-types": "^2.14.1",
+		"typescript": "6.0.2",
+		"typescript-to-lua": "^1.37.1"
 	}
 }

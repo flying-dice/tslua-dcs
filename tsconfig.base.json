@@ -2,6 +2,7 @@
 	"compilerOptions": {
 		"lib": ["esnext"],
 		"moduleResolution": "Node",
+		"ignoreDeprecations": "6.0",
 		"types": ["lua-types/5.1"],
 		"strict": true,
 		"declaration": true,
