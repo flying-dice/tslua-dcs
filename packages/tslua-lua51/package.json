@@ -10,6 +10,6 @@
 	},
 	"scripts": {
 		"build": "cargo build --release --locked --manifest-path Cargo.toml",
-		"test": "cargo fmt --check && cargo clippy --release --locked --all-targets -- -D warnings && node ./bin/lua51.mjs --preload ./tests/dcs-doubles.lua ./tests/smoke.lua first second"
+		"test": "cargo fmt --check && cargo clippy --release --locked --all-targets -- -D warnings && node ./bin/lua51.mjs --preload ./tests/dcs-doubles.lua ./tests/smoke.lua first second && node --test ./tests/launcher.test.mjs"
 	}
 }
