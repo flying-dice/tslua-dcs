@@ -2,73 +2,82 @@ import { describe, expect, test } from "@flying-dice/tslua-luatest";
 import { decodeUriComponent } from "../src";
 
 describe("decodeUriComponent", () => {
-	test("Spaces should be decoded correctly", () => {
-		expect(decodeUriComponent("Hello%20World")).toBe("Hello World");
-	});
+	const reserved: [string, string][] = [
+		["Hello%20World", "Hello World"],
+		["%23one", "#one"],
+		["%40email", "@email"],
+		["%24price", "$price"],
+		["%26symbol", "&symbol"],
+		["%2Bplus", "+plus"],
+		["%2Fslash", "/slash"],
+		["%3Acolon", ":colon"],
+		["%3Bsemicolon", ";semicolon"],
+		["%3Dequals", "=equals"],
+		["%3Fquestion", "?question"],
+		["%40at", "@at"],
+		["%25percent", "%percent"],
+	];
+	for (const [encoded, decoded] of reserved) {
+		test(`decodes ${encoded}`, () => {
+			expect(decodeUriComponent(encoded)).toBe(decoded);
+		});
+	}
 
-	test("Hash symbols should be decoded correctly", () => {
-		expect(decodeUriComponent("%23one")).toBe("#one");
-	});
-
-	test("At symbol should be decoded correctly", () => {
-		expect(decodeUriComponent("%40email")).toBe("@email");
-	});
-
-	test("Dollar symbol should be decoded correctly", () => {
-		expect(decodeUriComponent("%24price")).toBe("$price");
-	});
-
-	test("Ampersand should be decoded correctly", () => {
-		expect(decodeUriComponent("%26symbol")).toBe("&symbol");
-	});
-
-	test("Plus symbol should be decoded correctly", () => {
-		expect(decodeUriComponent("%2Bplus")).toBe("+plus");
-	});
-
-	test("Slash should be decoded correctly", () => {
-		expect(decodeUriComponent("%2Fslash")).toBe("/slash");
-	});
-
-	test("Colon should be decoded correctly", () => {
-		expect(decodeUriComponent("%3Acolon")).toBe(":colon");
-	});
-
-	test("Semicolon should be decoded correctly", () => {
-		expect(decodeUriComponent("%3Bsemicolon")).toBe(";semicolon");
-	});
-
-	test("Equals symbol should be decoded correctly", () => {
-		expect(decodeUriComponent("%3Dequals")).toBe("=equals");
-	});
-
-	test("Question mark should be decoded correctly", () => {
-		expect(decodeUriComponent("%3Fquestion")).toBe("?question");
-	});
-
-	test("At symbol should be decoded correctly", () => {
-		expect(decodeUriComponent("%40at")).toBe("@at");
-	});
-
-	test("Multiple encoded spaces should be decoded correctly", () => {
+	test("decodes multiple encoded spaces", () => {
 		expect(decodeUriComponent("Multi%20Word%20Test")).toBe("Multi Word Test");
 	});
 
-	test("Mixed special characters should be decoded correctly", () => {
+	test("decodes mixed special characters in a single pass", () => {
+		// %25 becomes '%', and the resulting "%24" is not decoded again.
 		expect(decodeUriComponent("Mixed%23%40%2524Symbols")).toBe(
 			"Mixed#@%24Symbols",
 		);
 	});
 
-	test("Empty string should return empty string", () => {
+	test("returns an empty string unchanged", () => {
 		expect(decodeUriComponent("")).toBe("");
 	});
 
-	test("Encoded spaces in a numeric string should be decoded correctly", () => {
+	test("decodes encoded spaces in a numeric string", () => {
 		expect(decodeUriComponent("123%20456")).toBe("123 456");
 	});
 
-	test("String without encoding should remain unchanged", () => {
+	test("leaves a string without escapes unchanged", () => {
 		expect(decodeUriComponent("NoEncoding")).toBe("NoEncoding");
+	});
+
+	test("decodes '+' as a space (form encoding)", () => {
+		expect(decodeUriComponent("a+b+c")).toBe("a b c");
+	});
+
+	test("an encoded '+' stays a plus sign", () => {
+		expect(decodeUriComponent("1%2B1+%3D+2")).toBe("1+1 = 2");
+	});
+
+	test("accepts lower-case hex digits", () => {
+		expect(decodeUriComponent("%2f%3a%7e")).toBe("/:~");
+		expect(decodeUriComponent("%ff%FF")).toBe(string.char(255, 255));
+	});
+
+	test("decodes multi-byte UTF-8 sequences byte by byte", () => {
+		expect(decodeUriComponent("caf%C3%A9")).toBe(
+			`caf${string.char(0xc3, 0xa9)}`,
+		);
+		expect(decodeUriComponent("caf%C3%A9")).toHaveLength(5);
+	});
+
+	test("decodes control and NUL bytes", () => {
+		expect(decodeUriComponent("a%00b%0D%0A")).toBe("a\0b\r\n");
+	});
+
+	test("leaves malformed escapes untouched", () => {
+		expect(decodeUriComponent("100%")).toBe("100%");
+		expect(decodeUriComponent("%2")).toBe("%2");
+		expect(decodeUriComponent("%zz")).toBe("%zz");
+		expect(decodeUriComponent("%G1%1")).toBe("%G1%1");
+	});
+
+	test("decodes an escape that directly follows a malformed one", () => {
+		expect(decodeUriComponent("%%41")).toBe("%A");
 	});
 });

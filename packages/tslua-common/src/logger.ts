@@ -21,9 +21,13 @@ export enum LogLevel {
  *
  * Update them to change the way messages are logged.
  *
+ * Transports are called as plain functions with the formatted message as their only argument (no `self`),
+ * so Lua functions such as `print` or DCS's `env.info` can be used directly.
+ *
+ * @noSelf
  * @example
  * const logger = new Logger("MyLogger");
- * logger.transports = { debug: print, info: print, warn: print, error: print };
+ * Logger.transports = { trace: print, debug: print, info: print, warn: print, error: print };
  */
 export interface LoggerTransports {
 	trace: (message: string) => void;
@@ -45,7 +49,7 @@ export interface LoggerTransports {
  * @example
  * const logger = new Logger("MyLogger");
  * Logger.level = LogLevel.DEBUG;
- * Logger.transports = { debug: print, info: print, warn: print, error: print };
+ * Logger.transports = { trace: print, debug: print, info: print, warn: print, error: print };
  */
 export class Logger {
 	public static level: LogLevel = LogLevel.INFO;
@@ -149,7 +153,7 @@ export class Logger {
 	 *
 	 * @example
 	 * const logger = new Logger("MyLogger");
-	 * logger.transports = { debug: Logger.ignore, info: Logger.ignore, warn: print, error: print };
+	 * Logger.transports = { trace: Logger.ignore, debug: Logger.ignore, info: Logger.ignore, warn: print, error: print };
 	 */
-	public static ignore() {}
+	public static ignore(this: void) {}
 }
