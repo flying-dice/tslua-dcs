@@ -7,154 +7,162 @@ import {
 	Application,
 } from "./index";
 
-const app = new Application("127.0.0.1", 29293);
+/**
+ * Builds the sample application served by `npm run dev` (see `test-app.ts`) and exercised by the test suite.
+ *
+ * @param bindAddress The address to bind to.
+ * @param port The port to listen on; `0` picks a free port.
+ */
+export function createSampleApp(
+	bindAddress: string,
+	port: number,
+): Application {
+	const app = new Application(bindAddress, port);
 
-app.useMiddleware((req, res, next) => {
-	res.setHeader("X-Request-Id", "123");
-	next();
-});
+	app.useMiddleware((_req, res, next) => {
+		res.setHeader("X-Request-Id", "123");
+		next();
+	});
 
-const users: Record<
-	string,
-	{ name: string; comments: Record<string, string> }
-> = {
-	JOHN: { name: "John Doe", comments: { JOHN_C_1: "Hello World!" } },
-	JANE: {
-		name: "Jane Gray",
-		comments: {
-			JANE_C_1: "Janes first comment.",
-			JANE_C_2: "Janes second comment.",
+	const users: Record<
+		string,
+		{ name: string; comments: Record<string, string> }
+	> = {
+		JOHN: { name: "John Doe", comments: { JOHN_C_1: "Hello World!" } },
+		JANE: {
+			name: "Jane Gray",
+			comments: {
+				JANE_C_1: "Janes first comment.",
+				JANE_C_2: "Janes second comment.",
+			},
 		},
-	},
-};
+	};
 
-app.get("/api/users", (req: AppHttpRequest, res: AppHttpResponse) => {
-	res.send(
-		Object.keys(users)
-			.map((it) => users[it].name)
-			.join(", "),
-	);
-});
+	app.get("/api/users", (_req: AppHttpRequest, res: AppHttpResponse) => {
+		res.send(
+			Object.keys(users)
+				.map((it) => users[it].name)
+				.join(", "),
+		);
+	});
 
-app.get("/api/users/:id", (req: AppHttpRequest, res: AppHttpResponse) => {
-	const userId = req.getPathParameterValueOrThrow("id");
-	if (!users[userId]) {
-		return res.status(HttpStatus.NOT_FOUND).send("Not Found");
-	}
-
-	res.send(`name: ${users[userId].name}`);
-});
-
-app.get(
-	"/api/users/:id/comments/:commentId",
-	(req: AppHttpRequest, res: AppHttpResponse) => {
+	app.get("/api/users/:id", (req: AppHttpRequest, res: AppHttpResponse) => {
 		const userId = req.getPathParameterValueOrThrow("id");
-		const commentId = req.getPathParameterValueOrThrow("commentId");
-
-		if (!users[userId] || !users[userId].comments[commentId]) {
+		if (!users[userId]) {
 			return res.status(HttpStatus.NOT_FOUND).send("Not Found");
 		}
 
-		res.send(users[userId].comments[commentId]);
-	},
-);
+		res.send(`name: ${users[userId].name}`);
+	});
 
-app.post("/api/users", (req: AppHttpRequest, res: AppHttpResponse) => {
-	res.send(req.body as string);
-});
+	app.get(
+		"/api/users/:id/comments/:commentId",
+		(req: AppHttpRequest, res: AppHttpResponse) => {
+			const userId = req.getPathParameterValueOrThrow("id");
+			const commentId = req.getPathParameterValueOrThrow("commentId");
 
-app.get("/health", (req, res) => {
-	res.json({ status: "OK" });
-});
+			if (!users[userId]?.comments[commentId]) {
+				return res.status(HttpStatus.NOT_FOUND).send("Not Found");
+			}
 
-app.get("/complex/:id", (req, res) => {
-	const complexId = req.getPathParameterValueOrThrow("id");
+			res.send(users[userId].comments[commentId]);
+		},
+	);
 
-	res.json({ id: complexId });
-});
+	app.post("/api/users", (req: AppHttpRequest, res: AppHttpResponse) => {
+		res.send(req.body as string);
+	});
 
-const authMiddleware: AppMiddleware = (req, res, next) => {
-	if (req.getHeaderValue("Authorization") !== "Bearer 123") {
-		return res.status(HttpStatus.UNAUTHORIZED).send("Unauthorized");
-	}
+	app.get("/health", (_req, res) => {
+		res.json({ status: "OK" });
+	});
 
-	next();
-};
+	app.get("/complex/:id", (req, res) => {
+		const complexId = req.getPathParameterValueOrThrow("id");
 
-app.get("/secure", authMiddleware, (req, res) => {
-	res.send("Secure Content");
-});
+		res.json({ id: complexId });
+	});
 
-// Comprehensive list of endpoints with hardcoded paths using safe characters
-app.get("/fixed-complex/Ground-1", (req, res) => {
-	res.json({ id: "Ground-1" });
-});
+	const authMiddleware: AppMiddleware = (req, res, next) => {
+		if (req.getHeaderValue("Authorization") !== "Bearer 123") {
+			return res.status(HttpStatus.UNAUTHORIZED).send("Unauthorized");
+		}
 
-app.get("/fixed-complex/Ground_2", (req, res) => {
-	res.json({ id: "Ground_2" });
-});
+		next();
+	};
 
-app.get("/fixed-complex/Ground~3", (req, res) => {
-	res.json({ id: "Ground~3" });
-});
+	app.get("/secure", authMiddleware, (_req, res) => {
+		res.send("Secure Content");
+	});
 
-app.get("/fixed-complex/Ground.4", (req, res) => {
-	res.json({ id: "Ground.4" });
-});
+	// Comprehensive list of endpoints with hardcoded paths using safe characters
+	app.get("/fixed-complex/Ground-1", (_req, res) => {
+		res.json({ id: "Ground-1" });
+	});
 
-app.get("/fixed-complex/Ground!5", (req, res) => {
-	res.json({ id: "Ground!5" });
-});
+	app.get("/fixed-complex/Ground_2", (_req, res) => {
+		res.json({ id: "Ground_2" });
+	});
 
-app.get("/fixed-complex/Ground$6", (req, res) => {
-	res.json({ id: "Ground$6" });
-});
+	app.get("/fixed-complex/Ground~3", (_req, res) => {
+		res.json({ id: "Ground~3" });
+	});
 
-app.get("/fixed-complex/Ground'7", (req, res) => {
-	res.json({ id: "Ground'7" });
-});
+	app.get("/fixed-complex/Ground.4", (_req, res) => {
+		res.json({ id: "Ground.4" });
+	});
 
-app.get("/fixed-complex/Ground(8)", (req, res) => {
-	res.json({ id: "Ground(8)" });
-});
+	app.get("/fixed-complex/Ground!5", (_req, res) => {
+		res.json({ id: "Ground!5" });
+	});
 
-app.get("/fixed-complex/Ground*9", (req, res) => {
-	res.json({ id: "Ground*9" });
-});
+	app.get("/fixed-complex/Ground$6", (_req, res) => {
+		res.json({ id: "Ground$6" });
+	});
 
-app.get("/fixed-complex/Ground+10", (req, res) => {
-	res.json({ id: "Ground+10" });
-});
+	app.get("/fixed-complex/Ground'7", (_req, res) => {
+		res.json({ id: "Ground'7" });
+	});
 
-app.get("/fixed-complex/Ground,11", (req, res) => {
-	res.json({ id: "Ground,11" });
-});
+	app.get("/fixed-complex/Ground(8)", (_req, res) => {
+		res.json({ id: "Ground(8)" });
+	});
 
-app.get("/fixed-complex/Ground;12", (req, res) => {
-	res.json({ id: "Ground;12" });
-});
+	app.get("/fixed-complex/Ground*9", (_req, res) => {
+		res.json({ id: "Ground*9" });
+	});
 
-app.get("/fixed-complex/Ground=13", (req, res) => {
-	res.json({ id: "Ground=13" });
-});
+	app.get("/fixed-complex/Ground+10", (_req, res) => {
+		res.json({ id: "Ground+10" });
+	});
 
-app.get(
-	"/groups/:groupId/units/:unitId",
-	(
-		req: AppHttpRequest<
-			{
-				groupId: string;
-				unitId: string;
-			},
-			{}
-		>,
-		res,
-	) => {
-		res.json({ groupId: req.params.groupId, unitId: req.params.unitId });
-	},
-);
+	app.get("/fixed-complex/Ground,11", (_req, res) => {
+		res.json({ id: "Ground,11" });
+	});
 
-do {
-	app.acceptNextClient();
-	//   biome-ignore lint/correctness/noConstantCondition: <explanation>
-} while (true);
+	app.get("/fixed-complex/Ground;12", (_req, res) => {
+		res.json({ id: "Ground;12" });
+	});
+
+	app.get("/fixed-complex/Ground=13", (_req, res) => {
+		res.json({ id: "Ground=13" });
+	});
+
+	app.get(
+		"/groups/:groupId/units/:unitId",
+		(
+			req: AppHttpRequest<
+				{
+					groupId: string;
+					unitId: string;
+				},
+				{}
+			>,
+			res,
+		) => {
+			res.json({ groupId: req.params.groupId, unitId: req.params.unitId });
+		},
+	);
+
+	return app;
+}
