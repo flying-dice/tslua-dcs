@@ -29,6 +29,7 @@ export * from "./Group";
 export * from "./index";
 export * from "./land";
 export * from "./missionCommands";
+export * from "./net";
 export * from "./Object";
 export * from "./radio";
 export * from "./StaticObject";
@@ -124,7 +125,16 @@ declare global {
 	/**
 	 * @noSelf
 	 */
-	const Unit: Pick<l_Unit, "getByName" | "getDescByName" | "Category">;
+	const Unit: Pick<
+		l_Unit,
+		| "getByName"
+		| "getDescByName"
+		| "Category"
+		| "OpticType"
+		| "RadarType"
+		| "RefuelingSystem"
+		| "SensorType"
+	>;
 
 	/**
 	 * @noSelf

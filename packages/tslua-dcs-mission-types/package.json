@@ -27,11 +27,12 @@
 		"clean": "rimraf dist",
 		"export": "tsx scripts/export.ts",
 		"typecheck:export": "tsc -p tsconfig.export.json",
-		"test:export": "vitest run scripts --passWithNoTests",
+		"test:export": "tstl -p tsconfig.tstl-tests.json && lua51 ./.test/tests.lua",
 		"build": "rimraf dist && tsc -p tsconfig.tstl.json && tstl -p tsconfig.tstl.json",
-		"test": "vitest run --coverage --passWithNoTests"
+		"test": "npm run typecheck:export && npm run test:export && npm run test --workspace=@flying-dice/tslua-dcs-mission-types-test"
 	},
 	"devDependencies": {
+		"@flying-dice/tslua-luatest": "^0.33.0",
 		"@types/fs-extra": "^11.0.4",
 		"@types/node": "^22.20.4",
 		"fs-extra": "^11.4.0",

@@ -1,0 +1,15 @@
+{
+	"$schema": "https://raw.githubusercontent.com/TypeScriptToLua/TypeScriptToLua/refs/tags/v1.37.1/tsconfig-schema.json",
+	"extends": "../tsconfig.base.tstl.json",
+	"include": ["tests/**/*.ts"],
+	"compilerOptions": {
+		"outDir": ".test",
+		"rootDir": ".",
+		"declaration": false
+	},
+	"tstl": {
+		"luaTarget": "5.1",
+		"luaBundleEntry": "tests/index.ts",
+		"luaBundle": "tests.lua"
+	}
+}
