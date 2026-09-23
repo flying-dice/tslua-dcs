@@ -6,7 +6,7 @@ import {
 	HttpStatus,
 	StatusText,
 } from "@flying-dice/tslua-http";
-import * as json from "@flying-dice/tslua-rxi-json";
+import * as json from "@flying-dice/tslua-json";
 import { HttpError } from "./errors";
 import { getPathParameters, isMatch } from "./path";
 
