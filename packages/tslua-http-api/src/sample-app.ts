@@ -1,4 +1,4 @@
-import { HttpStatus } from "@flying-dice/tslua-http";
+import { type HttpServerOptions, HttpStatus } from "@flying-dice/tslua-http";
 
 import {
 	type AppHttpRequest,
@@ -12,12 +12,14 @@ import {
  *
  * @param bindAddress The address to bind to.
  * @param port The port to listen on; `0` picks a free port.
+ * @param options Options for the underlying `HttpServer`.
  */
 export function createSampleApp(
 	bindAddress: string,
 	port: number,
+	options?: HttpServerOptions,
 ): Application {
-	const app = new Application(bindAddress, port);
+	const app = new Application(bindAddress, port, options);
 
 	app.useMiddleware((_req, res, next) => {
 		res.setHeader("X-Request-Id", "123");

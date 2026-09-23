@@ -7,11 +7,10 @@ import type { Application } from "../src";
  * - {@link dispatch} calls the request handler the application registers with its `HttpServer`,
  *   with a request/response pair shaped exactly like the ones `HttpServer` builds (a fresh `404`
  *   response with no headers). This is the unit-level path: no sockets involved.
- * - {@link roundTrip} performs a real HTTP exchange over loopback: a LuaSocket client connects to
- *   the application's listening socket (bound to port `0`), sends raw request bytes, the test steps
- *   the server once with `acceptNextClient()`, and the client reads the raw response until the
- *   server closes the connection. This is the end-to-end path through `tslua-http`'s parser and
- *   response writer.
+ * - {@link roundTrip} performs a real HTTP exchange over loopback: a non-blocking LuaSocket client
+ *   connects to the application's listening socket (bound to port `0`), and the test alternates
+ *   client writes, `pump()` calls and client reads until the server closes the connection. This is
+ *   the end-to-end path through `tslua-http`'s parser, scheduler and response writer.
  */
 
 /** @noSelf */
@@ -21,10 +20,17 @@ interface LuaSocketModule {
 		address: string,
 		port: number,
 	): LuaMultiReturn<[LuaSocketClient | undefined, string | undefined]>;
+	gettime(this: void): number;
 }
 
 interface LuaSocketClient {
-	send(data: string): LuaMultiReturn<[number | undefined, string | undefined]>;
+	send(
+		data: string,
+		i?: number,
+		j?: number,
+	): LuaMultiReturn<
+		[number | undefined, string | undefined, number | undefined]
+	>;
 	receive(
 		pattern: "*a" | "*l" | number,
 	): LuaMultiReturn<
@@ -135,23 +141,46 @@ export function portOf(app: Application): number {
 	return tonumber(port) as number;
 }
 
+/** Limits that turn a hang into a test failure; generous so slow machines do not trip them. */
+const WATCHDOG = { pumps: 100000, seconds: 20 };
+
 /**
- * Sends raw bytes to the application over loopback, steps the server once and returns everything
- * the server wrote before closing the connection.
+ * Sends raw bytes to the application over loopback and returns everything the server wrote before
+ * closing the connection. The client never blocks: it writes what the socket accepts (keeping partial
+ * progress), the server is pumped, and the client reads what is available, until the server closes.
  */
 export function rawExchange(app: Application, requestText: string): string {
 	const [client, connectError] = socket.connect("127.0.0.1", portOf(app));
 	if (!client) throw new Error(`connect failed: ${connectError}`);
-	client.settimeout(5);
+	client.settimeout(0);
 	try {
-		const [sent, sendError] = client.send(requestText);
-		if (sent === undefined) throw new Error(`send failed: ${sendError}`);
-		// The request is buffered by the OS, so the server can read all of it synchronously.
-		app.acceptNextClient();
-		const [data, receiveError, partial] = client.receive("*a");
-		if (data !== undefined) return data;
-		if (receiveError === "closed") return partial ?? "";
-		throw new Error(`receive failed: ${receiveError}`);
+		const received: string[] = [];
+		const deadline = socket.gettime() + WATCHDOG.seconds;
+		let sentTo = 0;
+		for (let pumps = 0; ; pumps++) {
+			if (pumps >= WATCHDOG.pumps || socket.gettime() > deadline) {
+				throw new Error(`watchdog: no complete response after ${pumps} pumps`);
+			}
+			if (sentTo < requestText.length) {
+				const [last, sendError, lastBeforeError] = client.send(
+					requestText,
+					sentTo + 1,
+				);
+				const reached = last ?? lastBeforeError;
+				if (reached !== undefined && reached > sentTo) sentTo = reached;
+				if (sendError !== undefined && sendError !== "timeout") {
+					throw new Error(`send failed: ${sendError}`);
+				}
+			}
+			app.pump();
+			const [data, receiveError, partial] = client.receive(65536);
+			const bytes = data ?? partial ?? "";
+			if (bytes.length > 0) received.push(bytes);
+			if (receiveError === "closed") return table.concat(received);
+			if (receiveError !== undefined && receiveError !== "timeout") {
+				throw new Error(`receive failed: ${receiveError}`);
+			}
+		}
 	} finally {
 		client.close();
 	}
