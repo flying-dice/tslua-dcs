@@ -1,8 +1,8 @@
 {
 	"extends": "../../tsconfig.base.json",
 	"include": ["src/**/*", "types/**/*"],
-	"exclude": ["src/**/*.test.ts"],
 	"compilerOptions": {
+		"types": ["lua-types/5.1", "@typescript-to-lua/language-extensions"],
 		"outDir": "dist",
 		"rootDir": "src"
 	}

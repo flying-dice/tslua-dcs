@@ -591,9 +591,14 @@ export function createRunner(options: RunnerOptions = {}): Runner {
 					0,
 				);
 			}
-			if (summary.total === 0 && runOptions.passWithNoTests !== true) {
+			// Skipped, todo and .only-filtered tests are reported but not executed:
+			// a run that executed none of its tests is as suspect as an empty one.
+			const executed = summary.passed + summary.failed;
+			if (executed === 0 && runOptions.passWithNoTests !== true) {
 				error(
-					"luatest: no tests were run (pass { passWithNoTests: true } to run() to allow this)",
+					summary.total === 0
+						? "luatest: no tests were run (pass { passWithNoTests: true } to run() to allow this)"
+						: `luatest: no tests were run: all ${summary.total} were skipped, todo or filtered out by .only (pass { passWithNoTests: true } to run() to allow this)`,
 					0,
 				);
 			}

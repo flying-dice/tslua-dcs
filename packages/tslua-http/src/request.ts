@@ -73,7 +73,13 @@ export const readRequestHead = (requestPayload: string): HttpRequest => {
 
 	for (const headerLine of headerLines) {
 		if (headerLine === "") break;
-		const [key, value] = headerLine.split(":");
+		// Split on the first colon only: values such as "localhost:8080" contain colons.
+		const separator = headerLine.indexOf(":");
+		if (separator < 0) {
+			throw new Error(`Malformed header line: ${headerLine}`);
+		}
+		const key = headerLine.substring(0, separator);
+		const value = headerLine.substring(separator + 1);
 		httpRequest.headers[key.trim().toLowerCase()] = value.trim();
 	}
 

@@ -40,7 +40,6 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.5.14",
-		"concurrently": "^10.0.5",
 		"lerna": "^10.0.1",
 		"nodemon": "^3.1.14",
 		"npm-check-updates": "^22.2.9",
