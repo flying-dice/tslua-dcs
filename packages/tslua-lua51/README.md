@@ -34,7 +34,8 @@ It behaves like stock `lua` with these deliberate differences:
 - `package.path` is pinned to `./?.lua;./?/init.lua` and `package.cpath` is empty; host `LUA_PATH`,
   `LUA_CPATH` and `LUA_INIT` are ignored.
 - `socket`, `socket.*`, `mime` and `ltn12` resolve from `package.preload`; no shared libraries load.
-- There is no interactive REPL; with no script, the chunk is read from stdin.
+- There is no interactive REPL. With no script (and no `-e` or `-v`) the chunk is read from stdin, also after
+  `-l` or `--preload`, as stock `lua` does.
 
 ## DCS test doubles
 

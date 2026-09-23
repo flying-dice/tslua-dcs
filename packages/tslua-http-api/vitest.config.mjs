@@ -6,5 +6,6 @@ export default defineConfig({
 		environment: "node",
 		fileParallelism: false,
 		isolate: true,
+		globalSetup: ["./tests/wait-for-server.mjs"],
 	},
 });

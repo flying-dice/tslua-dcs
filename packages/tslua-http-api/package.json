@@ -28,7 +28,7 @@
 		"dev": "cd dist && lua51 test-app.lua",
 		"dev:watch": "nodemon -e ts --watch src --exec \"npm run build && npm run dev\"",
 		"build:docs": "typedoc",
-		"test": "concurrently -k -s first \"npm run dev > .test-app.log\" \"vitest run\"",
+		"test": "lua51 --setup && concurrently -k -s first \"npm run dev > .test-app.log\" \"vitest run\"",
 		"test:lua": "tstl -p tsconfig.tstl-tests.json && lua51 ./.test/tests.lua"
 	},
 	"dependencies": {
