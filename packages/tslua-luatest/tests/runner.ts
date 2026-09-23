@@ -127,6 +127,43 @@ describe("runner: run() end-of-run contract", () => {
 		expect(isolated().runner.run({ passWithNoTests: true }).total).toBe(0);
 	});
 
+	test("a run where every test was skipped or todo executed nothing and throws", () => {
+		const { runner } = isolated();
+		runner.test.skip("skipped", () => {});
+		runner.test.todo("later");
+		runner.describe.skip("skipped group", () => {
+			runner.test("inside", () => {});
+		});
+		expect(() => runner.run()).toThrow(
+			"no tests were run: all 3 were skipped, todo or filtered out by .only",
+		);
+	});
+
+	test("skipped-only runs pass with passWithNoTests and report their skips", () => {
+		const { runner } = isolated();
+		runner.test.skip("skipped", () => {});
+		const summary = runner.run({ passWithNoTests: true });
+		expect(summary.skipped).toBe(1);
+		expect(summary.passed + summary.failed).toBe(0);
+		expect(summary.success).toBe(true);
+	});
+
+	test("a .only focus that matches no runnable test throws", () => {
+		const { runner } = isolated();
+		runner.describe.only("focused but empty", () => {
+			runner.test.skip("skipped inside the focus", () => {});
+		});
+		runner.test("not focused", () => {});
+		expect(() => runner.run()).toThrow("no tests were run: all 2 were skipped");
+	});
+
+	test("one executed test is enough, even among skips", () => {
+		const { runner } = isolated();
+		runner.test.skip("skipped", () => {});
+		runner.test("runs", () => {});
+		expect(runner.run().passed).toBe(1);
+	});
+
 	test("run() executes each declaration once; later runs only add new tests", () => {
 		const { runner } = isolated();
 		let count = 0;
