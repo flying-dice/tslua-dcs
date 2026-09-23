@@ -2,6 +2,24 @@
 declare module "socket" {
 	type TCPRecvPattern = number | "*l" | "*a";
 
+	/**
+	 * The result of a receive: the data, or `nil` followed by the error ("timeout", "closed", ...) and the
+	 * bytes that did arrive before the error. On a non-blocking socket "timeout" only means "no more data
+	 * right now"; the partial bytes are real request data.
+	 */
+	type TCPReceiveResult = LuaMultiReturn<
+		[string, undefined, undefined] | [undefined, string, string]
+	>;
+
+	/**
+	 * The result of a send: the index of the last byte sent, or `nil` followed by the error and the index
+	 * of the last byte sent before the error. Indices are 1-based positions in the whole `data` string,
+	 * not counts, so a send starting at `i` that sent nothing reports `i - 1`.
+	 */
+	type TCPSendResult = LuaMultiReturn<
+		[number, undefined, undefined] | [undefined, string, number]
+	>;
+
 	interface TCP {
 		/**
 		 * Waits for a remote connection on the server object and returns a client object representing that connection.
@@ -14,7 +32,7 @@ declare module "socket" {
 		 *
 		 * @see https://lunarmodules.github.io/luasocket/tcp.html#accept
 		 */
-		accept(): TCP;
+		accept(): LuaMultiReturn<[TCP, undefined] | [undefined, string]>;
 
 		/**
 		 * Closes a TCP object. The internal socket used by the object is closed and the local address to which the object was bound is made available to other applications. No further operations (except for further calls to the close method) are allowed on a closed socket.
@@ -30,35 +48,32 @@ declare module "socket" {
 		 * @param pattern Read pattern.
 		 * @param prefix Optional prefix for received data.
 		 * @returns The received pattern or `nil` followed by an error message and a string with partial data received.
+		 * @see https://lunarmodules.github.io/luasocket/tcp.html#receive
 		 */
-		receive(
-			pattern: TCPRecvPattern,
-			prefix?: string,
-		): LuaMultiReturn<
-			[string | undefined, string | undefined, string | undefined]
-		>;
+		receive(pattern: TCPRecvPattern, prefix?: string): TCPReceiveResult;
 
 		/**
-		 * Sends data through the client object.
+		 * Sends `data` (or the substring `data[i..j]`, 1-based and inclusive) through the client object.
 		 * @param data Data to send.
 		 * @param i Optional start index of the substring to send.
 		 * @param j Optional end index of the substring to send.
 		 * @returns The index of the last byte sent or `nil` followed by an error message and the index of the last byte sent.
+		 * @see https://lunarmodules.github.io/luasocket/tcp.html#send
 		 */
-		send(data: string, i?: number, j?: number): number | [null, string, number];
+		send(data: string, i?: number, j?: number): TCPSendResult;
 
 		/**
-		 * Changes the timeout values for the object.
+		 * Changes the timeout values for the object. `0` makes every operation non-blocking.
 		 * @param value Timeout value in seconds.
 		 * @param mode Timeout mode ('b' or 't').
 		 */
 		settimeout(value: number, mode?: "b" | "t"): void;
 
 		/**
-		 * Returns the local address information associated to the object.
-		 * The method returns a string with local IP address, a number with the local port, and a string with the family ("inet" or "inet6"). In case of error, the method returns nil.
+		 * Returns the local address information associated to the object: the local IP address, the port
+		 * (a string in LuaSocket 3, a number in LuaSocket 2) and, in LuaSocket 3, the family. In case of error, the method returns nil.
 		 */
-		getsockname(): [string, number, string];
+		getsockname(): LuaMultiReturn<[string, string | number, string?]>;
 	}
 
 	/**
@@ -80,4 +95,13 @@ declare module "socket" {
 		port: number,
 		backlog?: number,
 	): LuaMultiReturn<[TCP, undefined] | [undefined, string]>;
+
+	/**
+	 * Returns the wall-clock time in seconds since the Unix epoch, with sub-second precision where the platform
+	 * provides it. It is not monotonic: it follows system clock adjustments.
+	 *
+	 * @see https://lunarmodules.github.io/luasocket/socket.html#gettime
+	 * @noSelf
+	 */
+	function gettime(): number;
 }
