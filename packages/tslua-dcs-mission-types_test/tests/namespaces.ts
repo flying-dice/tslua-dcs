@@ -398,6 +398,30 @@ describe("world", () => {
 		expect(passthrough).toHaveBeenCalledWith(anything());
 	});
 
+	test("persistence callbacks accept plain Lua functions (this: void), as DCS calls them", () => {
+		// Plain functions such as DCS globals or @noSelf helpers have no `self`. The declarations
+		// must accept them; without `this: void` this file does not compile (TSTL rejects the call).
+		const scoreHandler = function (this: void): unknown {
+			return { red: 7 };
+		};
+		const storage = function (this: void, name: string, value: unknown): void {
+			stored.push([name, value]);
+		};
+		const passthroughHandler = function (
+			this: void,
+			...args: unknown[]
+		): unknown {
+			return args.length;
+		};
+		const stored: unknown[] = [];
+		world.setPersistenceHandler("plain", scoreHandler);
+		world.runPersistenceHandlers(storage);
+		expect(stored).toContainEqual(["plain", { red: 7 }]);
+		const passthrough = spyOn(world, "setPersistencePassthrough");
+		world.setPersistencePassthrough(passthroughHandler);
+		expect(passthrough).toHaveBeenCalledWith(passthroughHandler);
+	});
+
 	test("world.weather functions are dot calls (regression: missing @noSelf)", () => {
 		const setThickness = spyOn(world.weather, "setFogThickness");
 		world.weather.setFogThickness(250);
