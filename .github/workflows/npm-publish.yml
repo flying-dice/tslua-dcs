@@ -29,6 +29,11 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run test:lua
+      # Regression: the HTTP API suite must wait for a cold interpreter build
+      # (a fresh target dir) rather than race it; `npm test` above prebuilds.
+      - run: npm test --workspace=@flying-dice/tslua-http-api
+        env:
+          CARGO_TARGET_DIR: ${{ runner.temp }}/cold-lua51-target
       - run: npm run audit:dcs-types -- --strict
       - run: npm run typecheck:export --workspace=@flying-dice/tslua-dcs-mission-types
       - run: npm run typecheck:export --workspace=@flying-dice/tslua-dcs-gui-types

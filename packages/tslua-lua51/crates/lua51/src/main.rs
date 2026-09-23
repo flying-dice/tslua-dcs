@@ -12,7 +12,8 @@
 //! - `--preload <file>` runs a Lua file in the same state before the main
 //!   script. This is the seam for installing test doubles of DCS globals
 //!   (`env`, `timer`, `trigger`, `world`, ...) ahead of the code under test.
-//! - No interactive REPL: with no script, the chunk is read from stdin.
+//! - No interactive REPL: with no script (and no `-e` or `-v`), the chunk is read
+//!   from stdin, also after `-l` / `--preload`.
 
 use std::ffi::c_int;
 use std::io::{Read, Write};
@@ -91,6 +92,14 @@ struct Invocation {
     /// All of argv; `script_index` locates the script within it.
     argv: Vec<String>,
     script_index: usize,
+}
+
+impl Invocation {
+    fn has_exec(&self) -> bool {
+        self.actions
+            .iter()
+            .any(|action| matches!(action, Action::Exec(_)))
+    }
 }
 
 fn parse_args(argv: Vec<String>) -> Result<Invocation, String> {
@@ -241,7 +250,9 @@ fn run(invocation: &Invocation) -> mlua::Result<()> {
     match invocation.script.as_deref() {
         Some("-") => load_stdin(&lua)?.call::<()>(script_args),
         Some(path) => load_file(&lua, path)?.call::<()>(script_args),
-        None if invocation.actions.is_empty() && !invocation.show_version => {
+        // As in stock lua.c: only `-e` and `-v` suppress running stdin when no
+        // script is given; `-l` and `--preload` only prepare the state for it.
+        None if !invocation.has_exec() && !invocation.show_version => {
             load_stdin(&lua)?.call::<()>(script_args)
         }
         None => Ok(()),
