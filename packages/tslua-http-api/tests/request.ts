@@ -3,7 +3,6 @@ import { HttpStatus } from "@flying-dice/tslua-http";
 import {
 	afterAll,
 	afterEach,
-	anything,
 	beforeAll,
 	describe,
 	expect,
@@ -221,11 +220,11 @@ describe("AppHttpRequest", () => {
 			expect(caught).toBeInstanceOf(HttpError);
 			expect((caught as HttpError).status).toBe(HttpStatus.BAD_REQUEST);
 			expect((caught as HttpError).message).toBe("Invalid JSON");
-			// Logger transports are called as methods: the receiver comes first.
+			// Logger transports receive exactly one argument, the formatted message (#127).
 			expect(logged).toHaveBeenCalledWith(
-				anything(),
 				stringContaining("[ERROR] [AppHttpRequest] - Error parsing JSON"),
 			);
+			expect(logged.mock.calls[0].n).toBe(1);
 		});
 
 		test("getBodyOrThrow returns a present body", () => {

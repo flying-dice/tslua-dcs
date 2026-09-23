@@ -2,7 +2,6 @@ import { LogLevel, Logger } from "@flying-dice/tslua-common";
 import { HttpStatus } from "@flying-dice/tslua-http";
 import {
 	afterEach,
-	anything,
 	beforeEach,
 	describe,
 	expect,
@@ -683,16 +682,11 @@ describe("Application (dispatch only)", () => {
 		});
 		dispatch(app, "GET", "/logged");
 		expect(debug).toHaveBeenCalledWith(
-			anything(),
 			"[DEBUG] [Application] - Handling Request",
 		);
 		expect(debug).toHaveBeenCalledWith(
-			anything(),
 			"[DEBUG] [Application] - Found 1 handlers to process",
 		);
-		expect(debug).toHaveBeenCalledWith(
-			anything(),
-			stringContaining("[DEBUG] [Path] - "),
-		);
+		expect(debug).toHaveBeenCalledWith(stringContaining("[DEBUG] [Path] - "));
 	});
 });
