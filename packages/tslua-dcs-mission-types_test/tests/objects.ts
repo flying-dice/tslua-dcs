@@ -53,7 +53,7 @@ describe("Unit", () => {
 			"F-16CM bl.50",
 		);
 		expect(Unit.getDescByName("unknown type")).toBeUndefined();
-		expect(Unit.getByName(player.getName())).toBe(player);
+		expect(Unit.getByName(player.getName())).toEqual(player);
 	});
 
 	test("instance methods are colon calls with the unit as receiver", () => {
@@ -82,7 +82,7 @@ describe("Unit", () => {
 		expect(player.getForcesName()).toBe("USA");
 		expect(player.getCategory()).toBe(1);
 		expect(player.getCategoryEx()).toBe(Unit.Category.AIRPLANE);
-		expect(player.getGroup()).toBe(group());
+		expect(player.getGroup()).toEqual(group());
 		expect(player.getDesc().attributes.Planes).toBe(true);
 		expect(player.getAttributes()).toEqual(player.getDesc().attributes);
 	});
@@ -184,7 +184,7 @@ describe("Group", () => {
 
 	test("lookups, identity and composition", () => {
 		const flight = group();
-		expect(Group.getByName("Enfield-1")).toBe(flight);
+		expect(Group.getByName("Enfield-1")).toEqual(flight);
 		expect(Group.getByName("nobody")).toBeUndefined();
 		expect(flight.getName()).toBe("Enfield-1");
 		expect(flight.getID()).toBe(1);
@@ -197,7 +197,7 @@ describe("Group", () => {
 			"Enfield-1-1",
 			"Enfield-1-2",
 		]);
-		expect(flight.getUnit(2)).toBe(unit("Enfield-1-2"));
+		expect(flight.getUnit(2)).toEqual(unit("Enfield-1-2"));
 		expect(flight.getUnit(3)).toBeUndefined();
 		expect(flight.isExist()).toBe(true);
 	});
@@ -212,8 +212,8 @@ describe("Group", () => {
 	test("controller, activation, emission and destruction", () => {
 		const armor = group("Red Armor");
 		const controller = armor.getController();
-		expect(controller).toBe(armor.getController());
-		expect(controller).not.toBe(unit("Red Armor-1").getController());
+		expect(controller).toEqual(armor.getController());
+		expect(controller).not.toEqual(unit("Red Armor-1").getController());
 		armor.activate();
 		armor.enableEmission(false);
 		expect(armor.embarking()).toBeUndefined();
@@ -230,7 +230,7 @@ describe("StaticObject", () => {
 
 	test("lookups and getters", () => {
 		const hangar = staticObject();
-		expect(StaticObject.getByName("Blue Hangar")).toBe(hangar);
+		expect(StaticObject.getByName("Blue Hangar")).toEqual(hangar);
 		expect(StaticObject.getByName("nothing")).toBeUndefined();
 		expect(required(StaticObject.getDescByName("Hangar A"), "desc").life).toBe(
 			100,
@@ -284,10 +284,10 @@ describe("Airbase", () => {
 			required(Airbase.getDescByName("Batumi"), "desc").attributes.Airfields,
 		).toBe(true);
 		expect(Airbase.getDescByName("Nowhere")).toBeUndefined();
-		expect(Airbase.getNearest(batumi.getPoint(), coalition.side.BLUE)).toBe(
+		expect(Airbase.getNearest(batumi.getPoint(), coalition.side.BLUE)).toEqual(
 			batumi,
 		);
-		expect(Airbase.getNearest(batumi.getPoint(), coalition.side.RED)).toBe(
+		expect(Airbase.getNearest(batumi.getPoint(), coalition.side.RED)).toEqual(
 			base("Senaki-Kolkhi"),
 		);
 		expect(
@@ -356,8 +356,8 @@ describe("Warehouse", () => {
 
 	test("static functions are dot calls", () => {
 		const warehouse = base().getWarehouse();
-		expect(Warehouse.getByName("Batumi")).toBe(warehouse);
-		expect(Warehouse.getByName("Ammo Crate")).toBe(
+		expect(Warehouse.getByName("Batumi")).toEqual(warehouse);
+		expect(Warehouse.getByName("Ammo Crate")).toEqual(
 			Warehouse.getCargoAsWarehouse(staticObject("Ammo Crate")),
 		);
 		expect(Warehouse.getByName("Nowhere")).toBeUndefined();
@@ -389,7 +389,7 @@ describe("Warehouse", () => {
 			"4.4.7.32": 2,
 		});
 		expect(inventory.liquids[3]).toBe(7);
-		expect(warehouse.getOwner()).toBe(base() as unknown as l_Object);
+		expect(warehouse.getOwner()).toEqual(base() as unknown as l_Object);
 	});
 });
 
@@ -487,8 +487,8 @@ describe("Weapon", () => {
 			target: enemy,
 		});
 		expect(shots).toEqual([weapon]);
-		expect(weapon.getLauncher()).toBe(shooter);
-		expect(weapon.getTarget()).toBe(enemy as unknown as l_Object);
+		expect(weapon.getLauncher()).toEqual(shooter);
+		expect(weapon.getTarget()).toEqual(enemy as unknown as l_Object);
 		expect(weapon.getTypeName()).toBe("AIM_120C");
 		expect(weapon.getName()).toMatch("^AIM_120C#");
 		expect(weapon.getCategory()).toBe(2);
@@ -554,16 +554,21 @@ describe("Object (base class functions)", () => {
 describe("instance identity", () => {
 	useFreshWorld();
 
-	test("every lookup of the same object returns the same table", () => {
+	// Verified in DCS 2.9.29: every lookup returns a NEW handle table, so the same object
+	// compares equal by content (`id_`) but never by identity. Compare handles with toEqual.
+	test("lookups of the same object return equal but distinct handles", () => {
 		const fromGroup: l_Group = required(unit().getGroup(), "group");
-		expect(fromGroup).toBe(group());
+		expect(fromGroup).toEqual(group());
+		expect(fromGroup).not.toBe(group());
 		const bases: l_Airbase[] = world.getAirbases();
-		expect(bases[0]).toBe(base());
+		expect(bases[0]).toEqual(base());
+		expect(bases[0]).not.toBe(base());
 		const statics: l_StaticObject[] = coalition.getStaticObjects(2);
-		expect(statics[0]).toBe(staticObject());
+		expect(statics[0]).toEqual(staticObject());
 		const members: l_Unit[] = group().getUnits();
-		expect(members[0]).toBe(unit());
-		expect(members).toContain(unit("Enfield-1-2"));
+		expect(members[0]).toEqual(unit());
+		expect(members[0]).not.toBe(unit());
+		expect(members).toContainEqual(unit("Enfield-1-2"));
 		expect(members).toEqual([anything(), anything()]);
 	});
 });

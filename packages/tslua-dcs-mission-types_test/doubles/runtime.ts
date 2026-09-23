@@ -27,7 +27,6 @@ const calls = new LuaTable<string, number>();
 const paths: string[] = [];
 const classParents = new LuaTable<object, object>();
 const classNames = new LuaTable<object, string>();
-const instanceCache = new LuaTable<object, LuaTable<number, object>>();
 
 function record(path: string): void {
 	calls.set(path, (calls.get(path) ?? 0) + 1);
@@ -179,21 +178,12 @@ function describe(value: unknown): string {
 }
 
 /**
- * The instance of `cls` for object id `id`. Instances are cached so that lookups return the same table
- * for the same object, as DCS does (`Group.getByName(name) === group`).
+ * A handle of `cls` for object id `id`. Like DCS, every lookup returns a NEW handle table
+ * (`{ id_ = ... }`), so two lookups of the same object are equal by content but never
+ * identical: verified against DCS 2.9.29, where `Group.getByName(name) ~= group`.
  */
 export function instanceOf<T>(cls: object, id: number): T {
-	let byId = instanceCache.get(cls);
-	if (!byId) {
-		byId = new LuaTable<number, object>();
-		instanceCache.set(cls, byId);
-	}
-	let instance = byId.get(id);
-	if (!instance) {
-		instance = setmetatable({ id_: id }, cls as LuaMetatable<object>);
-		byId.set(id, instance);
-	}
-	return instance as unknown as T;
+	return setmetatable({ id_: id }, cls as LuaMetatable<object>) as unknown as T;
 }
 
 /** The `id_` of an instance created by {@link instanceOf}. */
@@ -201,9 +191,8 @@ export function idOf(instance: unknown): number {
 	return (instance as { id_: number }).id_;
 }
 
-export function clearInstances(): void {
-	for (const [cls] of pairs(instanceCache)) instanceCache.delete(cls);
-}
+/** Kept for callers that reset state; handles are no longer cached, so there is nothing to clear. */
+export function clearInstances(): void {}
 
 /** Assigns a global without tripping over the `const` declarations of the mission types. */
 export function setGlobal(name: string, value: unknown): void {

@@ -495,7 +495,7 @@ describe("coalition", () => {
 		const replacement = coalition.addGroup(0, Group.Category.GROUND, data);
 		expect(group.isExist()).toBe(false);
 		expect(replacement.getCoalition()).toBe(coalition.side.RED);
-		expect(Group.getByName("Spawned")).toBe(replacement);
+		expect(Group.getByName("Spawned")).toEqual(replacement);
 		expect(() => coalition.addGroup(2, 2, { units: [] })).toThrow(
 			"needs a name",
 		);
@@ -509,7 +509,7 @@ describe("coalition", () => {
 			y: 2,
 		});
 		expect(hangar.getPoint()).toEqual({ x: 1, y: 0, z: 2 });
-		expect(StaticObject.getByName("New Hangar")).toBe(hangar);
+		expect(StaticObject.getByName("New Hangar")).toEqual(hangar);
 		const cargo = coalition.addStaticObject(2, {
 			name: "Crate",
 			type: "ammo_cargo",
