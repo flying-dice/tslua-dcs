@@ -6,7 +6,7 @@
 		"packages/tslua-dcs-mission-types",
 		"packages/tslua-http",
 		"packages/tslua-http-api",
-		"packages/tslua-rxi-json",
+		"packages/tslua-json",
 		"packages/tslua-base64"
 	],
 	"entryPointStrategy": "packages",

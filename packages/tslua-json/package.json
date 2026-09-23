@@ -1,11 +1,11 @@
 {
-	"name": "@flying-dice/tslua-base64",
+	"name": "@flying-dice/tslua-json",
 	"version": "0.33.0",
-	"description": "Base64 (RFC 4648) encoding and decoding for TypeScriptToLua, written in TypeScript and compatible with Lua 5.1 / DCS World",
+	"description": "JSON (RFC 8259) encoding and decoding for TypeScriptToLua, written in TypeScript and compatible with Lua 5.1 / DCS World",
 	"keywords": [
 		"lua",
 		"dcs",
-		"base64"
+		"json"
 	],
 	"repository": {
 		"type": "git",
@@ -36,6 +36,5 @@
 		"lua-types": "^2.14.1",
 		"typescript": "6.0.2",
 		"typescript-to-lua": "^1.37.1"
-	},
-	"gitHead": "a6ae4c01c5f5796bcc1c0e88d4b790d83de03340"
+	}
 }
