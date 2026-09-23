@@ -10,4 +10,5 @@ docs
 /packages/tslua-http-api/.test/
 /packages/tslua-dcs-mission-types_test/.test/
 /packages/tslua-dcs-gui-types_test/.test/
+/packages/tslua-json/.test/
 /packages/tslua-base64/.test/
