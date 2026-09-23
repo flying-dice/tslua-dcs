@@ -77,6 +77,44 @@ describe("fn()", () => {
 		expect(mock(2)).toBe(-2);
 	});
 
+	test("interleaved once-behaviours run in registration order (return first)", () => {
+		const mock = fn<(x: number) => number>((x) => x);
+		mock
+			.mockReturnValueOnce(100)
+			.mockImplementationOnce((x) => x * 10)
+			.mockReturnValueOnce(200)
+			.mockImplementationOnce((x) => x * 20);
+		expect(mock(2)).toBe(100);
+		expect(mock(2)).toBe(20);
+		expect(mock(2)).toBe(200);
+		expect(mock(2)).toBe(40);
+		expect(mock(2)).toBe(2); // queue drained: back to the default implementation
+	});
+
+	test("interleaved once-behaviours run in registration order (implementation first)", () => {
+		const mock = fn<(x: number) => number>().mockReturnValue(7);
+		mock
+			.mockImplementationOnce((x) => x * 10)
+			.mockReturnValueOnce(100)
+			.mockImplementationOnce((x) => x * 20)
+			.mockReturnValueOnce(200);
+		expect(mock(2)).toBe(20);
+		expect(mock(2)).toBe(100);
+		expect(mock(2)).toBe(40);
+		expect(mock(2)).toBe(200);
+		expect(mock(2)).toBe(7); // queue drained: back to mockReturnValue
+		expect(mock.mock.results.map((result) => result.value)).toEqual([
+			20, 100, 40, 200, 7,
+		]);
+	});
+
+	test("mockReset clears the shared once-queue", () => {
+		const mock = fn<() => number>();
+		mock.mockReturnValueOnce(1).mockImplementationOnce(() => 2);
+		mock.mockReset();
+		expect(mock()).toBe(undefined);
+	});
+
 	test("records and rethrows errors", () => {
 		const mock = fn(() => error("broken", 0));
 		expect(() => mock()).toThrow({ exact: "broken" });

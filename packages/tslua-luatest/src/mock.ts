@@ -70,12 +70,19 @@ interface MockInternals {
 	state: MockState;
 	name: string;
 	implementation?: AnyFunction;
-	onceImplementations: AnyFunction[];
+	/**
+	 * One-shot behaviours from mockReturnValueOnce and mockImplementationOnce, in
+	 * registration order: a single queue, so interleaving the two APIs is honoured.
+	 */
+	onceQueue: OnceBehaviour[];
 	hasDefaultReturn: boolean;
 	defaultReturn: unknown;
-	onceReturns: { value: unknown }[];
 	restore?: () => void;
 }
+
+type OnceBehaviour =
+	| { kind: "return"; value: unknown }
+	| { kind: "implementation"; implementation: AnyFunction };
 
 const registry = setmetatable(new LuaTable<object, MockInternals>(), {
 	__mode: "k",
@@ -98,21 +105,20 @@ function invoke(
 ): LuaMultiReturn<any[]> {
 	internals.state.calls.push(args);
 	internals.state.lastCall = args;
-	const onceImplementation = internals.onceImplementations.shift();
-	const implementation = onceImplementation ?? internals.implementation;
-	const onceReturn =
-		onceImplementation === undefined
-			? internals.onceReturns.shift()
-			: undefined;
-
-	if (onceReturn !== undefined) {
-		internals.state.results.push({ type: "return", value: onceReturn.value });
-		return $multi(onceReturn.value);
+	const once = internals.onceQueue.shift();
+	if (once !== undefined && once.kind === "return") {
+		internals.state.results.push({ type: "return", value: once.value });
+		return $multi(once.value);
 	}
-	if (
-		implementation === undefined ||
-		(onceImplementation === undefined && internals.hasDefaultReturn)
-	) {
+	// A queued one-shot implementation wins; otherwise mockReturnValue
+	// overrides the default implementation, as in Jest.
+	const implementation =
+		once !== undefined
+			? once.implementation
+			: internals.hasDefaultReturn
+				? undefined
+				: internals.implementation;
+	if (implementation === undefined) {
 		const value = internals.hasDefaultReturn
 			? internals.defaultReturn
 			: undefined;
@@ -136,10 +142,9 @@ function createMock<T extends AnyFunction>(
 		state: newState(),
 		name,
 		implementation,
-		onceImplementations: [],
+		onceQueue: [],
 		hasDefaultReturn: false,
 		defaultReturn: undefined,
-		onceReturns: [],
 	};
 	const mock: any = {
 		__luatest_mock: true,
@@ -156,7 +161,7 @@ function createMock<T extends AnyFunction>(
 		return mock;
 	};
 	mock.mockReturnValueOnce = (value: unknown) => {
-		internals.onceReturns.push({ value });
+		internals.onceQueue.push({ kind: "return", value });
 		return mock;
 	};
 	mock.mockImplementation = (value: AnyFunction) => {
@@ -165,7 +170,7 @@ function createMock<T extends AnyFunction>(
 		return mock;
 	};
 	mock.mockImplementationOnce = (value: AnyFunction) => {
-		internals.onceImplementations.push(value);
+		internals.onceQueue.push({ kind: "implementation", implementation: value });
 		return mock;
 	};
 	const clear = () => {
@@ -179,10 +184,9 @@ function createMock<T extends AnyFunction>(
 	mock.mockReset = () => {
 		clear();
 		internals.implementation = undefined;
-		internals.onceImplementations = [];
+		internals.onceQueue = [];
 		internals.hasDefaultReturn = false;
 		internals.defaultReturn = undefined;
-		internals.onceReturns = [];
 		return mock;
 	};
 	mock.mockRestore = () => {

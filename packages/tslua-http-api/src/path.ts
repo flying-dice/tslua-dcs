@@ -19,13 +19,18 @@ export const gSubPathParamsToPattern = (route: string): string => {
 	return result[0];
 };
 
+/**
+ * Escapes the Lua pattern magic characters (`^ $ ( ) % . [ ] * + - ?`) in a route so that every character
+ * of the route, other than its `:name` parameters, matches literally.
+ *
+ * @param route
+ */
 export const gSubEscapeReservedChars = (route: string): string => {
 	logger.debug(`Escaping Path matcher ${route}`);
-	// replace all reserved chars with their escaped version including _
 	const [patternRoute] = string.gsub(
 		route,
-		"([%%w_%%%%-%%.~!$&'()*+,;=])",
-		"%%%1",
+		"[%^%$%(%)%%%.%[%]%*%+%-%?]",
+		"%%%0",
 	);
 	logger.debug(`Escaping Path matcher ${patternRoute}`);
 	return patternRoute;
@@ -41,7 +46,7 @@ export const getParamNames = (route: string): string[] => {
 	logger.debug(`Getting Param names from ${route}`);
 	const names: string[] = [];
 
-	for (const [name] of string.gmatch(route, ":(%w+)")) {
+	for (const [name] of string.gmatch(route, ":([%w_]+)")) {
 		logger.debug(`Adding ${name} to params array`);
 		names.push(name);
 	}
