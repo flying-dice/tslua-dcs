@@ -1,0 +1,15 @@
+{
+	"name": "@flying-dice/tslua-lua51",
+	"version": "0.33.0",
+	"description": "Repository-managed Lua 5.1.5 interpreter (with LuaSocket), built in Rust with mlua and a pinned toolchain",
+	"private": true,
+	"license": "ISC",
+	"type": "module",
+	"bin": {
+		"lua51": "./bin/lua51.mjs"
+	},
+	"scripts": {
+		"build": "cargo build --release --locked --manifest-path Cargo.toml",
+		"test": "cargo fmt --check && cargo clippy --release --locked --all-targets -- -D warnings && node ./bin/lua51.mjs --preload ./tests/dcs-doubles.lua ./tests/smoke.lua first second && node --test ./tests/launcher.test.mjs"
+	}
+}

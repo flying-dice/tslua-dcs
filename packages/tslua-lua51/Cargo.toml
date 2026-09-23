@@ -1,0 +1,40 @@
+# The repository-managed Lua 5.1.5 interpreter. Every Lua script the repo runs
+# (package `test:lua` suites, the http-api dev server) launches through this
+# binary via the `lua51` npm bin, so nothing depends on a host Lua install.
+#
+#   crates/lua51 — `tslua-lua51`, a stock-`lua`-compatible CLI on mlua with
+#                  vendored PUC Lua 5.1.5 (the ABI DCS ships) and statically
+#                  linked LuaSocket from vendor/luasocket.
+[workspace]
+resolver = "2"
+members = ["crates/lua51"]
+
+[workspace.package]
+version = "0.33.0"
+edition = "2021"
+license = "ISC"
+
+# Same policy as the dcs-studio bridge: pedantic on wholesale, plus the
+# restriction lints that keep panic paths out of the interpreter.
+[workspace.lints.rust]
+unsafe_op_in_unsafe_fn = "deny"
+
+[workspace.lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+unreachable = "deny"
+todo = "deny"
+unimplemented = "deny"
+dbg_macro = "deny"
+
+[workspace.dependencies]
+# `vendored` compiles PUC Lua 5.1.5 from the lua-src crate: no system Lua.
+mlua = { version = "0.12", features = ["lua51", "vendored"] }
+mlua-sys = { version = "0.12", features = ["lua51", "vendored"] }
+cc = "1"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

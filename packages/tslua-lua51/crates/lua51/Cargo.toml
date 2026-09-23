@@ -1,0 +1,22 @@
+[package]
+name = "tslua-lua51"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[[bin]]
+name = "tslua-lua51"
+path = "src/main.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+mlua.workspace = true
+# Direct dependency so build.rs receives DEP_LUA_INCLUDE (the vendored Lua
+# headers) for compiling LuaSocket; see build.rs.
+mlua-sys.workspace = true
+
+[build-dependencies]
+cc.workspace = true
