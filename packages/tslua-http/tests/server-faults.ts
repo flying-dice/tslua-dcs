@@ -78,6 +78,7 @@ describe("HttpServer with socket doubles", () => {
 				bytesWritten: 0,
 				closed: 0,
 				active: 0,
+				bufferedBytes: 0,
 			});
 			expect(requests).toHaveLength(0);
 			expect(logError).not.toHaveBeenCalled();
@@ -128,6 +129,7 @@ describe("HttpServer with socket doubles", () => {
 				bytesWritten: HELLO.length,
 				closed: 1,
 				active: 0,
+				bufferedBytes: 0,
 			});
 			expect(logError).not.toHaveBeenCalled();
 			expect(logWarn).not.toHaveBeenCalled();
@@ -146,14 +148,14 @@ describe("HttpServer with socket doubles", () => {
 			const b = fakeClient();
 			const { server, listener } = fakeServer([a, b]);
 			server.pump();
-			expect(server.activeConnections).toBe(2);
+			expect(server.connectionCount()).toBe(2);
 
 			server.close();
 			server.close();
 			expect(listener.close).toHaveBeenCalledTimes(1);
 			expect(a.close).toHaveBeenCalledTimes(1);
 			expect(b.close).toHaveBeenCalledTimes(1);
-			expect(server.activeConnections).toBe(0);
+			expect(server.connectionCount()).toBe(0);
 
 			const acceptsBefore = listener.accept.mock.calls.length;
 			expect(server.pump().visited).toBe(0);

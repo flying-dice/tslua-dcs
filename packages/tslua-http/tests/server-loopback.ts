@@ -245,7 +245,7 @@ describe("HttpServer over loopback", () => {
 			drive(
 				server,
 				[idle],
-				() => idle.requestSent && server.activeConnections === 1,
+				() => idle.requestSent && server.connectionCount() === 1,
 			);
 
 			const healthy = open(server, "GET /healthy HTTP/1.1\r\n\r\n");
@@ -256,7 +256,7 @@ describe("HttpServer over loopback", () => {
 			expect(healthy.response()).toBe(HELLO);
 			expect(requests.map((r) => r.path)).toEqual(["/healthy"]);
 			expect(idle.done).toBe(false);
-			expect(server.activeConnections).toBe(1);
+			expect(server.connectionCount()).toBe(1);
 
 			clock.advance(10);
 			drive(server, [idle]);
@@ -285,13 +285,13 @@ describe("HttpServer over loopback", () => {
 			drive(server, [stalled], () => {
 				if (!bigDispatched) return false;
 				const stats = server.pump();
-				return stats.bytesWritten === 0 && server.activeConnections === 1;
+				return stats.bytesWritten === 0 && server.connectionCount() === 1;
 			});
 
 			const healthy = open(server, "GET /small HTTP/1.1\r\n\r\n");
 			drive(server, [stalled, healthy], () => healthy.done);
 			expect(parseResponse(healthy.response()).body).toBe("small");
-			expect(server.activeConnections).toBe(1);
+			expect(server.connectionCount()).toBe(1);
 
 			// The stalled client resumes reading and receives every byte exactly once.
 			const resumed = drive(server, [], () => {
@@ -399,7 +399,7 @@ describe("HttpServer over loopback", () => {
 		test("close() releases the listening socket and open connections", () => {
 			const { server, requests } = recordingServer();
 			const client = open(server, "GET / HTTP/1.1\r\nHost: x");
-			drive(server, [client], () => server.activeConnections === 1);
+			drive(server, [client], () => server.connectionCount() === 1);
 			server.close();
 			server.close();
 			servers.splice(0); // already closed

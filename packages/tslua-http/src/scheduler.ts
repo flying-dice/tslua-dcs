@@ -1,4 +1,8 @@
-import type { Logger } from "@flying-dice/tslua-common";
+import {
+	type Logger,
+	Logger as LoggerClass,
+	LogLevel,
+} from "@flying-dice/tslua-common";
 import type { TCP } from "socket";
 import { HttpStatus } from "./constants";
 import type { ResolvedServerOptions } from "./options";
@@ -34,6 +38,8 @@ export interface PumpStats {
 	closed: number;
 	/** Connections still open when the pump returned. */
 	active: number;
+	/** Bytes of request bodies and responses retained when the pump returned (see `maxBufferedBytes`). */
+	bufferedBytes: number;
 }
 
 /** Everything the server retains for one connection between pumps. */
@@ -63,6 +69,10 @@ interface Connection {
 	/** 1-based index of the next response byte to send. */
 	writePos: number;
 	writeDeadline: number;
+	/** Set during a visit when the connection wanted a budgeted operation (I/O or dispatch) and was refused. */
+	starved: boolean;
+	/** Bytes of `maxBufferedBytes` this connection holds: its declared body, then its response. */
+	reserved: number;
 }
 
 /** Budgets shared by every operation of one pump. */
@@ -77,14 +87,24 @@ interface PumpBudget {
  * The connection machinery behind `HttpServer`: a set of non-blocking connections, each with explicit
  * state that survives between pumps, serviced round-robin within per-pump budgets. Internal; kept out of
  * `HttpServer` so its members cannot collide with those of subclasses such as `Application`.
+ *
+ * Connections are kept in service order. Each pump visits them from the front; afterwards the order becomes:
+ * connections the pump did not reach, then connections that were refused a budgeted operation (a dispatch,
+ * or I/O once the byte budget ran out), then everyone else. New connections join at the back. So a connection
+ * that loses out in one pump is first in the next, however many new clients keep arriving.
  */
+// No `get`/`set` accessors in this file or on HttpServer: TypeScriptToLua routes every property access on an
+// instance of a class with accessors through descriptor lookups, which made the whole pump markedly slower.
 export class ConnectionScheduler {
+	/** Open connections in service order. */
 	private connections: Connection[] = [];
 	private nextConnectionId = 1;
-	/** The id of the connection the next pump visits first (or the next one accepted after it). */
-	private nextVisitId = 1;
+	/** The sum of every connection's `reserved`. */
+	private bufferedBytes = 0;
 	private lastNow = -math.huge;
 	private closed = false;
+	/** Reused by every pump to avoid a table allocation per call. */
+	private readonly budget: PumpBudget = { io: 0, dispatches: 0, timeLimit: 0 };
 
 	constructor(
 		private readonly listener: TCP,
@@ -97,7 +117,7 @@ export class ConnectionScheduler {
 	) {}
 
 	/** The number of open connections. */
-	get activeConnections(): number {
+	connectionCount(): number {
 		return this.connections.length;
 	}
 
@@ -120,16 +140,16 @@ export class ConnectionScheduler {
 			bytesWritten: 0,
 			closed: 0,
 			active: this.connections.length,
+			bufferedBytes: this.bufferedBytes,
 		};
 		if (this.closed) return stats;
 
 		const options = this.options;
+		const budget = this.budget;
+		budget.io = options.maxIoBytesPerPump;
+		budget.dispatches = options.maxDispatchesPerPump;
 		const start = this.now();
-		const budget: PumpBudget = {
-			io: options.maxIoBytesPerPump,
-			dispatches: options.maxDispatchesPerPump,
-			timeLimit: start + options.maxPumpSeconds,
-		};
+		budget.timeLimit = start + options.maxPumpSeconds;
 
 		while (
 			stats.accepted < options.maxAcceptsPerPump &&
@@ -141,7 +161,7 @@ export class ConnectionScheduler {
 			const [client] = this.listener.accept();
 			// "timeout" means nobody is waiting; any other error (such as "closed") also ends accepting for this pump.
 			if (!client) break;
-			this.adopt(client);
+			this.adopt(client, start);
 			stats.accepted++;
 		}
 
@@ -149,35 +169,82 @@ export class ConnectionScheduler {
 		const list = this.connections;
 		const count = list.length;
 		if (count > 0) {
-			let first = 0;
-			while (first < count && list[first].id < this.nextVisitId) {
-				first++;
-			}
-			if (first === count) first = 0;
-
-			const visits = math.min(count, options.maxVisitsPerPump);
-			let visited = 0;
-			while (visited < visits) {
-				if (visited > 0 && this.now() >= budget.timeLimit) break;
-				const conn = list[(first + visited) % count];
-				this.visit(conn, budget, stats);
-				visited++;
-				if (this.closed) break;
-			}
-			stats.visited = visited;
-
-			// Start the next pump after the last connection visited; when all were visited, rotate by one so that
-			// the per-pump byte and dispatch budgets are not always spent on the same connections first.
-			const next = (first + (visited === count ? 1 : visited)) % count;
-			this.nextVisitId = list[next].id;
-
-			this.connections = this.connections.filter(
-				(conn) => conn.state !== "CLOSED",
+			const visited = this.visitAll(
+				list,
+				math.min(count, options.maxVisitsPerPump),
+				budget,
+				stats,
 			);
+			stats.visited = visited;
+			if (!this.closed) this.reorder(list, visited);
 		}
 
 		stats.active = this.connections.length;
+		stats.bufferedBytes = this.bufferedBytes;
 		return stats;
+	}
+
+	/**
+	 * Visits connections from the front of `list` until `visits` are done or the time budget is spent, and returns
+	 * how many were visited. A connection whose visit throws is closed and the loop carries on. (One protected call
+	 * per pump rather than per visit: in Lua each `try` costs a closure.)
+	 */
+	private visitAll(
+		list: Connection[],
+		visits: number,
+		budget: PumpBudget,
+		stats: PumpStats,
+	): number {
+		let visited = 0;
+		while (visited < visits) {
+			try {
+				while (visited < visits) {
+					if (visited > 0 && this.now() >= budget.timeLimit) return visited;
+					this.visit(list[visited], budget, stats);
+					visited++;
+					if (this.closed) return visited;
+				}
+			} catch (e) {
+				const conn = list[visited];
+				this.fail(conn, `unexpected error: ${e}`, "error");
+				stats.closed++;
+				visited++;
+				if (this.closed) return visited;
+			}
+		}
+		return visited;
+	}
+
+	/** Rebuilds the service order after a pump that visited the first `visited` connections of `list`. */
+	private reorder(list: Connection[], visited: number) {
+		if (visited === list.length && this.connections === list) {
+			// Common case: everyone was visited, nobody closed or was refused anything; the order stands.
+			let unchanged = true;
+			for (const conn of list) {
+				if (conn.starved || conn.state === "CLOSED") {
+					unchanged = false;
+					break;
+				}
+			}
+			if (unchanged) return;
+		}
+		const next: Connection[] = [];
+		for (let i = visited; i < list.length; i++) {
+			if (list[i].state !== "CLOSED") next.push(list[i]);
+		}
+		for (let i = 0; i < visited; i++) {
+			if (list[i].starved && list[i].state !== "CLOSED") next.push(list[i]);
+		}
+		for (let i = 0; i < visited; i++) {
+			if (!list[i].starved && list[i].state !== "CLOSED") next.push(list[i]);
+		}
+		// Connections added re-entrantly (by a handler calling pump) are not in `list`.
+		if (this.connections !== list) {
+			for (const conn of this.connections) {
+				if (conn.state !== "CLOSED" && !next.includes(conn)) next.push(conn);
+			}
+		}
+		this.connections = next;
 	}
 
 	/** The clock, never going backwards (see {@link HttpServerOptions.clock}). */
@@ -187,9 +254,8 @@ export class ConnectionScheduler {
 		return this.lastNow;
 	}
 
-	private adopt(client: TCP) {
+	private adopt(client: TCP, now: number) {
 		client.settimeout(0);
-		const now = this.now();
 		const conn: Connection = {
 			id: this.nextConnectionId++,
 			socket: client,
@@ -207,51 +273,57 @@ export class ConnectionScheduler {
 			bytesRead: 0,
 			writePos: 1,
 			writeDeadline: math.huge,
+			starved: false,
+			reserved: 0,
 		};
 		this.connections.push(conn);
-		this.logger.debug(`Accepted connection #${conn.id}`);
+		if (debugEnabled()) this.logger.debug(`Accepted connection #${conn.id}`);
 	}
 
-	/** Advances one connection as far as it can go without waiting; never throws. */
+	/** Advances one connection as far as it can go without waiting. Errors propagate to `visitAll`. */
 	private visit(conn: Connection, budget: PumpBudget, stats: PumpStats) {
-		try {
-			let visitIo = math.min(this.options.maxIoBytesPerVisit, budget.io);
-			const now = this.now();
+		conn.starved = false;
+		let visitIo = math.min(this.options.maxIoBytesPerVisit, budget.io);
+		const now = this.now();
 
-			if (conn.state === "READING_HEADERS" || conn.state === "READING_BODY") {
-				const idle = this.options.idleTimeout;
-				if (now >= conn.requestDeadline) {
-					this.reject(
-						conn,
-						HttpStatus.REQUEST_TIMEOUT,
-						"request deadline expired",
-					);
-				} else if (idle > 0 && now - conn.lastReadAt >= idle) {
-					this.reject(conn, HttpStatus.REQUEST_TIMEOUT, "idle timeout expired");
-				} else {
-					visitIo -= this.readInput(conn, visitIo, budget, stats);
-				}
+		if (conn.state === "READING_HEADERS" || conn.state === "READING_BODY") {
+			const idle = this.options.idleTimeout;
+			if (now >= conn.requestDeadline) {
+				this.reject(
+					conn,
+					HttpStatus.REQUEST_TIMEOUT,
+					"request deadline expired",
+				);
+			} else if (idle > 0 && now - conn.lastReadAt >= idle) {
+				this.reject(conn, HttpStatus.REQUEST_TIMEOUT, "idle timeout expired");
+			} else if (visitIo <= 0) {
+				conn.starved = true;
+			} else {
+				visitIo -= this.readInput(conn, visitIo, budget, stats, now);
 			}
+		}
 
+		if (conn.state === "READY_TO_DISPATCH") {
 			if (
-				conn.state === "READY_TO_DISPATCH" &&
 				budget.dispatches > 0 &&
 				(stats.dispatched === 0 || this.now() < budget.timeLimit)
 			) {
 				budget.dispatches--;
 				stats.dispatched++;
 				this.dispatch(conn);
+			} else {
+				conn.starved = true;
 			}
+		}
 
-			if (conn.state === "WRITING_RESPONSE") {
-				if (this.now() >= conn.writeDeadline) {
-					this.fail(conn, "response deadline expired", "warn");
-				} else {
-					this.writeOutput(conn, visitIo, budget, stats);
-				}
+		if (conn.state === "WRITING_RESPONSE") {
+			if (now >= conn.writeDeadline) {
+				this.fail(conn, "response deadline expired", "warn");
+			} else if (visitIo <= 0) {
+				conn.starved = true;
+			} else {
+				this.writeOutput(conn, visitIo, budget, stats);
 			}
-		} catch (e) {
-			this.fail(conn, `unexpected error: ${e}`, "error");
 		}
 		if (conn.state === "CLOSED") stats.closed++;
 	}
@@ -262,6 +334,7 @@ export class ConnectionScheduler {
 		allowance: number,
 		budget: PumpBudget,
 		stats: PumpStats,
+		now: number,
 	): number {
 		let total = 0;
 		while (
@@ -280,7 +353,7 @@ export class ConnectionScheduler {
 				budget.io -= bytes.length;
 				stats.bytesRead += bytes.length;
 				conn.bytesRead += bytes.length;
-				conn.lastReadAt = this.now();
+				conn.lastReadAt = now;
 				this.consume(conn, bytes);
 			}
 
@@ -317,6 +390,18 @@ export class ConnectionScheduler {
 				this.reject(conn, result.status, result.reason);
 				return;
 			}
+			if (
+				result.bodyLength > 0 &&
+				this.bufferedBytes + result.bodyLength > this.options.maxBufferedBytes
+			) {
+				this.reject(
+					conn,
+					HttpStatus.SERVICE_UNAVAILABLE,
+					`a ${result.bodyLength}-byte body does not fit in the buffer budget (${this.bufferedBytes} of ${this.options.maxBufferedBytes} bytes in use)`,
+				);
+				return;
+			}
+			this.reserve(conn, result.bodyLength);
 			conn.request = result.request;
 			conn.bodyExpected = result.bodyLength;
 			if (result.bodyLength === 0) {
@@ -324,9 +409,11 @@ export class ConnectionScheduler {
 				conn.state = "READY_TO_DISPATCH";
 				return;
 			}
-			this.logger.debug(
-				`Connection #${conn.id}: reading request body of ${result.bodyLength} bytes`,
-			);
+			if (debugEnabled()) {
+				this.logger.debug(
+					`Connection #${conn.id}: reading request body of ${result.bodyLength} bytes`,
+				);
+			}
 			conn.state = "READING_BODY";
 			conn.bodyChunks = [];
 			if (result.rest.length > 0) this.appendBody(conn, result.rest);
@@ -356,6 +443,7 @@ export class ConnectionScheduler {
 		conn.state = "DISPATCHING";
 		const request = conn.request as HttpRequest;
 		conn.request = undefined;
+		this.reserve(conn, 0); // the body now belongs to the handler
 
 		let response: HttpResponse;
 		try {
@@ -389,7 +477,14 @@ export class ConnectionScheduler {
 			);
 			return;
 		}
+		this.reserve(conn, serialized.length);
 		this.startResponse(conn, serialized, response.status);
+	}
+
+	/** Sets how many bytes of the buffer budget `conn` holds. */
+	private reserve(conn: Connection, bytes: number) {
+		this.bufferedBytes += bytes - conn.reserved;
+		conn.reserved = bytes;
 	}
 
 	private serverError(conn: Connection, reason: string) {
@@ -471,9 +566,11 @@ export class ConnectionScheduler {
 		}
 
 		if (conn.writePos > length) {
-			this.logger.debug(
-				`Connection #${conn.id}: sent ${conn.responseStatus} (${length} bytes), closing`,
-			);
+			if (debugEnabled()) {
+				this.logger.debug(
+					`Connection #${conn.id}: sent ${conn.responseStatus} (${length} bytes), closing`,
+				);
+			}
 			this.release(conn);
 		}
 	}
@@ -499,12 +596,18 @@ export class ConnectionScheduler {
 		conn.request = undefined;
 		conn.bodyChunks = undefined;
 		conn.response = undefined;
+		this.reserve(conn, 0);
 		try {
 			conn.socket.close();
 		} catch (e) {
 			this.logger.error(`Connection #${conn.id}: close failed: ${e}`);
 		}
 	}
+}
+
+/** Skips building debug messages nobody will see. */
+function debugEnabled(): boolean {
+	return LoggerClass.level <= LogLevel.DEBUG;
 }
 
 function errorResponse(status: HttpStatus): string {

@@ -60,8 +60,7 @@ A request without a body goes from `READING_HEADERS` straight to `READY_TO_DISPA
 
 1. accepts up to `maxAcceptsPerPump` new connections, while fewer than `maxConnections` are open. At capacity it stops
    accepting, and new clients wait in the operating system's listen backlog;
-2. visits open connections round-robin, starting after the last connection the previous pump visited, up to
-   `maxVisitsPerPump` visits. A visit:
+2. visits open connections in service order, up to `maxVisitsPerPump` visits. A visit:
    - reads what is available (bounded `receive(n)` calls on a non-blocking socket, partial data included) and feeds it
      to an incremental parser;
    - runs the request handler once the request is complete, at most once per request;
@@ -71,13 +70,16 @@ A request without a body goes from `READING_HEADERS` straight to `READY_TO_DISPA
 3. stops early when a per-pump budget is spent: `maxIoBytesPerPump` bytes read plus written, `maxDispatchesPerPump`
    handler runs, or `maxPumpSeconds` of clock time. The first accept, visit and dispatch of a pump always happen, so
    the server keeps making progress with a coarse clock.
+4. reorders the connections for the next pump: first the ones this pump did not reach, then the ones that were refused
+   a budgeted operation (a handler run, or I/O once the byte budget ran out), then the rest. New connections join at
+   the back. A connection that loses out in one pump is therefore first in the next, however many new clients arrive.
 
 No socket call waits: a read or write that would block ends that connection's visit, and the connection is revisited on
 a later pump. The time budget is cooperative. It is checked between operations and cannot interrupt a handler that is
 already running, but no further handler starts once it is spent.
 
 `pump()` returns counters for the call (`accepted`, `visited`, `dispatched`, `bytesRead`, `bytesWritten`, `closed`,
-`active`), which you can use for your own bounded instrumentation. The server logs connection events at debug level
+`active`, `bufferedBytes`), and `connectionCount()` returns the number of open connections. You can use them for your own bounded instrumentation. The server logs connection events at debug level
 and failures at warn or error level. It never logs per pump, and a read or write that would block is never logged.
 
 ## Options and defaults
@@ -87,7 +89,8 @@ your workload.
 
 | Option | Default | Meaning |
 |---|---|---|
-| `maxConnections` | `8` | Open connections; accepting pauses at this count |
+| `maxConnections` | `64` | Open connections; accepting pauses at this count. Idle connections are cheap, so keep this well above the expected number of clients: a few idle clients can otherwise hold every slot until their deadlines expire |
+| `maxBufferedBytes` | `33554432` | Budget for request bodies plus serialized responses across all connections; a body that does not fit gets `503` (see below) |
 | `maxRequestHeaderBytes` | `8192` | Request line plus headers; more gets `431` |
 | `maxRequestHeaderCount` | `64` | Header lines; more gets `431` |
 | `maxRequestBodyBytes` | `1048576` | Largest `Content-Length`; more gets `413` before any body is read |
@@ -104,11 +107,16 @@ your workload.
 | `maxPumpSeconds` | `0.005` | Soft time budget per pump |
 | `clock` | `socket.gettime` | Clock for deadlines and the time budget |
 
-**Memory bound.** A connection holds at most one head buffer (`maxRequestHeaderBytes` plus one read chunk), then the
-request body (at most `maxRequestBodyBytes`, released at dispatch), then the serialized response (at most
-`maxResponseBytes`). The server's own buffers are therefore bounded by
-`maxConnections × (maxRequestHeaderBytes + ioChunkBytes + max(maxRequestBodyBytes, maxResponseBytes))`, which is about
-32 MiB with the defaults. While a complete body is joined into one string its fragments exist alongside it for a
+**Memory bound.** Request bodies and serialized responses are counted against the `maxBufferedBytes` budget. A declared
+body is reserved when its head arrives, and one that does not fit gets `503 Service Unavailable` before anything is
+read or dispatched, so retained bodies never exceed the budget. A response is counted from dispatch until its connection
+closes. That makes new bodies wait for room, but it never delays or fails a request: a few clients that stop reading
+must not stop the server answering everyone else. Responses are bounded per connection by `maxResponseBytes` and in time
+by `responseTimeout`. Each connection also holds at most one head buffer (`maxRequestHeaderBytes` plus one read chunk).
+The server's own buffers are therefore bounded by
+`maxBufferedBytes + maxConnections × (maxRequestHeaderBytes + ioChunkBytes + maxResponseBytes)`, about 289 MiB with the
+defaults. That worst case needs 64 clients each leaving a 4 MiB response unread, so lower `maxResponseBytes` or
+`maxConnections` if your responses are small or your clients few. While a complete body is joined into one string its fragments exist alongside it for a
 moment, and strings the handler builds for itself (such as a response body before serialization) are outside this
 bound.
 
@@ -136,6 +144,7 @@ network deadlines would never expire.
 | `Content-Length` above `maxRequestBodyBytes` | `413` |
 | Any `Expect` header (the server never sends `100 Continue`) | `417` |
 | Head larger than `maxRequestHeaderBytes`, or more than `maxRequestHeaderCount` headers | `431` |
+| A declared body that does not fit in the free `maxBufferedBytes` budget | `503` |
 | Request not complete within `requestTimeout` (or `idleTimeout`) | `408` |
 
 - A request is dispatched only when it is complete. If the client half-closes after a complete request, it is still

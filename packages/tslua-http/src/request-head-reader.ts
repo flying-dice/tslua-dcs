@@ -1,5 +1,6 @@
-import { CRLF, HttpStatus } from "./constants";
-import { type HttpRequest, readRequestHead } from "./request";
+import { HttpStatus } from "./constants";
+import { getQueryParams } from "./query-params";
+import type { HttpRequest } from "./request";
 
 /** Limits applied while reading a request head. */
 export interface RequestHeadLimits {
@@ -66,11 +67,6 @@ export class RequestHeadReader {
 
 	constructor(private readonly limits: RequestHeadLimits) {}
 
-	/** The number of head bytes held so far. */
-	get bufferedBytes(): number {
-		return this.buffer.length;
-	}
-
 	push(data: string): HeadResult {
 		this.buffer = this.buffer + data;
 
@@ -119,18 +115,24 @@ export class RequestHeadReader {
 			return reject(HttpStatus.BAD_REQUEST, "empty request line");
 		}
 
-		// Inspect the framing headers on the raw lines: the parsed header record keeps only the last of repeated names.
+		// Parse the headers exactly as `readRequestHead` does, and inspect the framing headers on the raw lines while
+		// doing so: the header record keeps only the last of repeated names.
+		const headers: Record<string, string> = {};
 		const contentLengths: string[] = [];
 		let transferEncoding = false;
 		let expect = false;
 		for (let i = 1; i < this.lines.length; i++) {
 			const line = this.lines[i];
-			const separator = line.indexOf(":");
-			if (separator < 0) {
+			const [colon] = string.find(line, ":", 1, true);
+			if (colon === undefined) {
 				return reject(HttpStatus.BAD_REQUEST, `Malformed header line: ${line}`);
 			}
-			const name = line.substring(0, separator).trim().toLowerCase();
-			const value = line.substring(separator + 1).trim();
+			const name = string
+				.sub(line, 1, colon - 1)
+				.trim()
+				.toLowerCase();
+			const value = string.sub(line, colon + 1).trim();
+			headers[name] = value;
 			if (name === "content-length") contentLengths.push(value);
 			else if (name === "transfer-encoding") transferEncoding = true;
 			else if (name === "expect") expect = true;
@@ -178,15 +180,30 @@ export class RequestHeadReader {
 			return reject(HttpStatus.EXPECTATION_FAILED, "Expect is not supported");
 		}
 
-		let request: HttpRequest;
-		try {
-			request = readRequestHead(this.lines.join(CRLF));
-		} catch (e) {
-			return reject(HttpStatus.BAD_REQUEST, `${e}`);
+		// The common "METHOD target PROTOCOL" line is matched with one pattern; anything else is split exactly as
+		// readRequestHead splits it, so odd lines parse the same way they always did.
+		let [method, originalUrl, protocol] = string.match(
+			this.lines[0],
+			"^([^ ]+) ([^ ]+) ([^ ]+)$",
+		);
+		if (method === undefined) {
+			[method, originalUrl, protocol] = this.lines[0].split(" ");
 		}
-		if (!request.method || !request.originalUrl) {
+		if (!method || originalUrl === undefined) {
 			return reject(HttpStatus.BAD_REQUEST, "malformed request line");
 		}
+		const [query] = string.find(originalUrl, "?", 1, true);
+		const request: HttpRequest = {
+			method,
+			path:
+				query === undefined
+					? originalUrl
+					: string.sub(originalUrl, 1, query - 1),
+			protocol,
+			headers,
+			originalUrl,
+			parameters: query === undefined ? {} : getQueryParams(originalUrl),
+		};
 
 		return { kind: "complete", request, bodyLength, rest };
 	}

@@ -1,5 +1,6 @@
 import { describe, expect, test } from "@flying-dice/tslua-luatest";
 import { HttpStatus } from "../src/constants";
+import { readRequestHead } from "../src/request";
 import {
 	type HeadResult,
 	type RequestHeadLimits,
@@ -117,5 +118,23 @@ describe("RequestHeadReader", () => {
 		expect(exact.kind === "complete" && exact.bodyLength).toBe(1024);
 		const [zeros] = read(["POST / HTTP/1.1\r\nContent-Length: 007\r\n\r\n"]);
 		expect(zeros.kind === "complete" && zeros.bodyLength).toBe(7);
+	});
+
+	test("builds the same request as readRequestHead", () => {
+		const heads = [
+			"GET / HTTP/1.1",
+			"GET /a/b?x=1&y=&z HTTP/1.1\r\nHost: h:8080\r\nX-Pad:   v  \r\nACCEPT :text/plain",
+			"DELETE /units/7 HTTP/1.0\r\nX-Empty:\r\nA: 1\r\na: 2",
+			"patch /%41?q=%42 HTTP/1.1\r\nReferer: http://e.com:81/a",
+			"GET /",
+			"GET  /double-space HTTP/1.1",
+		];
+		for (const head of heads) {
+			const [result] = read([`${head}\r\n\r\n`]);
+			expect(result.kind, head).toBe("complete");
+			if (result.kind === "complete") {
+				expect(result.request, head).toEqual(readRequestHead(head));
+			}
+		}
 	});
 });

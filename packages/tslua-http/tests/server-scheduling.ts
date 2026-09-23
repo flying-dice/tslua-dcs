@@ -115,11 +115,11 @@ describe("HttpServer scheduling", () => {
 			const { server } = fakeServer([client]);
 			server.pump();
 			expect(client.close).not.toHaveBeenCalled();
-			expect(server.activeConnections).toBe(1);
+			expect(server.connectionCount()).toBe(1);
 			server.pump();
 			expect(client.written()).toBe(HELLO);
 			expect(client.close).toHaveBeenCalledTimes(1);
-			expect(server.activeConnections).toBe(0);
+			expect(server.connectionCount()).toBe(0);
 		});
 	});
 
@@ -134,7 +134,7 @@ describe("HttpServer scheduling", () => {
 			expect(healthy.written()).toBe(HELLO);
 			expect(healthy.close).toHaveBeenCalledTimes(1);
 			expect(idle.close).not.toHaveBeenCalled();
-			expect(server.activeConnections).toBe(1);
+			expect(server.connectionCount()).toBe(1);
 
 			// The idle client finishes later and is served then.
 			idle.arrive("TP/1.1\r\n\r\n");
@@ -192,11 +192,11 @@ describe("HttpServer scheduling", () => {
 			server.pump();
 			server.pump();
 			expect(listener.accept).toHaveBeenCalledTimes(2); // the first pump, until full
-			expect(server.activeConnections).toBe(2);
+			expect(server.connectionCount()).toBe(2);
 
 			a.arrive("TP/1.1\r\n\r\n");
 			server.pump(); // a completes and frees its slot
-			expect(server.activeConnections).toBe(1);
+			expect(server.connectionCount()).toBe(1);
 			server.pump(); // c is accepted and served
 			expect(requests.map((r) => r.path)).toEqual(["/", "/c"]);
 		});
@@ -253,6 +253,52 @@ describe("HttpServer scheduling", () => {
 			expect(requests[1].body).toBe(body);
 		});
 
+		test("a slow connection is not starved by a steady stream of fast new clients", () => {
+			// Reproduces the benchmark case: one client trickling its request while new clients keep arriving and
+			// finishing within a pump. Once complete, the slow request must be dispatched within a pump or two.
+			const slow = fakeClient(["GET /slow HTTP/1.1\r\n"]);
+			const { server, listener, requests } = fakeServer(
+				[slow, ready("/new"), ready("/new")],
+				{
+					maxDispatchesPerPump: 2,
+				},
+			);
+			server.pump();
+			slow.arrive("\r\n");
+			for (let pump = 0; pump < 20; pump++) {
+				listener.enqueue(ready("/new"), ready("/new"));
+				server.pump();
+				if (requests.some((r) => r.path === "/slow")) break;
+			}
+			const position = requests.findIndex((r) => r.path === "/slow");
+			expect(position).toBeGreaterThanOrEqual(0);
+			expect(position).toBeLessThanOrEqual(6);
+			expect(slow.written()).toBe(HELLO);
+		});
+
+		test("a connection refused a dispatch goes first in the next pump", () => {
+			const a = ready("/a");
+			const b = fakeClient(["GET /b HT"]);
+			const { server, listener, requests } = fakeServer([a, b], {
+				maxDispatchesPerPump: 1,
+			});
+			server.pump(); // a dispatched; b partial
+			b.arrive("TP/1.1\r\n\r\n");
+			listener.enqueue(ready("/c"));
+			server.pump(); // b completes first in order and is dispatched; c is refused
+			listener.enqueue(ready("/d"), ready("/e"));
+			server.pump(); // c, refused last time, goes before d and e
+			server.pump();
+			server.pump();
+			expect(requests.map((r) => r.path)).toEqual([
+				"/a",
+				"/b",
+				"/c",
+				"/d",
+				"/e",
+			]);
+		});
+
 		test("caps the bytes moved for one connection in one visit", () => {
 			const body = string.rep("z", 1000);
 			const client = fakeClient([
@@ -305,6 +351,70 @@ describe("HttpServer scheduling", () => {
 			expect(stats.dispatched).toBe(1);
 			fake.server.pump();
 			expect(fake.requests.map((r) => r.path)).toEqual(["/1", "/2"]);
+		});
+	});
+
+	describe("buffer budget", () => {
+		test("a body that does not fit in maxBufferedBytes gets 503 before it is read or dispatched", () => {
+			const first = fakeClient([
+				"POST /a HTTP/1.1\r\nContent-Length: 60\r\n\r\n",
+			]);
+			const second = fakeClient([
+				"POST /b HTTP/1.1\r\nContent-Length: 50\r\n\r\n",
+			]);
+			const { server, requests } = fakeServer([first, second], {
+				maxBufferedBytes: 100,
+			});
+			const stats = server.pump();
+			expect(stats.bufferedBytes).toBe(60);
+			expect(second.written()).toBe(errorBytes(503, "Service Unavailable"));
+			expect(second.receive).toHaveBeenCalledTimes(1);
+			expect(logWarn).toHaveBeenCalledWith(
+				stringContaining(
+					"Connection #2: rejected with 503 while reading the request head after 40 bytes: a 50-byte body does not fit",
+				),
+			);
+
+			first.arrive(string.rep("a", 60));
+			expect(server.pump().bufferedBytes).toBe(0);
+			expect(requests.map((r) => r.path)).toEqual(["/a"]);
+		});
+
+		test("pending responses count against the budget: new bodies get 503, but requests are never held back", () => {
+			const stalled = ready("/big");
+			stalled.sendLimits(0, 0, 0);
+			const { server, listener, requests } = fakeServer(
+				[stalled],
+				{ maxBufferedBytes: 100 },
+				(req, res) => {
+					res.status = 200;
+					res.body = req.path === "/big" ? string.rep("x", 150) : "Hello";
+					return res;
+				},
+			);
+			expect(server.pump().bufferedBytes).toBeGreaterThan(150);
+
+			const get = ready("/next");
+			const post = fakeClient([
+				"POST /upload HTTP/1.1\r\nContent-Length: 5\r\n\r\nhello",
+			]);
+			listener.enqueue(get, post);
+			server.pump();
+			expect(requests.map((r) => r.path)).toEqual(["/big", "/next"]);
+			expect(get.written()).toBe(HELLO);
+			expect(post.written()).toBe(errorBytes(503, "Service Unavailable"));
+		});
+
+		test("releases every reservation when connections close", () => {
+			const a = fakeClient([
+				"POST / HTTP/1.1\r\nContent-Length: 10\r\n\r\nabc",
+			]);
+			const b = ready();
+			b.sendLimits(0);
+			const { server } = fakeServer([a, b]);
+			expect(server.pump().bufferedBytes).toBe(10 + HELLO.length);
+			server.close();
+			expect(server.pump().bufferedBytes).toBe(0);
 		});
 	});
 
@@ -378,7 +488,7 @@ describe("HttpServer scheduling", () => {
 			server.pump();
 			expect(stalled.close).toHaveBeenCalledTimes(1);
 			expect(stalled.written()).toBe(string.sub(HELLO, 1, 3));
-			expect(server.activeConnections).toBe(0);
+			expect(server.connectionCount()).toBe(0);
 			expect(logWarn).toHaveBeenCalledWith(
 				stringContaining(
 					"Connection #1: closed while writing the response: response deadline expired",

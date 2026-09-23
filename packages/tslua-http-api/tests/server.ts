@@ -84,7 +84,7 @@ describe("Application over a loopback socket", () => {
 		idle.send("GET /hello HTTP/1.1\r\nHost: x");
 		app.pump();
 		expect(roundTrip(app, "GET", "/hello").body).toBe("Hello World!");
-		expect(app.activeConnections).toBe(1);
+		expect(app.connectionCount()).toBe(1);
 		idle.close();
 	});
 

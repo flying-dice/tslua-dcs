@@ -78,9 +78,12 @@ export class HttpServer {
 		);
 	}
 
-	/** The number of open connections. */
-	get activeConnections(): number {
-		return this.scheduler.activeConnections;
+	/**
+	 * The number of open connections. (A method rather than a getter: accessors would slow every property access
+	 * on the server and its subclasses in the generated Lua.)
+	 */
+	connectionCount(): number {
+		return this.scheduler.connectionCount();
 	}
 
 	/**

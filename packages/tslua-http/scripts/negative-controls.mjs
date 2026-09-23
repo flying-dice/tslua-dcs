@@ -16,8 +16,7 @@ const target = join(root, "src", "scheduler.ts");
 const mutations = [
 	{
 		name: "blocking client sockets (the old settimeout(2))",
-		find: "client.settimeout(0);",
-		replace: "client.settimeout(2);",
+		edits: [["client.settimeout(0);", "client.settimeout(2);"]],
 		expect: [
 			"makes each accepted client non-blocking",
 			"an idle connection does not hold up a complete request",
@@ -25,8 +24,7 @@ const mutations = [
 	},
 	{
 		name: "partial-write progress discarded on would-block",
-		find: "conn.writePos = reached + 1;",
-		replace: "if (sendError === undefined) conn.writePos = reached + 1;",
+		edits: [["conn.writePos = reached + 1;", "if (sendError === undefined) conn.writePos = reached + 1;"]],
 		expect: [
 			"partial sends, including zero progress, resume at the next byte",
 			"a client that stops reading a large response does not stop a healthy client",
@@ -34,27 +32,41 @@ const mutations = [
 	},
 	{
 		name: "unsent response treated as sent (the old ignored send result)",
-		find: 'if (sendError === "timeout") break; // the socket buffer is full; resume later',
-		replace:
-			'if (sendError === "timeout") { conn.writePos = length + 1; break; }',
+		edits: [
+			[
+				'if (sendError === "timeout") break; // the socket buffer is full; resume later',
+				'if (sendError === "timeout") { conn.writePos = length + 1; break; }',
+			],
+		],
 		expect: [
 			"partial sends, including zero progress, resume at the next byte",
 			"the connection is closed only after the last byte is accepted",
 		],
 	},
 	{
-		name: "unfair scheduling: every pump starts at the first connection",
-		find: "this.nextVisitId = list[next].id;",
-		replace: "this.nextVisitId = 0;",
+		name: "no rotation: connections always visited in accept order",
+		edits: [
+			[
+				"if (!this.closed) this.reorder(list, visited);",
+				'if (!this.closed) this.connections = this.connections.filter((c) => c.state !== "CLOSED");',
+			],
+		],
+		expect: ["visits connections round-robin", "rotates the starting connection"],
+	},
+	{
+		name: "refused connections not given priority in the next pump",
+		edits: [
+			['if (list[i].starved && list[i].state !== "CLOSED") next.push(list[i]);', "// removed"],
+			['if (!list[i].starved && list[i].state !== "CLOSED") next.push(list[i]);', 'if (list[i].state !== "CLOSED") next.push(list[i]);'],
+		],
 		expect: [
-			"visits connections round-robin",
+			"a connection refused a dispatch goes first in the next pump",
 			"rotates the starting connection",
 		],
 	},
 	{
 		name: "one connection per pump (head-of-line blocking)",
-		find: "const visits = math.min(count, options.maxVisitsPerPump);",
-		replace: "const visits = 1;",
+		edits: [["math.min(count, options.maxVisitsPerPump),", "1,"]],
 		expect: [
 			"an idle connection does not delay a complete request behind it",
 			"several ready connections all progress in one pump",
@@ -62,20 +74,28 @@ const mutations = [
 	},
 	{
 		name: "request deadline extended by every received byte",
-		find: "conn.lastReadAt = this.now();",
-		replace:
-			"conn.lastReadAt = this.now(); conn.requestDeadline = conn.lastReadAt + this.options.requestTimeout;",
+		edits: [
+			["conn.lastReadAt = now;", "conn.lastReadAt = now; conn.requestDeadline = now + this.options.requestTimeout;"],
+		],
 		expect: ["trickling bytes does not extend the absolute request deadline"],
 	},
 	{
 		name: "incomplete request dispatched when the client closes",
-		find: "			// \"closed\" or a socket error: a complete request can still be answered, an incomplete one never is.",
-		replace:
-			'			if (conn.state === "READING_BODY") { (conn.request as HttpRequest).body = table.concat(conn.bodyChunks as string[]); conn.state = "READY_TO_DISPATCH"; break; }',
+		edits: [
+			[
+				'// "closed" or a socket error: a complete request can still be answered, an incomplete one never is.',
+				'if (conn.state === "READING_BODY") { (conn.request as HttpRequest).body = table.concat(conn.bodyChunks as string[]); conn.state = "READY_TO_DISPATCH"; break; }',
+			],
+		],
 		expect: [
 			"drops a connection closed before the whole body arrives",
 			"never dispatches an incomplete body followed by a half-close",
 		],
+	},
+	{
+		name: "responses not counted against the buffer budget",
+		edits: [["this.reserve(conn, serialized.length);", "// not reserved"]],
+		expect: ["pending responses count against the budget"],
 	},
 ];
 
@@ -97,10 +117,14 @@ const original = readFileSync(target, "utf8");
 let survivors = 0;
 try {
 	for (const mutation of mutations) {
-		if (!original.includes(mutation.find)) {
-			throw new Error(`mutation "${mutation.name}": source text not found`);
+		let mutated = original;
+		for (const [find, replace] of mutation.edits) {
+			if (!mutated.includes(find)) {
+				throw new Error(`mutation "${mutation.name}": source text not found: ${find}`);
+			}
+			mutated = mutated.replace(find, replace);
 		}
-		writeFileSync(target, original.replace(mutation.find, mutation.replace));
+		writeFileSync(target, mutated);
 		const result = runSuite();
 		const caught = mutation.expect.filter((name) =>
 			result.failed.some((failed) => failed.includes(name)),
