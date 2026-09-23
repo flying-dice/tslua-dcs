@@ -5,7 +5,6 @@
 import { Logger, LogLevel } from "@flying-dice/tslua-common";
 import {
 	afterEach,
-	anything,
 	describe,
 	expect,
 	restoreAllMocks,
@@ -222,13 +221,13 @@ describe("HttpServer over loopback", () => {
 			const { server } = recordingServer();
 			exchange(server, "POST / HTTP/1.1\r\nContent-Length: 2\r\n\r\nhi");
 			expect(debug).toHaveBeenCalledWith(
-				anything(),
 				"[DEBUG] [HttpServer] - Fetching request body 2",
 			);
 			expect(debug).toHaveBeenLastCalledWith(
-				anything(),
 				"[DEBUG] [HttpServer] - Closing client",
 			);
+			// The corrected Logger contract (#127): the message is the only argument.
+			for (const call of debug.mock.calls) expect(call.n).toBe(1);
 		});
 	});
 
@@ -299,13 +298,9 @@ describe("HttpServer over loopback", () => {
 
 			expect(exchange(server, "GET / HTTP/1.1\r\n\r\n")).toBe("");
 			expect(error).toHaveBeenCalledWith(
-				anything(),
 				stringContaining("[ERROR] [HttpServer] - Error handling client: "),
 			);
-			expect(error).toHaveBeenCalledWith(
-				anything(),
-				stringContaining("handler exploded"),
-			);
+			expect(error).toHaveBeenCalledWith(stringContaining("handler exploded"));
 
 			expect(exchange(server, "GET / HTTP/1.1\r\n\r\n")).toBe(
 				"HTTP/1.1 200 OK\r\nServer: Lua HTTP/1.1\r\n\r\n",
@@ -331,7 +326,6 @@ describe("HttpServer over loopback", () => {
 			);
 			expect(requests).toHaveLength(0);
 			expect(error).toHaveBeenCalledWith(
-				anything(),
 				stringContaining("Malformed header line: no colon here"),
 			);
 		});
@@ -356,7 +350,6 @@ describe("HttpServer over loopback", () => {
 			).toBe("");
 			expect(requests).toHaveLength(0);
 			expect(error).toHaveBeenCalledWith(
-				anything(),
 				stringContaining("Client returned unexpected value, terminating"),
 			);
 		});
@@ -371,17 +364,42 @@ describe("HttpServer over loopback", () => {
 			expect(error).toHaveBeenCalledTimes(1);
 		});
 
-		test("a body cut short by the client reaches the handler as undefined", () => {
-			// Current behaviour: the partial body LuaSocket returns alongside the error is dropped.
+		test("partial data then an early close: the handler is not called and nothing is sent", () => {
 			const { server, requests } = recordingServer();
+			const error = spyOn(Logger.transports, "error").mockReturnValue(
+				undefined,
+			);
 			const raw = exchange(
 				server,
 				"POST / HTTP/1.1\r\nContent-Length: 10\r\n\r\nabc",
 				{ endRequest: true },
 			);
-			expect(requests).toHaveLength(1);
-			expect(requests[0].body).toBeUndefined();
-			expect(raw).toBe("HTTP/1.1 200 OK\r\nServer: Lua HTTP/1.1\r\n\r\nHello");
+			expect(requests).toHaveLength(0);
+			expect(raw).toBe("");
+			expect(error).toHaveBeenCalledWith(
+				stringContaining(
+					"Incomplete request body: expected 10 bytes, received 3 (closed)",
+				),
+			);
+		});
+
+		test("partial data then silence: the server times out with 408 and no dispatch", () => {
+			const { server, requests } = recordingServer();
+			const error = spyOn(Logger.transports, "error").mockReturnValue(
+				undefined,
+			);
+			// The client stays connected but never sends the rest; the server's 2s read timeout fires.
+			const raw = exchange(
+				server,
+				"POST / HTTP/1.1\r\nContent-Length: 10\r\n\r\nabc",
+			);
+			expect(requests).toHaveLength(0);
+			expect(raw).toMatch("^HTTP/1%.1 408 Request Timeout\r\n");
+			expect(error).toHaveBeenCalledWith(
+				stringContaining(
+					"Incomplete request body: expected 10 bytes, received 3 (timeout)",
+				),
+			);
 		});
 	});
 });

@@ -34,7 +34,9 @@ declare module "socket" {
 		receive(
 			pattern: TCPRecvPattern,
 			prefix?: string,
-		): string | [null, string, string];
+		): LuaMultiReturn<
+			[string | undefined, string | undefined, string | undefined]
+		>;
 
 		/**
 		 * Sends data through the client object.

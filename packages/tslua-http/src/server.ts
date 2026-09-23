@@ -1,7 +1,7 @@
 import { Logger } from "@flying-dice/tslua-common";
 import * as socket from "socket";
 import type { TCP } from "socket";
-import { CRLF } from "./constants";
+import { CRLF, HttpStatus } from "./constants";
 import { type HttpRequest, readRequestHead } from "./request";
 import { type HttpResponse, assembleResponseString } from "./response";
 
@@ -102,7 +102,7 @@ export class HttpServer {
 		client.settimeout(2);
 
 		do {
-			const received = client.receive("*l");
+			const [received] = client.receive("*l");
 			if (typeof received === "string") {
 				requestHeadLines.push(received);
 			}
@@ -121,7 +121,24 @@ export class HttpServer {
 			this.logger.debug(`Fetching request body ${contentLength}`);
 
 			client.settimeout(2);
-			request.body = client.receive(contentLengthNum) as string;
+			const [body, receiveError, partial] = client.receive(contentLengthNum);
+			if (body === undefined) {
+				// A body shorter than its Content-Length is not a valid request: never
+				// hand it to the handler. A client that is still connected but too slow
+				// gets 408; a closed connection can't be answered.
+				if (receiveError === "timeout") {
+					client.send(
+						assembleResponseString({
+							status: HttpStatus.REQUEST_TIMEOUT,
+							headers: { Connection: "close" },
+						}),
+					);
+				}
+				throw new Error(
+					`Incomplete request body: expected ${contentLengthNum} bytes, received ${(partial ?? "").length} (${receiveError})`,
+				);
+			}
+			request.body = body;
 		}
 
 		this.logger.debug("Handling request");

@@ -5,7 +5,6 @@
 import { Logger } from "@flying-dice/tslua-common";
 import {
 	afterEach,
-	anything,
 	beforeEach,
 	describe,
 	expect,
@@ -128,7 +127,6 @@ describe("HttpServer with socket doubles", () => {
 		expect(client.close).toHaveBeenCalledTimes(1);
 		expect(requests).toHaveLength(0);
 		expect(logError).toHaveBeenCalledWith(
-			anything(),
 			stringContaining("Client returned unexpected value, terminating"),
 		);
 	});
@@ -147,7 +145,7 @@ describe("HttpServer with socket doubles", () => {
 		expect(logError).toHaveBeenCalledTimes(1);
 	});
 
-	test("a read timeout on the body still calls the handler, with no body", () => {
+	test("a read timeout on the body answers 408 and never calls the handler", () => {
 		const client = fakeClient([
 			"POST / HTTP/1.1",
 			"Content-Length: 5",
@@ -157,10 +155,72 @@ describe("HttpServer with socket doubles", () => {
 		serverFor(client).acceptNextClient();
 
 		expect(client.receive).toHaveBeenLastCalledWith(client.socket, 5);
-		expect(requests).toHaveLength(1);
-		expect(requests[0].body).toBeUndefined();
+		expect(requests).toHaveLength(0);
 		expect(client.send).toHaveBeenCalledTimes(1);
+		const [, sent] = client.send.mock.calls[0];
+		expect(sent).toMatch("^HTTP/1%.1 408 Request Timeout\r\n");
+		expect(sent).toContain("Connection: close");
+		expect(logError).toHaveBeenCalledWith(
+			stringContaining(
+				"Incomplete request body: expected 5 bytes, received 2 (timeout)",
+			),
+		);
 		expect(client.close).toHaveBeenCalledTimes(1);
+	});
+
+	test("a connection closed before the whole body arrives is dropped without dispatch", () => {
+		const client = fakeClient([
+			"POST / HTTP/1.1",
+			"Content-Length: 5",
+			"",
+			{ error: "closed", partial: "Hel" },
+		]);
+		serverFor(client).acceptNextClient();
+
+		expect(requests).toHaveLength(0);
+		expect(client.send).not.toHaveBeenCalled();
+		expect(logError).toHaveBeenCalledWith(
+			stringContaining(
+				"Incomplete request body: expected 5 bytes, received 3 (closed)",
+			),
+		);
+		expect(client.close).toHaveBeenCalledTimes(1);
+	});
+
+	test("an early close with no body bytes at all is dropped without dispatch", () => {
+		const client = fakeClient([
+			"POST / HTTP/1.1",
+			"Content-Length: 5",
+			"",
+			{ error: "closed" },
+		]);
+		serverFor(client).acceptNextClient();
+
+		expect(requests).toHaveLength(0);
+		expect(client.send).not.toHaveBeenCalled();
+		expect(logError).toHaveBeenCalledWith(
+			stringContaining("expected 5 bytes, received 0 (closed)"),
+		);
+	});
+
+	test("the server keeps serving after an incomplete body", () => {
+		const bad = fakeClient([
+			"POST / HTTP/1.1",
+			"Content-Length: 5",
+			"",
+			{ error: "closed" },
+		]);
+		const good = fakeClient([
+			"POST / HTTP/1.1",
+			"Content-Length: 5",
+			"",
+			"Hello",
+		]);
+		const server = serverFor(bad, good);
+		server.acceptNextClient();
+		server.acceptNextClient();
+		expect(requests).toHaveLength(1);
+		expect(requests[0].body).toBe("Hello");
 	});
 
 	test("a failed send is ignored and the client is still closed", () => {
@@ -181,10 +241,7 @@ describe("HttpServer with socket doubles", () => {
 		serverFor(client).acceptNextClient();
 
 		expect(client.close).toHaveBeenCalledTimes(1);
-		expect(logError).toHaveBeenCalledWith(
-			anything(),
-			stringContaining("socket exploded"),
-		);
+		expect(logError).toHaveBeenCalledWith(stringContaining("socket exploded"));
 	});
 
 	test("each call accepts at most one client", () => {
