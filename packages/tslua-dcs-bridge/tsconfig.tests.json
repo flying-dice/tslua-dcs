@@ -1,0 +1,22 @@
+{
+	"$schema": "https://raw.githubusercontent.com/TypeScriptToLua/TypeScriptToLua/refs/tags/v1.37.1/tsconfig-schema.json",
+	"compilerOptions": {
+		"target": "ES2022",
+		"lib": ["ES2022"],
+		"moduleResolution": "Node",
+		"ignoreDeprecations": "6.0",
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"rootDir": ".",
+		"outDir": ".test",
+		"types": ["lua-types/5.1", "@typescript-to-lua/language-extensions"]
+	},
+	"include": ["src/core/**/*", "tests/**/*"],
+	"tstl": {
+		"luaTarget": "5.1",
+		"luaBundleEntry": "tests/index.ts",
+		"luaBundle": "tests.lua",
+		"noResolvePaths": ["socket"]
+	}
+}

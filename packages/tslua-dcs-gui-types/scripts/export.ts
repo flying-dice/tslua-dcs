@@ -102,7 +102,7 @@ export async function runExport() {
 			if (!/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(n))
 				fail(`unsafe namespace ${JSON.stringify(n)}`);
 		const base = (
-			process.env.DCS_STUDIO_GUI_URL ?? "http://127.0.0.1:25569"
+			process.env.DCS_BRIDGE_GUI_URL ?? "http://127.0.0.1:25579"
 		).replace(/\/$/, "");
 		try {
 			const u = new URL(base);
@@ -116,13 +116,17 @@ export async function runExport() {
 			healthTimeout,
 			"health",
 		)) as Record<string, unknown>;
-		if (health.name !== "dcs-studio-gui" || health.env !== job.env)
-			fail(`wrong bridge at ${base}; expected dcs-studio-gui/gui`);
+		if (health.name !== "tslua-dcs-gui-bridge" || health.env !== job.env)
+			fail(
+				`wrong bridge at ${base}; expected tslua-dcs-gui-bridge/gui (run "npm run dcs:start")`,
+			);
 		if (health.pump_stalled)
 			fail("bridge reports pump_stalled; wait for DCS to be ready");
 		const discovery = await rpc(base, "export:discover", "rpc.discover", {});
 		if (!JSON.stringify(discovery).includes("eval"))
-			fail("bridge does not advertise eval; upgrade or reinject DCS Studio");
+			fail(
+				"bridge does not advertise eval; rebuild and reinstall with: npm run dcs:start",
+			);
 		const probe = await rpc(base, "export:version", "eval", {
 			code: "return type(_G._APP_VERSION) == 'string' and _G._APP_VERSION or nil",
 		});

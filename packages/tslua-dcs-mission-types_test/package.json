@@ -4,15 +4,15 @@
 	"private": true,
 	"scripts": {
 		"build": "tstl -p tsconfig.json",
-		"test:dcs": "npm run export --workspace=@flying-dice/tslua-dcs-mission-types && npm run build --workspace=@flying-dice/tslua-dcs-mission-types && npm run build && tsx scripts/run.ts"
+		"test:dcs": "npm run export --workspace=@flying-dice/tslua-dcs-mission-types && npm run build --workspace=@flying-dice/tslua-dcs-mission-types && npm run build && dcs-bridge run mission .test/mission-tests.lua"
 	},
 	"dependencies": {
 		"@flying-dice/tslua-dcs-mission-types": "0.33.0",
 		"@flying-dice/tslua-luatest": "0.33.0"
 	},
 	"devDependencies": {
+		"@flying-dice/tslua-dcs-bridge": "^0.33.0",
 		"@types/node": "^22.20.4",
-		"tsx": "^4.23.15",
 		"typescript": "6.0.2",
 		"typescript-to-lua": "^1.37.1"
 	}

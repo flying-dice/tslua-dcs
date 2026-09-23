@@ -1,0 +1,26 @@
+{
+	"$schema": "https://raw.githubusercontent.com/TypeScriptToLua/TypeScriptToLua/refs/tags/v1.37.1/tsconfig-schema.json",
+	"compilerOptions": {
+		"target": "ES2022",
+		"lib": ["ES2022"],
+		"moduleResolution": "Node",
+		"ignoreDeprecations": "6.0",
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"rootDir": ".",
+		"outDir": "dist",
+		"types": [
+			"lua-types/5.1",
+			"@typescript-to-lua/language-extensions",
+			"@flying-dice/tslua-dcs-mission-types"
+		]
+	},
+	"include": ["src/core/**/*", "src/mission/**/*"],
+	"tstl": {
+		"luaTarget": "5.1",
+		"luaBundleEntry": "src/mission/index.ts",
+		"luaBundle": "tslua-dcs-mission-bridge.lua",
+		"noResolvePaths": ["socket"]
+	}
+}

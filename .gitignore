@@ -12,3 +12,4 @@ docs
 /packages/tslua-dcs-gui-types_test/.test/
 /packages/tslua-json/.test/
 /packages/tslua-base64/.test/
+/packages/tslua-dcs-bridge/.test/

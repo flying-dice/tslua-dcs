@@ -1,14 +1,20 @@
 # Updating DCS type definitions
 
-Exports use the DCS Studio bridges; this repository no longer installs or talks to DCS Fiddle. Install DCS Studio, select the intended DCS and Saved Games profile, then run `dcs.bridge.inject` and `dcs.bridge.launch`. Injection deploys bridge files, so restart DCS when Studio asks you to.
+Exports and the in-sim test suites talk to DCS through this repository's own bridge, [`packages/tslua-dcs-bridge`](packages/tslua-dcs-bridge/README.md). No external tooling (DCS Studio, DCS Fiddle) is needed.
 
-The GUI exporter uses `http://127.0.0.1:25569` and must be run with DCS at the main menu. The mission exporter uses `http://127.0.0.1:25570` and needs a trusted development mission actively running and unpaused. Open the MissionScripting panel in Studio, use its desanitize action if the mission bridge requires it, and restart/reload as directed. Desanitizing permits filesystem/OS access in mission Lua: restore sanitization afterwards. The exporter never changes DCS lifecycle or sanitization itself.
+Start DCS with both bridges from the repository root:
 
-Run `npm run export` from the repository root, or a package's `npm run export`. The exporter checks `/health`, `rpc.discover`, DCS runtime version, and every configured namespace before it writes anything. It stages all generated files and publishes only after the package succeeds; a failed later namespace leaves existing exports intact.
+```shell
+npm run dcs:start
+```
 
-Use `DCS_STUDIO_GUI_URL` or `DCS_STUDIO_MISSION_URL` for a different local bridge address. Time budgets are `DCS_EXPORT_HEALTH_TIMEOUT_MS` (3s), `DCS_EXPORT_RPC_TIMEOUT_MS` (35s), and `DCS_EXPORT_TIMEOUT_MS` (120s). Normally the generated `@version` comes from `_APP_VERSION`; if that runtime value is unavailable, set `DCS_EXPORT_DCS_VERSION` explicitly. That value is maintainer-supplied DCS provenance, never a bridge or npm version.
+This builds the bridge, installs it (GUI hook, mission script, empty Caucasus test mission, and a marked loader block in the game's `Scripts/MissionScripting.lua`; the original is kept as `MissionScripting.lua.tslua-dcs.bak`), launches DCS, starts the test mission and unpauses it. The GUI bridge answers on `http://127.0.0.1:25579` from the main menu onwards; the mission bridge answers on `http://127.0.0.1:25580` while a mission is running and unpaused. The mission bridge loads before the sanitization block, so no desanitizing is required. `npx dcs-bridge uninstall` removes everything, and a DCS update that rewrites `MissionScripting.lua` only needs `npx dcs-bridge install` again.
 
-If a bridge is unavailable, verify Studio injection/launch and its `/health` identity. A stalled mission bridge requires a running, unpaused mission; wrong namespace reports should be investigated in that selected Lua environment rather than sourced from another one. Remove any old DCS Fiddle hook from Saved Games manually—repository cleanup cannot remove external installed files.
+Run `npm run export` from the repository root, or a package's `npm run export`. The exporter checks `/health`, `rpc.discover`, DCS runtime version, and every configured namespace before it writes anything. It stages all generated files and publishes only after the package succeeds; a failed later namespace leaves existing exports intact. Mission exports reflect the running mission (e.g. `env.mission`), so export from the bundled test mission for reproducible output.
+
+Use `DCS_BRIDGE_GUI_URL` or `DCS_BRIDGE_MISSION_URL` for a different local bridge address, and `DCS_SAVED_GAMES` / `DCS_INSTALL` if auto-detection picks the wrong DCS. Time budgets are `DCS_EXPORT_HEALTH_TIMEOUT_MS` (3s), `DCS_EXPORT_RPC_TIMEOUT_MS` (35s), and `DCS_EXPORT_TIMEOUT_MS` (120s). Normally the generated `@version` comes from `_APP_VERSION`; if that runtime value is unavailable, set `DCS_EXPORT_DCS_VERSION` explicitly. That value is maintainer-supplied DCS provenance, never a bridge or npm version.
+
+If a bridge is unavailable, check `npm run dcs:status` and `Saved Games/<DCS>/Logs/dcs.log` (lines tagged `TSLUA-DCS-BRIDGE`). The mission bridge is pumped on model time, so it stops answering while the mission is paused. Remove any old DCS Fiddle or DCS Studio hooks from Saved Games manually if you no longer use them.
 
 ## Preparing a release
 
