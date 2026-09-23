@@ -10,7 +10,7 @@
 	},
 	"scripts": {
 		"build": "rimraf dist && tstl -p tsconfig.gui.json && tstl -p tsconfig.mission.json && node scripts/build-mission.mjs",
-		"test": "npm run test:lua",
+		"test": "npm run test:lua && node --test ./tests/cli.test.mjs",
 		"test:lua": "tstl -p tsconfig.tests.json && lua51 ./.test/tests.lua"
 	},
 	"dependencies": {
