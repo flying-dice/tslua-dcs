@@ -1,7 +1,7 @@
 {
 	"name": "@flying-dice/tslua-base64",
 	"version": "0.33.0",
-	"description": "Base64 library with typings",
+	"description": "Base64 (RFC 4648) encoding and decoding for TypeScriptToLua, written in TypeScript and compatible with Lua 5.1 / DCS World",
 	"keywords": [
 		"lua",
 		"dcs",
@@ -16,11 +16,26 @@
 		"registry": "https://registry.npmjs.org/"
 	},
 	"license": "ISC",
+	"types": "./dist/index.d.ts",
+	"main": "./dist/index",
+	"files": [
+		"dist",
+		"README.md",
+		"CHANGELOG.md"
+	],
 	"scripts": {
-		"build:docs": "typedoc"
+		"build": "rimraf dist && tsc -p tsconfig.tstl.json && tstl -p tsconfig.tstl.json",
+		"build:docs": "typedoc",
+		"test": "npm run test:lua",
+		"test:lua": "tstl -p tsconfig.tstl-tests.json && lua51 ./.test/tests.lua",
+		"generate:corpus": "node ./scripts/generate-corpus.mjs"
 	},
 	"devDependencies": {
-		"typescript": "6.0.2"
+		"@flying-dice/tslua-lua51": "^0.33.0",
+		"@flying-dice/tslua-luatest": "^0.33.0",
+		"lua-types": "^2.14.1",
+		"typescript": "6.0.2",
+		"typescript-to-lua": "^1.37.1"
 	},
 	"gitHead": "a6ae4c01c5f5796bcc1c0e88d4b790d83de03340"
 }
