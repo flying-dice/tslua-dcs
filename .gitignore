@@ -9,5 +9,6 @@ docs
 /packages/tslua-http/.test/
 /packages/tslua-luatest/.test/
 /packages/tslua-http-api/.test/
+/packages/tslua-openapi/.test/
 /packages/tslua-dcs-mission-types_test/.test/
 /packages/tslua-dcs-gui-types_test/.test/
