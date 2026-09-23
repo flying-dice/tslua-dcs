@@ -17,13 +17,15 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Install Lua and LuaRocks
-        run: |
-          sudo apt-get update
-          sudo apt-get install lua5.1
-          sudo apt-get install luarocks
-      - name: Install LuaSocket
-        run: sudo luarocks install luasocket
+      # Every Lua script runs on the repo-managed interpreter (packages/tslua-lua51),
+      # so no system Lua/LuaRocks/LuaSocket is installed. Keep this version in
+      # step with packages/tslua-lua51/rust-toolchain.toml.
+      - uses: dtolnay/rust-toolchain@1.97.0
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: packages/tslua-lua51
       - run: npm ci
       - run: npm test
       - run: npm run test:lua

@@ -20,6 +20,25 @@ Some useful Docs include:
 
 Detailed usage instructions will be added soon.
 
+### Lua runtime
+
+Every Lua script in this repo (the `test:lua` suites, the `tslua-http-api` dev server) runs on a
+repo-managed Lua 5.1.5 interpreter rather than whatever Lua the host has installed. It lives in
+[`packages/tslua-lua51`](packages/tslua-lua51): a small Rust CLI on [mlua](https://github.com/mlua-rs/mlua)
+with vendored PUC Lua 5.1.5 (the version DCS ships) and statically linked LuaSocket.
+
+The only host prerequisites are Node.js and [rustup](https://rustup.rs); the Rust toolchain version is pinned
+by `packages/tslua-lua51/rust-toolchain.toml` and installed automatically. Package scripts invoke it as
+`lua51`, which builds the interpreter on first use:
+
+```shell
+npx lua51 --setup                                   # build it now
+npx lua51 script.lua                                # same arguments as stock `lua`
+npx lua51 --preload dcs-doubles.lua tests.lua       # install DCS test doubles first
+```
+
+See the [package README](packages/tslua-lua51/README.md) for details.
+
 ### Updating
 
 See the [UPDATING.md](UPDATING.md) file for instructions on updating the definitions.

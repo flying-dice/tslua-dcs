@@ -1,0 +1,6 @@
+# Pinned for the same reason as the dcs-studio bridge: "it builds" must not be
+# a property of whoever built it. Raise deliberately; keep CI in step.
+[toolchain]
+channel = "1.97.0"
+components = ["rustfmt", "clippy"]
+profile = "minimal"

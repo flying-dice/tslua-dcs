@@ -26,7 +26,7 @@
 		"build": "rimraf dist && tsc -p tsconfig.tstl.json && tstl -p tsconfig.tstl.json",
 		"build:docs": "typedoc",
 		"test": "vitest run --coverage && npm run test:lua",
-		"test:lua": "tstl -p tsconfig.tstl-tests.json && lua ./.test/tests.lua"
+		"test:lua": "tstl -p tsconfig.tstl-tests.json && lua51 ./.test/tests.lua"
 	},
 	"dependencies": {
 		"@flying-dice/tslua-common": "^0.33.0"
