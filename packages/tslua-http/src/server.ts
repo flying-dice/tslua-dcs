@@ -45,7 +45,13 @@ export class HttpServer {
 	) {
 		this.logger = new Logger("HttpServer");
 
-		this.server = socket.bind(bindAddress, port);
+		const [server, bindError] = socket.bind(bindAddress, port);
+		if (!server) {
+			throw new Error(
+				`Failed to bind ${bindAddress}:${port}: ${bindError ?? "unknown error"}`,
+			);
+		}
+		this.server = server;
 		this.server.settimeout(0);
 	}
 

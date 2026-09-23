@@ -70,7 +70,12 @@ declare module "socket" {
 	 * @param address
 	 * @param port
 	 * @param backlog Specifies the number of client connections that can be queued waiting for service. If the queue is full and another client attempts connection, the connection is refused.
+	 * @returns The server object, or `nil` followed by an error message when the address cannot be bound.
 	 * @noSelf
 	 */
-	function bind(address: string, port: number, backlog?: number): TCP;
+	function bind(
+		address: string,
+		port: number,
+		backlog?: number,
+	): LuaMultiReturn<[TCP, undefined] | [undefined, string]>;
 }
