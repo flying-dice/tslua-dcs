@@ -27,7 +27,10 @@ export async function waitForHealthy(url, timeoutMs) {
 			if (response.ok && Date.now() <= deadline) return;
 			lastError = new Error(`status ${response.status}`);
 		} catch (error) {
-			lastError = error;
+			// An abort at the deadline says nothing new; keep the last real outcome.
+			if (error?.name !== "TimeoutError" || lastError === undefined) {
+				lastError = error;
+			}
 		}
 		const pause = Math.min(RETRY_INTERVAL_MS, deadline - Date.now());
 		if (pause > 0) await new Promise((resolve) => setTimeout(resolve, pause));
