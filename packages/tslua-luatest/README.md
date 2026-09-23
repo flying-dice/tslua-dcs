@@ -146,12 +146,12 @@ interface Summary {
 }
 ```
 
-It throws `luatest: N of M tests failed` when anything failed and `luatest: no tests were run` when nothing
-ran. An uncaught error makes `lua51` exit with status 1, and makes a DCS `pcall`-based runner report
+It throws `luatest: N of M tests failed` when anything failed, and `luatest: no tests were run` when no test
+executed: an empty run, or one where every test was skipped, `todo`, or filtered out by `.only`. An uncaught error makes `lua51` exit with status 1, and makes a DCS `pcall`-based runner report
 failure. Options:
 
 - `throwOnFailure: false` returns the summary instead of throwing (e.g. to send results elsewhere in DCS).
-- `passWithNoTests: true` makes an empty run pass.
+- `passWithNoTests: true` lets a run that executed no tests (empty, or all skipped/todo/filtered) pass.
 
 Calling `run()` again later runs only tests declared since. The summary always covers everything the runner
 has executed.
@@ -367,8 +367,12 @@ expect(outText.mock.calls[0][0]).toBe("hello");
 | `mock.calls` | arguments of every call (arrays with `n`, the Lua argument count including trailing `nil`s) |
 | `mock.results` | `{ type: "return" \| "throw", value }` per call (`value` is the first return value or the error) |
 | `mock.lastCall` | arguments of the latest call |
-| `mockReturnValue(v)` / `mockReturnValueOnce(v)` | return `v` (once-values are used first, in order) |
+| `mockReturnValue(v)` / `mockReturnValueOnce(v)` | return `v` |
 | `mockImplementation(f)` / `mockImplementationOnce(f)` | run `f` (all its return values pass through) |
+
+`mockReturnValueOnce` and `mockImplementationOnce` share one queue, consumed one entry per call in the order
+they were registered, however the two are interleaved. Once it is empty, `mockReturnValue` (if set) wins over
+`mockImplementation`, as in Jest.
 | `mockClear()` | forget calls and results |
 | `mockReset()` | also forget implementations and return values |
 | `mockRestore()` | for `spyOn`, put the original back; for `fn`, same as `mockReset` |

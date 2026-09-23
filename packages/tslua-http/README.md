@@ -33,6 +33,9 @@ const httpServer = new HttpServer('127.0.0.1', 8080, (req: HttpRequest, res: Htt
         res.body = "UP!"
         return res
     }
+
+    // Always return a response: returning nothing closes the connection without a reply.
+    return res
 });
 
 // Entering a loop to accept and process client requests
@@ -42,3 +45,16 @@ while (true) {
     httpServer.acceptNextClient();
 }
 ```
+
+## Testing
+
+`npm test` compiles `tests/index.ts` with TypeScriptToLua and runs it on the repository's `lua51` interpreter
+with [luatest](../tslua-luatest). The suite covers:
+
+- the pure functions (`readRequestHead`, `assembleResponseString`, `getQueryParams`, `decodeUriComponent`,
+  the status tables) with explicit byte-level expectations;
+- `HttpServer` over real LuaSocket on loopback (`tests/support/loopback.ts`): the server binds to
+  `127.0.0.1:0` and a client socket in the same process sends raw HTTP, so no second process is needed;
+- `HttpServer` against scripted socket doubles (`tests/doubles/fake-socket.ts`) for exact call sequences and
+  faults such as read timeouts, partial reads and failed sends. `useFakeListener` makes `socket.bind` return
+  the fake listener; `restoreAllMocks()` undoes it.
