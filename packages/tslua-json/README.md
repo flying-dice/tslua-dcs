@@ -52,7 +52,8 @@ Lua has one table type and no `null`, so the conversion follows these rules:
 | A table you build yourself | Keys `1..n` make an array, and holes encode as `null`, as in JavaScript. String keys make an object; any positive integer keys beside them become strings, as with `JSON.stringify({ 1: "a", b: 2 })`. |
 | An empty table you build yourself | Encodes as `[]` unless you mark it with `asObject` or pass `emptyTable: "object"`. |
 | Class instances | Encode their own fields, not their methods. Implement `toJSON()` to choose the shape, as in JavaScript. |
-| Keys that are not strings or positive integers, NaN, infinity, functions, cycles, and arrays sparser than about 2:1 | These are errors. |
+| Keys that are not strings or positive integers, NaN, infinity, functions, cycles, and arrays sparser than about 2:1 | These are errors. The sparsity limit also applies to tables marked with `asArray`. The only exception is an array returned by `decode`, which may stay as sparse as the text it came from. |
+| A number key and a string key with the same text, such as `[1]` and `["1"]` | An error, because both would become the JSON name `"1"` and one value would be lost. |
 | Strings | Treated as UTF-8 bytes. `\uXXXX` escapes are decoded to UTF-8, and an unpaired surrogate becomes U+FFFD. Invalid UTF-8 passes through unchanged. |
 
 ## Migrating from `@flying-dice/tslua-rxi-json`

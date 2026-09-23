@@ -299,7 +299,23 @@ for (const value of [
 ]) {
 	addNumber(value);
 }
-while (numberRows.length < 3000) addNumber(randomDouble());
+// Powers of two and their neighbouring doubles: the rounding interval is
+// asymmetric at a power of two, which is where shortest-digit searches that
+// only try the correctly rounded candidate go wrong (e.g. 2^-24).
+const bits = new DataView(new ArrayBuffer(8));
+const nextDouble = (value, direction) => {
+	bits.setFloat64(0, value);
+	bits.setBigUint64(0, bits.getBigUint64(0) + BigInt(direction));
+	return bits.getFloat64(0);
+};
+for (let exponent = -1074; exponent <= 1023; exponent++) {
+	const power = 2 ** exponent;
+	for (const value of [power, nextDouble(power, 1), exponent > -1074 ? nextDouble(power, -1) : power]) {
+		addNumber(value);
+		addNumber(-value);
+	}
+}
+while (numberRows.length < 14000) addNumber(randomDouble());
 
 writeFileSync(
 	out,

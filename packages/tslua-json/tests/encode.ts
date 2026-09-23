@@ -36,6 +36,8 @@ describe("encode: values", () => {
 		expect(encode(0.1 + 0.2)).toBe("0.30000000000000004");
 		expect(encode(1e21)).toBe("1e+21");
 		expect(encode(123456789012)).toBe("123456789012");
+		expect(encode(2 ** -24)).toBe("5.960464477539063e-8");
+		expect(encode(-(2 ** -24))).toBe("-5.960464477539063e-8");
 		expect(encode("hi")).toBe('"hi"');
 	});
 
@@ -242,6 +244,56 @@ describe("encode: errors", () => {
 			() => encode(fractional),
 			"cannot encode a table with keys that are not strings or positive integers",
 			"fraction",
+		);
+	});
+
+	test("number and string keys with the same JSON name", () => {
+		const table = new LuaTable<AnyNotNil, string>();
+		table.set(1, "numeric");
+		table.set("1", "string");
+		for (const sortKeys of [false, true]) {
+			assertThrows(
+				() => encode(table, { sortKeys }),
+				'the table has both a number key 1 and a string key "1"',
+				`sortKeys ${sortKeys}`,
+			);
+		}
+	});
+
+	test("marked arrays are held to the same sparsity limit", () => {
+		const marked = asArray(new LuaTable<number, number>());
+		(marked as LuaTable<number, number>).set(1000000000, 1);
+		assertThrows(
+			() => encode(marked),
+			"array is too sparse (1 values, highest index 1000000000)",
+			"asArray",
+		);
+		const infinite = () => {
+			const table = new LuaTable<number, number>();
+			table.set(math.huge, 1);
+			return table;
+		};
+		assertThrows(
+			() => encode(infinite()),
+			"keys that are not strings or positive integers",
+			"unmarked inf",
+		);
+		assertThrows(
+			() => encode(asArray(infinite())),
+			"a table marked as an array has non-index keys",
+			"marked inf",
+		);
+	});
+
+	test("decoded arrays may stay as sparse as their source text", () => {
+		const text = `[${string.rep("null,", 100)}1]`;
+		expect(encode(decode(text))).toBe(text);
+		const grown = decode<unknown[]>(text);
+		grown[999] = 2;
+		assertThrows(
+			() => encode(grown),
+			"array is too sparse (2 values, highest index 1000)",
+			"grown past its source",
 		);
 	});
 

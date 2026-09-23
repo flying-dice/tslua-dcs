@@ -86,6 +86,11 @@ function isFiniteNumber(n: number): boolean {
 /** Smallest positive normal double; below it precision drops (subnormals). */
 const MIN_NORMAL = 2.2250738585072014e-308;
 
+/** Lengths of arrays produced by decode, including trailing runs of null that decoded to nil. */
+const DECODED_ARRAY_LENGTHS = setmetatable(new LuaTable<object, number>(), {
+	__mode: "k",
+});
+
 // Marker metatables: decoded tables carry one, and asArray/asObject apply them.
 const ARRAY_MT: LuaMetatable<object> = {};
 const OBJECT_MT: LuaMetatable<object> = {};
@@ -144,6 +149,55 @@ export function asObject<T extends object>(value: T): T {
  * (the algorithm `JSON.stringify` uses): the shortest digits that round-trip,
  * laid out in plain or exponential notation by the same thresholds.
  */
+const SCIENTIFIC_PATTERN = "^(-?)(%d)%.?(%d*)e([-+]%d+)$";
+
+/** Adds `delta` (±1) to a string of decimal digits; the length may change on carry or borrow. */
+function stepDigits(digits: string, delta: number): string {
+	const bytes = [...string.byte(digits, 1, digits.length)];
+	let index = bytes.length - 1;
+	while (index >= 0) {
+		const next = bytes[index] - 48 + delta;
+		if (next >= 0 && next <= 9) {
+			bytes[index] = 48 + next;
+			break;
+		}
+		bytes[index] = next < 0 ? 57 : 48;
+		index--;
+	}
+	const [stepped] = string.gsub(string.char(...bytes), "^0+", "");
+	return index < 0 ? `1${stepped}` : stepped;
+}
+
+/**
+ * Returns a `%e`-style decimal of `precision` significant digits that parses
+ * back to `value`, or `undefined` if none exists. The correctly rounded
+ * candidate is tried first. When it fails, the adjacent candidate on the side
+ * of `value` can still lie inside the rounding interval (it does next to
+ * powers of two, where the interval is asymmetric), and ECMAScript picks it.
+ */
+function roundTripAt(value: number, precision: number): string | undefined {
+	const rounded = string.format(`%.${precision - 1}e`, value);
+	const roundedValue = tonumber(rounded) as number;
+	if (roundedValue === value) return rounded;
+
+	const [sign, lead, fraction, exponentText] = string.match(
+		rounded,
+		SCIENTIFIC_PATTERN,
+	);
+	let exponent = tonumber(exponentText) as number;
+	const towardsValue = math.abs(roundedValue) < math.abs(value) ? 1 : -1;
+	let digits = stepDigits(lead + fraction, towardsValue);
+	if (digits.length > precision) {
+		exponent++; // 9.99 -> 10.0
+		digits = string.sub(digits, 1, precision);
+	} else if (digits.length < precision) {
+		exponent--; // 1.00 -> 0.999
+		digits = `${digits}9`;
+	}
+	const neighbour = `${sign}${string.sub(digits, 1, 1)}.${string.sub(digits, 2)}e${exponent < 0 ? "-" : "+"}${math.abs(exponent)}`;
+	return tonumber(neighbour) === value ? neighbour : undefined;
+}
+
 function formatNumber(value: number): string {
 	if (value === 0) return "0"; // also -0, as in JavaScript
 	if (
@@ -154,33 +208,30 @@ function formatNumber(value: number): string {
 		return string.format("%.0f", value);
 	}
 
-	// %.{p-1}e gives p significant digits, correctly rounded; the first p that
-	// round-trips is the shortest. A normal double carries more than 15 digits
-	// of precision, so if 15 digits round-trip then any shorter form is those 15
-	// digits with trailing zeros (stripped below); only 16 and 17 need trying
-	// after. Subnormals carry fewer digits, so for them every precision is tried.
-	let scientific: string;
+	// The shortest precision with a round-tripping decimal wins. A normal
+	// double carries more than 15 digits of precision, so if any form of at most
+	// 15 digits round-trips, the correctly rounded 15-digit one does (its
+	// trailing zeros are stripped below); only 16 digits then need a search, and
+	// 17 always round-trip. Subnormals carry fewer digits, so for them every
+	// precision is searched.
+	let scientific: string | undefined;
 	if (math.abs(value) < MIN_NORMAL) {
-		scientific = string.format("%.16e", value);
-		for (let precision = 0; precision < 16; precision++) {
-			const candidate = string.format(`%.${precision}e`, value);
-			if (tonumber(candidate) === value) {
-				scientific = candidate;
-				break;
-			}
+		for (
+			let precision = 1;
+			precision <= 16 && scientific === undefined;
+			precision++
+		) {
+			scientific = roundTripAt(value, precision);
 		}
 	} else {
 		scientific = string.format("%.14e", value);
-		if (tonumber(scientific) !== value) {
-			scientific = string.format("%.15e", value);
-			if (tonumber(scientific) !== value)
-				scientific = string.format("%.16e", value);
-		}
+		if (tonumber(scientific) !== value) scientific = roundTripAt(value, 16);
 	}
+	scientific ??= string.format("%.16e", value);
 
 	const [sign, lead, fraction, exponentText] = string.match(
 		scientific,
-		"^(-?)(%d)%.?(%d*)e([-+]%d+)$",
+		SCIENTIFIC_PATTERN,
 	);
 	const [digits] = string.gsub(lead + fraction, "0+$", "");
 	const k = digits.length;
@@ -291,7 +342,12 @@ function arrayLength(
 	let allStrings = true;
 	for (const [key] of pairs(value as LuaTable<AnyNotNil, unknown>)) {
 		count++;
-		if (typeof key === "number" && key > 0 && key === math.floor(key)) {
+		if (
+			typeof key === "number" &&
+			key > 0 &&
+			key === math.floor(key) &&
+			key !== math.huge
+		) {
 			if (key > maxIndex) maxIndex = key;
 		} else {
 			allIndices = false;
@@ -306,18 +362,18 @@ function arrayLength(
 				depth,
 				"a table marked as an array has non-index keys",
 			);
+		// A decoded array may be as sparse as its source text (runs of null that
+		// decoded to nil), which bounds it; any other marked array is checked
+		// like an unmarked one.
+		const decodedLength = DECODED_ARRAY_LENGTHS.get(value);
+		if (decodedLength === undefined || maxIndex > decodedLength) {
+			assertDense(state, depth, count, maxIndex);
+		}
 		return maxIndex;
 	}
 	if (count === 0) return state.emptyAsObject ? undefined : 0;
 	if (allIndices) {
-		// Holes encode as null (as in JavaScript), but refuse pathological sparsity.
-		if (maxIndex > count * 2 + 16) {
-			encodeFailure(
-				state,
-				depth,
-				`array is too sparse (${count} values, highest index ${maxIndex})`,
-			);
-		}
+		assertDense(state, depth, count, maxIndex);
 		return maxIndex;
 	}
 	if (allStrings) return undefined;
@@ -328,9 +384,42 @@ function arrayLength(
 	);
 }
 
-function objectKey(state: EncodeState, depth: number, key: unknown): string {
+/** Holes encode as null (as in JavaScript), but pathological sparsity is refused. */
+function assertDense(
+	state: EncodeState,
+	depth: number,
+	count: number,
+	maxIndex: number,
+): void {
+	if (maxIndex > count * 2 + 16) {
+		encodeFailure(
+			state,
+			depth,
+			`array is too sparse (${count} values, highest index ${maxIndex})`,
+		);
+	}
+}
+
+function objectKey(
+	state: EncodeState,
+	depth: number,
+	items: object,
+	key: unknown,
+): string {
 	if (typeof key === "string") return key;
-	if (typeof key === "number" && isFiniteNumber(key)) return formatNumber(key);
+	if (typeof key === "number" && isFiniteNumber(key)) {
+		const name = formatNumber(key);
+		// A string key with the same text would become a second member with the
+		// same JSON name, silently dropping one of the two values.
+		if (rawget(items as Record<string, unknown>, name) !== undefined) {
+			encodeFailure(
+				state,
+				depth,
+				`the table has both a number key ${name} and a string key "${name}"`,
+			);
+		}
+		return name;
+	}
 	return encodeFailure(
 		state,
 		depth,
@@ -437,7 +526,7 @@ ${string.rep(state.indent, depth - 1)}`
 			const names: string[] = [];
 			const originals = new LuaTable<string, AnyNotNil>();
 			for (const [key] of pairs(items)) {
-				const name = objectKey(state, depth, key);
+				const name = objectKey(state, depth, items, key);
 				names.push(name);
 				originals.set(name, key);
 			}
@@ -445,7 +534,7 @@ ${string.rep(state.indent, depth - 1)}`
 			for (const name of names) member(name, items.get(originals.get(name)));
 		} else {
 			for (const [key, item] of pairs(items))
-				member(objectKey(state, depth, key), item);
+				member(objectKey(state, depth, items, key), item);
 		}
 
 		if (first) {
@@ -720,15 +809,19 @@ function parseArray(state: DecodeState, depth: number): unknown[] {
 	}
 
 	let index = 0;
+	let hasHoles = false;
 	while (true) {
 		index++;
-		result.set(index, parseValue(state, depth + 1));
+		const item = parseValue(state, depth + 1);
+		if (item === undefined) hasHoles = true;
+		result.set(index, item);
 		skipWhitespace(state);
 		const next = string.byte(state.text, state.pos);
 		if (next === 44) {
 			state.pos++;
 		} else if (next === 93) {
 			state.pos++;
+			if (hasHoles) DECODED_ARRAY_LENGTHS.set(result, index);
 			return result as unknown as unknown[];
 		} else {
 			decodeFailure(
