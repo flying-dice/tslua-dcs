@@ -25,7 +25,7 @@
 	"scripts": {
 		"build": "rimraf dist && tsc -p tsconfig.tstl.json && tstl -p tsconfig.tstl.json",
 		"build:docs": "typedoc",
-		"test": "vitest run --coverage && npm run test:lua",
+		"test": "npm run test:lua",
 		"test:lua": "tstl -p tsconfig.tstl-tests.json && lua51 ./.test/tests.lua"
 	},
 	"dependencies": {
@@ -33,13 +33,9 @@
 	},
 	"devDependencies": {
 		"@flying-dice/tslua-luatest": "^0.33.0",
-		"@vitest/coverage-v8": "^4.1.11",
-		"@vitest/ui": "^4.1.11",
 		"lua-types": "^2.14.1",
 		"typescript": "6.0.2",
-		"typescript-to-lua": "^1.37.1",
-		"vitest": "^4.1.11",
-		"vitest-mock-extended": "^5.1.1"
+		"typescript-to-lua": "^1.37.1"
 	},
 	"gitHead": "a6ae4c01c5f5796bcc1c0e88d4b790d83de03340"
 }
