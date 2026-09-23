@@ -28,7 +28,7 @@ async function main() {
 		throw new Error(`wrong bridge at ${base}`);
 	if (health.pump_stalled) throw new Error("GUI bridge is stalled");
 
-	const bundle = await readFile(resolve(".test/gui-tests.lua"), "utf8");
+	const bundle = await readFile(resolve(".test/tests.lua"), "utf8");
 	const code = `local output={} local original_print=print print=function(...) local values={...} for i=1,#values do values[i]=tostring(values[i]) end output[#output+1]=table.concat(values,"\\t") original_print(...) end local chunk,load_error=loadstring(${luaString(bundle)},"@tslua-dcs-gui-types_test") if not chunk then print=original_print return {passed=false,error=load_error,output=output} end local ok,result=pcall(chunk) print=original_print if not ok then return {passed=false,error=tostring(result),output=output} end return {passed=true,output=output}`;
 	const response = await json(`${base}/rpc`, {
 		method: "POST",

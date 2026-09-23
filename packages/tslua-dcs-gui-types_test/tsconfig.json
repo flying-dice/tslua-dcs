@@ -13,6 +13,6 @@
 	"tstl": {
 		"luaTarget": "5.1",
 		"luaBundleEntry": "src/index.ts",
-		"luaBundle": "gui-tests.lua"
+		"luaBundle": "tests.lua"
 	}
 }
