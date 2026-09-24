@@ -1,10 +1,11 @@
 /**
- * HttpServer against real LuaSocket over loopback: the server is bound to 127.0.0.1 on an
- * OS-assigned port and a client socket in the same process sends raw HTTP.
+ * HttpServer against real LuaSocket over loopback: the server is bound to 127.0.0.1 on an OS-assigned port and
+ * non-blocking clients in the same process send raw HTTP while the test pumps the server (support/loopback.ts).
  */
-import { Logger, LogLevel } from "@flying-dice/tslua-common";
+import { Logger } from "@flying-dice/tslua-common";
 import {
 	afterEach,
+	beforeEach,
 	describe,
 	expect,
 	restoreAllMocks,
@@ -12,26 +13,43 @@ import {
 	stringContaining,
 	test,
 } from "@flying-dice/tslua-luatest";
-import { HttpServer, type HttpRequest, type RequestHandler } from "../src";
+import * as socket from "socket";
 import {
-	connect,
+	type HttpRequest,
+	HttpServer,
+	type HttpServerOptions,
+	type RequestHandler,
+} from "../src";
+import { fakeClock } from "./doubles/fake-socket";
+import {
+	ClientExchange,
+	drive,
 	exchange,
 	type LoopbackServer,
 	parseResponse,
-	readAll,
 	startServer,
 } from "./support/loopback";
 
-const servers: LoopbackServer[] = [];
+const HELLO =
+	"HTTP/1.1 200 OK\r\nServer: Lua HTTP/1.1\r\nConnection: close\r\n\r\nHello";
 
-function serve(handler: RequestHandler): LoopbackServer {
-	const server = startServer(handler);
+const servers: LoopbackServer[] = [];
+const exchanges: ClientExchange[] = [];
+
+function serve(
+	handler: RequestHandler,
+	options?: HttpServerOptions,
+): LoopbackServer {
+	const server = startServer(handler, options);
 	servers.push(server);
 	return server;
 }
 
 /** A server whose handler records each request and answers 200 with `body`. */
-function recordingServer(body = "Hello"): {
+function recordingServer(
+	body = "Hello",
+	options?: HttpServerOptions,
+): {
 	server: LoopbackServer;
 	requests: HttpRequest[];
 } {
@@ -41,14 +59,29 @@ function recordingServer(body = "Hello"): {
 		res.status = 200;
 		res.body = body;
 		return res;
-	});
+	}, options);
 	return { server, requests };
 }
 
+function open(
+	server: LoopbackServer,
+	request: string,
+	options?: ConstructorParameters<typeof ClientExchange>[2],
+): ClientExchange {
+	const client = new ClientExchange(server.port(), request, options);
+	exchanges.push(client);
+	return client;
+}
+
 describe("HttpServer over loopback", () => {
+	beforeEach(() => {
+		spyOn(Logger.transports, "warn").mockReturnValue(undefined);
+		spyOn(Logger.transports, "error").mockReturnValue(undefined);
+	});
+
 	afterEach(() => {
 		restoreAllMocks();
-		Logger.level = LogLevel.INFO;
+		for (const client of exchanges.splice(0)) client.close();
 		for (const server of servers.splice(0)) server.close();
 	});
 
@@ -73,7 +106,7 @@ describe("HttpServer over loopback", () => {
 				"GET /units?coalition=blue&limit=2 HTTP/1.1\r\nHost: 127.0.0.1:8080\r\nAccept: */*\r\n\r\n",
 			);
 
-			expect(raw).toBe("HTTP/1.1 200 OK\r\nServer: Lua HTTP/1.1\r\n\r\nHello");
+			expect(raw).toBe(HELLO);
 			expect(requests).toEqual([
 				{
 					method: "GET",
@@ -96,7 +129,7 @@ describe("HttpServer over loopback", () => {
 
 			expect(initial).toEqual({ status: 404, headers: {} });
 			expect(raw).toBe(
-				"HTTP/1.1 404 Not Found\r\nServer: Lua HTTP/1.1\r\n\r\n",
+				"HTTP/1.1 404 Not Found\r\nServer: Lua HTTP/1.1\r\nConnection: close\r\n\r\n",
 			);
 		});
 
@@ -115,6 +148,7 @@ describe("HttpServer over loopback", () => {
 			expect(response.headerLines).toEqual([
 				"Server: Lua HTTP/1.1",
 				"Content-Type: application/json",
+				"Connection: close",
 			]);
 			expect(response.body).toBe('{"id":1}');
 		});
@@ -126,18 +160,8 @@ describe("HttpServer over loopback", () => {
 				body: "short and stout",
 			}));
 			expect(exchange(server, "BREW /pot HTTP/1.1\r\n\r\n")).toBe(
-				"HTTP/1.1 418 I'm a Teapot\r\nServer: Lua HTTP/1.1\r\n\r\nshort and stout",
+				"HTTP/1.1 418 I'm a Teapot\r\nServer: Lua HTTP/1.1\r\nConnection: close\r\n\r\nshort and stout",
 			);
-		});
-
-		test("reads a body of Content-Length bytes", () => {
-			const { server, requests } = recordingServer();
-			exchange(
-				server,
-				'POST /submit HTTP/1.1\r\nContent-Type: application/json\r\nContent-Length: 17\r\n\r\n{"hello":"world"}',
-			);
-			expect(requests[0].body).toBe('{"hello":"world"}');
-			expect(requests[0].headers["content-length"]).toBe("17");
 		});
 
 		test("reads a binary body containing CRLFs and NUL bytes intact", () => {
@@ -150,114 +174,50 @@ describe("HttpServer over loopback", () => {
 			expect(requests[0].body).toBe(body);
 		});
 
-		test("reads a larger body", () => {
-			const { server, requests } = recordingServer();
-			const body = string.rep("0123456789abcdef", 512); // 8 KiB
+		test("reads a body larger than one read chunk", () => {
+			const { server, requests } = recordingServer("Hello", {
+				ioChunkBytes: 1000,
+			});
+			const body = string.rep("0123456789abcdef", 4096); // 64 KiB
 			exchange(
 				server,
 				`POST /big HTTP/1.1\r\nContent-Length: ${body.length}\r\n\r\n${body}`,
 			);
-			expect(requests[0].body).toHaveLength(8192);
+			expect(requests[0].body).toHaveLength(65536);
 			expect(requests[0].body).toBe(body);
 		});
 
-		test("reads only Content-Length bytes when the client sends more", () => {
+		test("reconstructs a request written one byte per pump", () => {
 			const { server, requests } = recordingServer();
-			exchange(server, "POST / HTTP/1.1\r\nContent-Length: 3\r\n\r\nabcdef");
-			expect(requests[0].body).toBe("abc");
+			const raw = exchange(
+				server,
+				"POST /frag?a=1 HTTP/1.1\r\nHost: x\r\nContent-Length: 4\r\n\r\n\r\n\0z",
+				{ sliceBytes: 1 },
+			);
+			expect(raw).toBe(HELLO);
+			expect(requests).toHaveLength(1);
+			expect(requests[0].path).toBe("/frag");
+			expect(requests[0].body).toBe("\r\n\0z");
 		});
 
-		const noBody: [string, string][] = [
-			["no Content-Length header", ""],
-			["Content-Length: 0", "Content-Length: 0\r\n"],
-			["a non-numeric Content-Length", "Content-Length: abc\r\n"],
-			["a negative Content-Length", "Content-Length: -5\r\n"],
-		];
-		for (const [name, header] of noBody) {
-			test(`does not read a body with ${name}`, () => {
-				const { server, requests } = recordingServer();
-				const raw = exchange(server, `POST / HTTP/1.1\r\n${header}\r\nignored`);
-				expect(requests).toHaveLength(1);
-				expect(requests[0].body).toBeUndefined();
-				expect(raw).toBe(
-					"HTTP/1.1 200 OK\r\nServer: Lua HTTP/1.1\r\n\r\nHello",
-				);
-			});
-		}
-
-		test("accepts bare LF line endings", () => {
+		test("rejects an invalid Content-Length with 400 instead of guessing", () => {
 			const { server, requests } = recordingServer();
-			exchange(
+			const raw = exchange(
 				server,
-				"GET /lf HTTP/1.1\nHost: example.com\nContent-Length: 2\n\nhi",
+				"POST / HTTP/1.1\r\nContent-Length: abc\r\n\r\n",
 			);
-			expect(requests[0].path).toBe("/lf");
-			expect(requests[0].headers).toEqual({
-				host: "example.com",
-				"content-length": "2",
-			});
-			expect(requests[0].body).toBe("hi");
+			expect(requests).toHaveLength(0);
+			expect(raw).toBe(
+				"HTTP/1.1 400 Bad Request\r\nServer: Lua HTTP/1.1\r\nConnection: close\r\n\r\n",
+			);
 		});
 
 		test("closes the connection after each response", () => {
 			const { server } = recordingServer();
-			const client = connect(server.port());
-			client.send("GET / HTTP/1.1\r\n\r\n");
-			server.acceptNextClient();
-			expect(readAll(client)).toBe(
-				"HTTP/1.1 200 OK\r\nServer: Lua HTTP/1.1\r\n\r\nHello",
-			);
-			const [data, err] = client.receive("*l");
-			expect(data).toBeUndefined();
-			expect(err).toBe("closed");
-			client.close();
-		});
-
-		test("logs its progress at debug level", () => {
-			Logger.level = LogLevel.DEBUG;
-			const debug = spyOn(Logger.transports, "debug").mockReturnValue(
-				undefined,
-			);
-			const { server } = recordingServer();
-			exchange(server, "POST / HTTP/1.1\r\nContent-Length: 2\r\n\r\nhi");
-			expect(debug).toHaveBeenCalledWith(
-				"[DEBUG] [HttpServer] - Fetching request body 2",
-			);
-			expect(debug).toHaveBeenLastCalledWith(
-				"[DEBUG] [HttpServer] - Closing client",
-			);
-			// The corrected Logger contract (#127): the message is the only argument.
-			for (const call of debug.mock.calls) expect(call.n).toBe(1);
-		});
-	});
-
-	describe("accept loop", () => {
-		test("returns immediately when no client is waiting", () => {
-			const { server, requests } = recordingServer();
-			server.acceptNextClient();
-			server.acceptNextClient();
-			expect(requests).toHaveLength(0);
-		});
-
-		test("handles one waiting client per call", () => {
-			const { server, requests } = recordingServer();
-			const first = connect(server.port());
-			const second = connect(server.port());
-			first.send("GET /first HTTP/1.1\r\n\r\n");
-			second.send("GET /second HTTP/1.1\r\n\r\n");
-
-			server.acceptNextClient();
-			expect(requests).toHaveLength(1);
-			server.acceptNextClient();
-			expect(requests).toHaveLength(2);
-			server.acceptNextClient();
-			expect(requests).toHaveLength(2);
-
-			expect(requests.map((r) => r.path)).toEqual(["/first", "/second"]);
-			expect(parseResponse(readAll(first)).statusLine).toBe("HTTP/1.1 200 OK");
-			expect(parseResponse(readAll(second)).statusLine).toBe("HTTP/1.1 200 OK");
-			first.close();
-			second.close();
+			const client = open(server, "GET / HTTP/1.1\r\n\r\n");
+			drive(server, [client]);
+			expect(client.response()).toBe(HELLO);
+			expect(client.done).toBe(true);
 		});
 
 		test("serves consecutive requests", () => {
@@ -272,19 +232,142 @@ describe("HttpServer over loopback", () => {
 				).toBe(path);
 			}
 		});
+	});
 
-		test("close() releases the listening socket", () => {
+	describe("concurrency", () => {
+		test("an idle connection does not hold up a complete request, and still gets its deadline response", () => {
+			const clock = fakeClock();
+			const { server, requests } = recordingServer("Hello", {
+				clock: clock.clock,
+				requestTimeout: 10,
+			});
+			const idle = open(server, "GET /idle HTTP/1.1\r\nHost: x"); // never finished
+			drive(
+				server,
+				[idle],
+				() => idle.requestSent && server.connectionCount() === 1,
+			);
+
+			const healthy = open(server, "GET /healthy HTTP/1.1\r\n\r\n");
+			const started = socket.gettime();
+			drive(server, [idle, healthy], () => healthy.done);
+			// Generous: a pump that waited on the idle socket (the old 2 s read timeout) would take far longer.
+			expect(socket.gettime() - started).toBeLessThan(1);
+			expect(healthy.response()).toBe(HELLO);
+			expect(requests.map((r) => r.path)).toEqual(["/healthy"]);
+			expect(idle.done).toBe(false);
+			expect(server.connectionCount()).toBe(1);
+
+			clock.advance(10);
+			drive(server, [idle]);
+			expect(idle.response()).toBe(
+				"HTTP/1.1 408 Request Timeout\r\nServer: Lua HTTP/1.1\r\nConnection: close\r\n\r\n",
+			);
+			expect(requests).toHaveLength(1);
+		});
+
+		test("a client that stops reading a large response does not stop a healthy client", () => {
+			const big = string.rep("0123456789abcdef", 1048576); // 16 MiB, more than loopback buffers hold
+			let bigDispatched = false;
+			const server = serve(
+				(req, res) => {
+					if (req.path === "/big") bigDispatched = true;
+					res.status = 200;
+					res.body = req.path === "/big" ? big : "small";
+					return res;
+				},
+				{ maxResponseBytes: 32 * 1048576 },
+			);
+			const stalled = open(server, "GET /big HTTP/1.1\r\n\r\n", {
+				read: false,
+			});
+			// Pump until the stalled response fills the socket buffers: a pump then writes nothing.
+			drive(server, [stalled], () => {
+				if (!bigDispatched) return false;
+				const stats = server.pump();
+				return stats.bytesWritten === 0 && server.connectionCount() === 1;
+			});
+
+			const healthy = open(server, "GET /small HTTP/1.1\r\n\r\n");
+			drive(server, [stalled, healthy], () => healthy.done);
+			expect(parseResponse(healthy.response()).body).toBe("small");
+			expect(server.connectionCount()).toBe(1);
+
+			// The stalled client resumes reading and receives every byte exactly once.
+			const resumed = drive(server, [], () => {
+				stalled.read();
+				return stalled.done;
+			});
+			expect(resumed.length).toBeGreaterThan(0);
+			const response = parseResponse(stalled.response());
+			expect(response.body).toHaveLength(big.length);
+			expect(response.body === big).toBe(true);
+		});
+
+		test("a burst of clients is served within one pump when the budgets allow", () => {
+			const { server, requests } = recordingServer("Hello", {
+				maxAcceptsPerPump: 8,
+				maxConnections: 8,
+				maxDispatchesPerPump: 8,
+				clock: fakeClock().clock, // the time budget never runs out
+			});
+			const clients: ClientExchange[] = [];
+			for (let i = 1; i <= 6; i++) {
+				const client = open(server, `GET /${i} HTTP/1.1\r\n\r\n`);
+				client.step(); // the whole request is now in the server's receive buffer
+				clients.push(client);
+			}
+			const stats = server.pump();
+			expect(stats.accepted).toBe(6);
+			expect(stats.dispatched).toBe(6);
+			drive(server, clients);
+			expect(requests).toHaveLength(6);
+			for (const client of clients) expect(client.response()).toBe(HELLO);
+		});
+	});
+
+	describe("receive-side closure", () => {
+		test("answers a complete request after the client half-closes", () => {
 			const { server, requests } = recordingServer();
-			server.close();
-			servers.splice(0); // already closed
-			// Accepting on a closed listener reports "closed", which is ignored.
-			server.acceptNextClient();
+			const raw = exchange(
+				server,
+				"POST / HTTP/1.1\r\nContent-Length: 2\r\n\r\nhi",
+				{
+					endRequest: true,
+				},
+			);
+			expect(requests[0].body).toBe("hi");
+			expect(raw).toBe(HELLO);
+		});
+
+		test("never dispatches an incomplete body followed by a half-close, and sends nothing", () => {
+			const { server, requests } = recordingServer();
+			const raw = exchange(
+				server,
+				"POST / HTTP/1.1\r\nContent-Length: 10\r\n\r\nabc",
+				{ endRequest: true },
+			);
+			expect(requests).toHaveLength(0);
+			expect(raw).toBe("");
+		});
+
+		test("never dispatches an incomplete head followed by a half-close", () => {
+			const { server, requests } = recordingServer();
+			expect(
+				exchange(server, "GET / HTTP/1.1\r\nHost: x", { endRequest: true }),
+			).toBe("");
+			expect(requests).toHaveLength(0);
+		});
+
+		test("a client that connects and sends nothing is dropped", () => {
+			const { server, requests } = recordingServer();
+			expect(exchange(server, "", { endRequest: true })).toBe("");
 			expect(requests).toHaveLength(0);
 		});
 	});
 
 	describe("failures", () => {
-		test("a throwing handler is logged, the client is closed without a response, and serving continues", () => {
+		test("a throwing handler gets 500 and serving continues", () => {
 			const error = spyOn(Logger.transports, "error").mockReturnValue(
 				undefined,
 			);
@@ -296,110 +379,34 @@ describe("HttpServer over loopback", () => {
 				return res;
 			});
 
-			expect(exchange(server, "GET / HTTP/1.1\r\n\r\n")).toBe("");
-			expect(error).toHaveBeenCalledWith(
-				stringContaining("[ERROR] [HttpServer] - Error handling client: "),
+			expect(exchange(server, "GET / HTTP/1.1\r\n\r\n")).toBe(
+				"HTTP/1.1 500 Internal Server Error\r\nServer: Lua HTTP/1.1\r\nConnection: close\r\n\r\n",
 			);
 			expect(error).toHaveBeenCalledWith(stringContaining("handler exploded"));
-
 			expect(exchange(server, "GET / HTTP/1.1\r\n\r\n")).toBe(
-				"HTTP/1.1 200 OK\r\nServer: Lua HTTP/1.1\r\n\r\n",
+				"HTTP/1.1 200 OK\r\nServer: Lua HTTP/1.1\r\nConnection: close\r\n\r\n",
 			);
 		});
 
-		test("a handler that returns nothing is logged and gets no response", () => {
-			const error = spyOn(Logger.transports, "error").mockReturnValue(
-				undefined,
-			);
-			const server = serve((() => undefined) as unknown as RequestHandler);
-			expect(exchange(server, "GET / HTTP/1.1\r\n\r\n")).toBe("");
-			expect(error).toHaveBeenCalledTimes(1);
-		});
-
-		test("a malformed header line is logged and the handler is not called", () => {
-			const error = spyOn(Logger.transports, "error").mockReturnValue(
-				undefined,
-			);
+		test("a malformed header line gets 400 and the handler is not called", () => {
 			const { server, requests } = recordingServer();
 			expect(exchange(server, "GET / HTTP/1.1\r\nno colon here\r\n\r\n")).toBe(
-				"",
+				"HTTP/1.1 400 Bad Request\r\nServer: Lua HTTP/1.1\r\nConnection: close\r\n\r\n",
 			);
 			expect(requests).toHaveLength(0);
-			expect(error).toHaveBeenCalledWith(
-				stringContaining("Malformed header line: no colon here"),
-			);
 		});
 
-		test("an empty request line is logged and the handler is not called", () => {
-			const error = spyOn(Logger.transports, "error").mockReturnValue(
-				undefined,
-			);
+		test("close() releases the listening socket and open connections", () => {
 			const { server, requests } = recordingServer();
-			expect(exchange(server, "\r\n")).toBe("");
+			const client = open(server, "GET / HTTP/1.1\r\nHost: x");
+			drive(server, [client], () => server.connectionCount() === 1);
+			server.close();
+			server.close();
+			servers.splice(0); // already closed
+			expect(server.pump().visited).toBe(0);
+			client.read();
+			expect(client.done).toBe(true);
 			expect(requests).toHaveLength(0);
-			expect(error).toHaveBeenCalledTimes(1);
-		});
-
-		test("a client that closes mid-head is logged and the handler is not called", () => {
-			const error = spyOn(Logger.transports, "error").mockReturnValue(
-				undefined,
-			);
-			const { server, requests } = recordingServer();
-			expect(
-				exchange(server, "GET / HTTP/1.1\r\nHost: x", { endRequest: true }),
-			).toBe("");
-			expect(requests).toHaveLength(0);
-			expect(error).toHaveBeenCalledWith(
-				stringContaining("Client returned unexpected value, terminating"),
-			);
-		});
-
-		test("a client that connects and sends nothing is dropped", () => {
-			const error = spyOn(Logger.transports, "error").mockReturnValue(
-				undefined,
-			);
-			const { server, requests } = recordingServer();
-			expect(exchange(server, "", { endRequest: true })).toBe("");
-			expect(requests).toHaveLength(0);
-			expect(error).toHaveBeenCalledTimes(1);
-		});
-
-		test("partial data then an early close: the handler is not called and nothing is sent", () => {
-			const { server, requests } = recordingServer();
-			const error = spyOn(Logger.transports, "error").mockReturnValue(
-				undefined,
-			);
-			const raw = exchange(
-				server,
-				"POST / HTTP/1.1\r\nContent-Length: 10\r\n\r\nabc",
-				{ endRequest: true },
-			);
-			expect(requests).toHaveLength(0);
-			expect(raw).toBe("");
-			expect(error).toHaveBeenCalledWith(
-				stringContaining(
-					"Incomplete request body: expected 10 bytes, received 3 (closed)",
-				),
-			);
-		});
-
-		test("partial data then silence: the server times out with 408 and no dispatch", () => {
-			const { server, requests } = recordingServer();
-			const error = spyOn(Logger.transports, "error").mockReturnValue(
-				undefined,
-			);
-			// The client stays connected but never sends the rest; the server's 2s read timeout fires.
-			const raw = exchange(
-				server,
-				"POST / HTTP/1.1\r\nContent-Length: 10\r\n\r\nabc",
-			);
-			expect(requests).toHaveLength(0);
-			expect(raw).toMatch("^HTTP/1%.1 408 Request Timeout\r\n");
-			expect(error).toHaveBeenCalledWith(
-				stringContaining(
-					"Incomplete request body: expected 10 bytes, received 3 (timeout)",
-				),
-			);
 		});
 	});
 });

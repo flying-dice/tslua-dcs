@@ -45,6 +45,9 @@ export type HttpResponse = {
  *                                  information to construct the response string.
  *                                  It must include a status and headers, with an
  *                                  optional body.
+ * @param options - `closeConnection: true` drops any `Connection` header the response sets (in any
+ *                  letter case) and writes `Connection: close` after the other headers, for a server
+ *                  that closes every connection after one response.
  *
  * @returns {string} The complete HTTP response string, ready to be sent over the network.
  *                   This string includes the start line (status line), headers, and
@@ -61,15 +64,21 @@ export type HttpResponse = {
  * };
  * const responseString = assembleResponseString(response);
  */
-export function assembleResponseString(response: HttpResponse): string {
+export function assembleResponseString(
+	response: HttpResponse,
+	options: { closeConnection?: boolean } = {},
+): string {
 	const startLine = `HTTP/1.1 ${response.status} ${
 		StatusText[response.status] || "Unknown Status"
 	}`;
 	const headers = ["Server: Lua HTTP/1.1"];
 
 	Object.keys(response.headers).forEach((key) => {
+		if (options.closeConnection && key.toLowerCase() === "connection") return;
 		headers.push(`${key}: ${response.headers[key]}`);
 	});
+
+	if (options.closeConnection) headers.push("Connection: close");
 
 	let responseString: string;
 

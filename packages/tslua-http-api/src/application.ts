@@ -3,6 +3,7 @@ import {
 	type HttpRequest,
 	type HttpResponse,
 	HttpServer,
+	type HttpServerOptions,
 	HttpStatus,
 	StatusText,
 } from "@flying-dice/tslua-http";
@@ -233,13 +234,17 @@ export class Application extends HttpServer {
 	protected logger: Logger;
 
 	/**
-	 * Constructs a new Application instance.
+	 * Constructs a new Application instance. Drive it by calling {@link HttpServer.pump} repeatedly.
 	 * @param bindAddress The network address the server will bind to.
 	 * @param port The port number the server will listen on.
+	 * @param options Limits, deadlines, per-pump budgets and the clock of the underlying `HttpServer`.
 	 */
-	constructor(bindAddress: string, port: number) {
-		super(bindAddress, port, (req: HttpRequest, res: HttpResponse) =>
-			this.handleRequest(req, res),
+	constructor(bindAddress: string, port: number, options?: HttpServerOptions) {
+		super(
+			bindAddress,
+			port,
+			(req: HttpRequest, res: HttpResponse) => this.handleRequest(req, res),
+			options,
 		);
 		this.logger = new Logger(Application.name);
 		this.requestHandlers = [];

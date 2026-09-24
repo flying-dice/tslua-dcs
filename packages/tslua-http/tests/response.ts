@@ -113,4 +113,19 @@ describe("assembleResponseString", () => {
 			}),
 		).toMatch("^HTTP/1%.1 500 Internal Server Error\r\n");
 	});
+
+	test("closeConnection replaces any Connection header with a final Connection: close", () => {
+		expect(
+			assembleResponseString(
+				{
+					status: HttpStatus.OK,
+					headers: { CONNECTION: "keep-alive" },
+					body: "x",
+				},
+				{ closeConnection: true },
+			),
+		).toBe(
+			"HTTP/1.1 200 OK\r\nServer: Lua HTTP/1.1\r\nConnection: close\r\n\r\nx",
+		);
+	});
 });

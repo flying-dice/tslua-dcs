@@ -1,44 +1,38 @@
-# HTTP Server for Lua
+# HTTP API framework for Lua
 
 ## Introduction
 
-tslua-http is a lightweight and simple HTTP server class designed for Lua environments with the `socket` module.
-
-The server is designed to be embedded in games such as DCS World allowing HTTP requests to be handled.
+tslua-http-api is a small Express-style framework (routing, middleware, JSON bodies and error handling) on top of
+[tslua-http](../tslua-http), for Lua environments with the `socket` module such as DCS World.
 
 Written in TypeScript and transpiled to Lua using TypeScriptToLua.
 
 ## Usage
 
-Here's a complete example of using the `HttpServer` class to build a simple HTTP server with routing:
-
-By Default Responses start life as an empty `404`, so if your request handler does not perform any mutation on the res
-then the user will receive a `404`.
-
-The request handler receives a req and res object. When processing is done return the res to have it be sent to the client.
-
 ```typescript
-import {HttpRequest, HttpResponse, HttpServer} from "@flying-dice/tslua-http"
+import { Application } from "@flying-dice/tslua-http-api";
 
-// Creating and starting an HttpServer
-const httpServer = new HttpServer('127.0.0.1', 8080, (req: HttpRequest, res: HttpResponse) => {
-    if (req.path === "/") {
-        res.status = 200;
-        res.body = "This is the Index!"
-        return res
-    }
+const app = new Application("127.0.0.1", 8080);
 
-    if (req.path === "/health") {
-        res.status = 200;
-        res.body = "UP!"
-        return res
-    }
+app.get("/health", (_req, res) => {
+    res.status(200).send("UP!");
 });
 
-// Entering a loop to accept and process client requests
-// In a real world scenario you would avoid using an infinite loop and use
-// some kind of in game timer linked to periodically loop (i.e. main game loop or frame rendering)
-while (true) {
-    httpServer.acceptNextClient();
-}
+app.post("/units/:id", (req, res) => {
+    res.json({ id: req.getPathParameterValue("id"), body: req.getBody() });
+});
+
+// Drive the server from the host's loop; each pump does bounded, non-blocking work and returns.
+// In DCS, from a timer callback:
+timer.scheduleFunction(() => {
+    app.pump();
+    return timer.getTime() + 0.1;
+}, [], timer.getTime() + 0.1);
 ```
+
+Requests that match no route receive an empty `404`. The optional third constructor argument takes the
+`HttpServerOptions` of `tslua-http` (connection limits, deadlines, per-pump budgets and the clock), for example
+`new Application("127.0.0.1", 8080, { maxConnections: 4 })`. See the [tslua-http README](../tslua-http/README.md) for
+the scheduling policy, the defaults and the supported HTTP subset.
+
+`acceptNextClient()` still works: it runs one `pump()`.
