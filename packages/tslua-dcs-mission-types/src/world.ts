@@ -27,6 +27,8 @@ export type FogAnimationKey = [
 
 /**
  * Dynamic fog controls introduced in DCS 2.9.10.
+ *
+ * @noSelf
  */
 export interface l_WorldWeather {
 	/**
@@ -229,7 +231,7 @@ export interface l_world extends _world {
 	 *
 	 * @see %DCS_INSTALL_DIR%/Scripts/World/PersistenceHandlers.lua:5
 	 */
-	setPersistenceHandler(name: string, handler: () => unknown): void;
+	setPersistenceHandler(name: string, handler: (this: void) => unknown): void;
 
 	/**
 	 * Runs each persistence callback and passes its name and result to storage.
@@ -248,7 +250,7 @@ export interface l_world extends _world {
 	 * @see %DCS_INSTALL_DIR%/Scripts/World/PersistenceHandlers.lua:14
 	 */
 	runPersistenceHandlers(
-		storageFunc: (name: string, value: unknown) => void,
+		storageFunc: (this: void, name: string, value: unknown) => void,
 	): void;
 
 	/**
@@ -314,7 +316,9 @@ export interface l_world extends _world {
 	 * @returns Nothing.
 	 * @example `world.setPersistencePassthrough(handler);`
 	 */
-	setPersistencePassthrough(handler: (...args: unknown[]) => unknown): void;
+	setPersistencePassthrough(
+		handler: (this: void, ...args: unknown[]) => unknown,
+	): void;
 
 	/**
 	 * Returns every airbase-like object in the mission, including map airfields,

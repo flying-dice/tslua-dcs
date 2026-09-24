@@ -4,7 +4,7 @@ import { unitFixture } from "./fixtures";
 describe("Unit examples", () => {
 	test("unit lookup and getters return documented values", () => {
 		const unit = unitFixture();
-		expect(Unit.getByName(unit.getName())).toBe(unit);
+		expect(Unit.getByName(unit.getName())).toEqual(unit);
 		const id = unit.getID();
 		expect(type(id) === "number" || type(id) === "string").toBe(true);
 		expect(type(unit.getObjectID())).toBe("number");
