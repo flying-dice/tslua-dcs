@@ -113,8 +113,8 @@ tuned budgets:
 - **TypeScriptToLua costs about 1.6× CPU per request.** It mostly comes from lualib helpers
   (`__TS__StringSplit`, `__TS__StringTrim`, `__TS__ArrayFilter`, `__TS__New`), method calls through class tables, and
   object allocation. One specific trap: a class with any `get`/`set` accessor makes every property access on its
-  instances go through `__TS__DescriptorGet`/`__TS__DescriptorSet`. Accessors added during this work made the whole
-  pump 20–40% slower until they were replaced with methods.
+  instances go through `__TS__DescriptorGet`/`__TS__DescriptorSet`. Accessors added during this work cost about 15–20% of the
+  pump's throughput in a profiled run (11.0k against 13.0k req/s) until they were replaced with methods.
 - **The Express-style layer adds roughly another 1.7×** on top of that. A sampling profile of `Application` under load
   puts about a third of all Lua instructions in framework code that predates this work:
   - `Logger.debug` calls whose message strings are built even when debug logging is off (~9%);
