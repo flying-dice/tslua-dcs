@@ -24,15 +24,15 @@ import {
 	existsSync,
 	mkdirSync,
 	readFileSync,
-	readdirSync,
 	realpathSync,
 	rmSync,
-	statSync,
 	writeFileSync,
 } from "node:fs";
-import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { bridgeToken, findSavedGames, TOKEN_FILE } from "../../../scripts/dcs-profile.mjs";
+
+export { bridgeToken, findSavedGames };
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const distDir = join(packageDir, "dist");
@@ -49,28 +49,9 @@ const BEGIN_MARK = "-- BEGIN tslua-dcs-bridge";
 const END_MARK = "-- END tslua-dcs-bridge";
 const ANCHOR = "dofile('Scripts/ScriptingSystem.lua')";
 const TEST_MISSION = "tslua-dcs-test.miz";
-/** Relative to Saved Games; the bridges read it at load (see src/core/token.ts). */
-const TOKEN_FILE = join("Config", "tslua-dcs-bridge.token");
 
 function fail(message) {
 	throw new Error(`[dcs-bridge] ${message}`);
-}
-
-/** The Saved Games write dir: DCS_SAVED_GAMES, else the DCS* folder whose dcs.log is newest. */
-export function findSavedGames() {
-	if (process.env.DCS_SAVED_GAMES) return resolve(process.env.DCS_SAVED_GAMES);
-	const root = join(homedir(), "Saved Games");
-	if (!existsSync(root)) fail(`no Saved Games folder at ${root}; set DCS_SAVED_GAMES`);
-	const candidates = readdirSync(root)
-		.filter((name) => /^DCS/i.test(name))
-		.map((name) => join(root, name))
-		.map((dir) => {
-			const log = join(dir, "Logs", "dcs.log");
-			return { dir, used: existsSync(log) ? statSync(log).mtimeMs : 0 };
-		})
-		.sort((a, b) => b.used - a.used);
-	if (candidates.length === 0) fail(`no DCS folder under ${root}; set DCS_SAVED_GAMES`);
-	return candidates[0].dir;
 }
 
 /** The game install dir: DCS_INSTALL, else the Windows uninstall registry entry. */
@@ -190,14 +171,6 @@ export async function health(env, timeoutMs = 2000) {
 	const response = await fetch(`${BRIDGE_URLS[env]}/health`, { signal: AbortSignal.timeout(timeoutMs) });
 	if (!response.ok) fail(`${env} bridge /health returned HTTP ${response.status}`);
 	return response.json();
-}
-
-/** The bearer token for RPC calls: DCS_BRIDGE_TOKEN, else the installed token file. */
-export function bridgeToken() {
-	if (process.env.DCS_BRIDGE_TOKEN) return process.env.DCS_BRIDGE_TOKEN.trim();
-	const file = join(findSavedGames(), TOKEN_FILE);
-	if (!existsSync(file)) fail(`no bridge token at ${file}; run dcs-bridge install`);
-	return readFileSync(file, "utf8").trim();
 }
 
 let rpcId = 0;

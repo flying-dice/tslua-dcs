@@ -5,7 +5,7 @@
  */
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { afterEach, beforeEach, test } from "node:test";
@@ -208,4 +208,54 @@ test("luaString round-trips every byte through Lua 5.1, including control charac
 		lines,
 		samples.map((sample) => Buffer.from(sample, "latin1").toString("hex")),
 	);
+});
+
+test("with two profiles, the installer, the CLI and the exporters all pick the same profile and token", async () => {
+	// Regression: the exporters used to pick the profile with the newest *token file* while the
+	// installer/CLI pick the one with the newest dcs.log, so they could send another profile's token.
+	const profiles = await import(`${pathToFileURL(join(repoRoot, "scripts", "dcs-profile.mjs")).href}?two-profiles`);
+	const root = join(sandbox, "Two Profiles");
+	const stable = join(root, "DCS");
+	const beta = join(root, "DCS.openbeta");
+	for (const dir of [stable, beta]) mkdirSync(join(dir, "Logs"), { recursive: true });
+	for (const dir of [stable, beta]) mkdirSync(join(dir, "Config"), { recursive: true });
+	const now = Date.now() / 1000;
+	// DCS.openbeta: older log, NEWER token. DCS: newer log, older token.
+	writeFileSync(join(beta, "Logs", "dcs.log"), "");
+	utimesSync(join(beta, "Logs", "dcs.log"), now - 3600, now - 3600);
+	writeFileSync(join(stable, "Logs", "dcs.log"), "");
+	utimesSync(join(stable, "Logs", "dcs.log"), now - 60, now - 60);
+	writeFileSync(join(stable, "Config", "tslua-dcs-bridge.token"), "stable-token\n");
+	utimesSync(join(stable, "Config", "tslua-dcs-bridge.token"), now - 7200, now - 7200);
+	writeFileSync(join(beta, "Config", "tslua-dcs-bridge.token"), "beta-token\n");
+	utimesSync(join(beta, "Config", "tslua-dcs-bridge.token"), now - 10, now - 10);
+
+	const previous = { ...process.env };
+	try {
+		delete process.env.DCS_SAVED_GAMES;
+		delete process.env.DCS_BRIDGE_TOKEN;
+		assert.equal(profiles.findSavedGames({ root }), stable, "the newest dcs.log wins");
+		assert.equal(profiles.bridgeToken({ root }), "stable-token", "the token of that same profile");
+		process.env.DCS_SAVED_GAMES = beta;
+		assert.equal(profiles.bridgeToken({ root }), "beta-token", "an explicit profile is honoured");
+		process.env.DCS_BRIDGE_TOKEN = "explicit";
+		assert.equal(profiles.bridgeToken({ root }), "explicit", "an explicit token wins");
+	} finally {
+		process.env = previous;
+	}
+
+	// The CLI re-exports the very same functions, so it cannot drift from the exporters.
+	const shared = await import(pathToFileURL(join(repoRoot, "scripts", "dcs-profile.mjs")).href);
+	const cliModule = await import(pathToFileURL(cli).href);
+	assert.equal(cliModule.findSavedGames, shared.findSavedGames);
+	assert.equal(cliModule.bridgeToken, shared.bridgeToken);
+});
+
+test("both exporters take their token from the shared profile module, with no discovery of their own", () => {
+	for (const pkg of ["tslua-dcs-mission-types", "tslua-dcs-gui-types"]) {
+		const source = readFileSync(join(repoRoot, "packages", pkg, "scripts", "export.ts"), "utf8");
+		assert.match(source, /import \{ bridgeToken \} from "\.\.\/\.\.\/\.\.\/scripts\/dcs-profile\.mjs";/, pkg);
+		assert.match(source, /authorization: `Bearer \$\{bridgeToken\(\)\}`/, pkg);
+		assert.doesNotMatch(source, /Saved Games|readdirSync|tslua-dcs-bridge\.token/, `${pkg} has its own discovery`);
+	}
 });

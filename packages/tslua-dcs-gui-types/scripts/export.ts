@@ -6,10 +6,10 @@ import {
 	rm,
 	writeFile,
 } from "node:fs/promises";
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
-import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+// The same profile/token rule as the dcs-bridge installer and CLI (one implementation).
+import { bridgeToken } from "../../../scripts/dcs-profile.mjs";
 import { config } from "./config";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -58,30 +58,6 @@ async function getJson(
 		fail(`${op} returned invalid JSON`);
 	}
 }
-/** The bridge's bearer token: DCS_BRIDGE_TOKEN, else the token `dcs-bridge install` wrote to Saved Games. */
-function bridgeToken(): string {
-	const fromEnv = process.env.DCS_BRIDGE_TOKEN?.trim();
-	if (fromEnv) return fromEnv;
-	const tokenFile = join("Config", "tslua-dcs-bridge.token");
-	const candidates = process.env.DCS_SAVED_GAMES
-		? [join(process.env.DCS_SAVED_GAMES, tokenFile)]
-		: (() => {
-				const root = join(homedir(), "Saved Games");
-				if (!existsSync(root)) return [];
-				return readdirSync(root)
-					.filter((name) => /^DCS/i.test(name))
-					.map((name) => join(root, name, tokenFile))
-					.filter((file) => existsSync(file))
-					.sort((a, b) => statSync(b).mtimeMs - statSync(a).mtimeMs);
-			})();
-	const found = candidates.find((file) => existsSync(file));
-	if (!found)
-		fail(
-			"no bridge token found; run: npm run dcs:start (or set DCS_BRIDGE_TOKEN)",
-		);
-	return readFileSync(found as string, "utf8").trim();
-}
-
 async function rpc(
 	base: string,
 	id: string,
