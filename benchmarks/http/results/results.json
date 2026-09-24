@@ -1,0 +1,3379 @@
+{
+	"meta": {
+		"date": "2026-09-24T00:21:44.041Z",
+		"baseline": "677d1cf",
+		"after": "b4dc06d",
+		"durationSeconds": 8,
+		"reps": 3,
+		"frameSeconds": 0.016666666666666666,
+		"machine": "Intel(R) Xeon(R) Processor @ 2.10GHz, 4 CPUs, 16 GiB, linux 6.18.44-fc-v37",
+		"node": "v22.22.2",
+		"lua": "Lua 5.1.5  Copyright (C) 1994-2012 Lua.org, PUC-Rio"
+	},
+	"results": [
+		{
+			"scenario": "capacity",
+			"variant": "before-http",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.901,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 175453,
+					"errors": {},
+					"perSecond": 19711.605437591283,
+					"latencyMs": {
+						"p50": 1.3149679999987711,
+						"p90": 2.339367000000493,
+						"p99": 4.812619000000268,
+						"max": 2048.992091,
+						"mean": 2.2230829815620297
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 517166,
+				"wallSeconds": 9.108506,
+				"cpuSeconds": 8.355008,
+				"stepTotalSeconds": 8.651322,
+				"stepMax": 0.017424,
+				"stepP50": 0.000002183,
+				"stepP99": 0.000125239,
+				"stepP999": 0.000568341,
+				"over1ms": 219,
+				"over5ms": 11,
+				"over16ms": 1,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 26166.7
+			}
+		},
+		{
+			"scenario": "capacity",
+			"variant": "before-app",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.878,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 101359,
+					"errors": {},
+					"perSecond": 11416.8731696328,
+					"latencyMs": {
+						"p50": 2.2126180000050226,
+						"p90": 4.273827999997593,
+						"p99": 7.199886000002152,
+						"max": 3073.624386999996,
+						"mean": 3.8363933431367716
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 461279,
+				"wallSeconds": 9.005412,
+				"cpuSeconds": 8.852015,
+				"stepTotalSeconds": 8.635285,
+				"stepMax": 0.004493,
+				"stepP50": 0.00000198,
+				"stepP99": 0.000176224,
+				"stepP999": 0.000490954,
+				"over1ms": 84,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 30562.9
+			}
+		},
+		{
+			"scenario": "capacity",
+			"variant": "after-http",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.85,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 156035,
+					"errors": {},
+					"perSecond": 17631.073446327686,
+					"latencyMs": {
+						"p50": 1.921516000002157,
+						"p90": 3.379371999995783,
+						"p99": 5.482088999997359,
+						"max": 1030.9525809999905,
+						"mean": 2.4620569258628455
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 303443,
+				"wallSeconds": 9.112215,
+				"cpuSeconds": 8.96446,
+				"stepTotalSeconds": 8.902932,
+				"stepMax": 0.003886,
+				"stepP50": 0.000002925,
+				"stepP99": 0.000301403,
+				"stepP999": 0.000925767,
+				"over1ms": 196,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 18432.2
+			}
+		},
+		{
+			"scenario": "capacity",
+			"variant": "after-http-tuned",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.678,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 162816,
+					"errors": {},
+					"perSecond": 18761.926711223783,
+					"latencyMs": {
+						"p50": 1.4157160000031581,
+						"p90": 2.7317800000018906,
+						"p99": 5.225999000002048,
+						"max": 1037.2324039999949,
+						"mean": 2.3863452293202347
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 209695,
+				"wallSeconds": 8.878736,
+				"cpuSeconds": 8.682925,
+				"stepTotalSeconds": 8.737404,
+				"stepMax": 0.011678,
+				"stepP50": 0.000002925,
+				"stepP99": 0.001436169,
+				"stepP999": 0.003134977,
+				"over1ms": 4358,
+				"over5ms": 25,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 19101.7
+			}
+		},
+		{
+			"scenario": "capacity",
+			"variant": "after-app",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.654,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 94581,
+					"errors": {},
+					"perSecond": 10929.165703720822,
+					"latencyMs": {
+						"p50": 3.0283720000006724,
+						"p90": 5.536827000003541,
+						"p99": 7.845612999997684,
+						"max": 2049.6654550000094,
+						"mean": 4.0737888590626055
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 203835,
+				"wallSeconds": 8.715469,
+				"cpuSeconds": 8.592408,
+				"stepTotalSeconds": 8.584247,
+				"stepMax": 0.004714,
+				"stepP50": 0.000002925,
+				"stepP99": 0.000490954,
+				"stepP999": 0.001436169,
+				"over1ms": 665,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 26362.2
+			}
+		},
+		{
+			"scenario": "capacity",
+			"variant": "after-app-tuned",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.907,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 100554,
+					"errors": {},
+					"perSecond": 11289.323004378579,
+					"latencyMs": {
+						"p50": 2.348156000021845,
+						"p90": 4.176142999989679,
+						"p99": 6.412681999994675,
+						"max": 1036.8829210000113,
+						"mean": 3.8542209451438767
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 280692,
+				"wallSeconds": 9.117032,
+				"cpuSeconds": 9.012169,
+				"stepTotalSeconds": 8.948119,
+				"stepMax": 0.00684,
+				"stepP50": 0.000002925,
+				"stepP99": 0.002121876,
+				"stepP999": 0.004001113,
+				"over1ms": 3137,
+				"over5ms": 140,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 24658.2
+			}
+		},
+		{
+			"scenario": "capacity",
+			"variant": "raw-lua",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.001,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 222396,
+					"errors": {},
+					"perSecond": 27796.0254968129,
+					"latencyMs": {
+						"p50": 1.511502000008477,
+						"p90": 2.345298999978695,
+						"p99": 4.674758000008296,
+						"max": 1030.9928359999903,
+						"mean": 1.7179002713313574
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 110493,
+				"wallSeconds": 8.20798,
+				"cpuSeconds": 7.919143,
+				"stepTotalSeconds": 8.104447,
+				"stepMax": 0.004897,
+				"stepP50": 0.000073225,
+				"stepP99": 0.000424105,
+				"stepP999": 0.000972056,
+				"over1ms": 103,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 25950.7
+			}
+		},
+		{
+			"scenario": "capacity",
+			"variant": "raw-lua-tuned",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 9.017,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 269358,
+					"errors": {},
+					"perSecond": 29872.241321947433,
+					"latencyMs": {
+						"p50": 0.9098800000210758,
+						"p90": 1.4377629999944475,
+						"p99": 3.103880000009667,
+						"max": 2036.5074549999845,
+						"mean": 1.440295006433818
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 400902,
+				"wallSeconds": 9.240777,
+				"cpuSeconds": 8.960523,
+				"stepTotalSeconds": 9.008566,
+				"stepMax": 0.005716,
+				"stepP50": 0.00000198,
+				"stepP99": 0.000881683,
+				"stepP999": 0.001436169,
+				"over1ms": 2354,
+				"over5ms": 2,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 25950.7
+			}
+		},
+		{
+			"scenario": "frame-healthy",
+			"variant": "before-http",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.263,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 496,
+					"errors": {},
+					"perSecond": 60.026624712574126,
+					"latencyMs": {
+						"p50": 266.62972300002,
+						"p90": 266.7277389999945,
+						"p99": 266.8282130000007,
+						"max": 267.20616800000425,
+						"mean": 262.46638106249964
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 497,
+				"wallSeconds": 8.283517,
+				"cpuSeconds": 0.103407,
+				"stepTotalSeconds": 0.082607,
+				"stepMax": 0.000906,
+				"stepP50": 0.000159841,
+				"stepP99": 0.000332297,
+				"stepP999": 0.000925767,
+				"over1ms": 0,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 26166.7
+			}
+		},
+		{
+			"scenario": "frame-healthy",
+			"variant": "before-app",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.264,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 496,
+					"errors": {},
+					"perSecond": 60.01936108422072,
+					"latencyMs": {
+						"p50": 266.6194759999926,
+						"p90": 266.75428900000406,
+						"p99": 267.5886720000126,
+						"max": 270.3268059999973,
+						"mean": 262.49025865927365
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 500,
+				"wallSeconds": 8.333586,
+				"cpuSeconds": 0.146552,
+				"stepTotalSeconds": 0.124813,
+				"stepMax": 0.001334,
+				"stepP50": 0.000236157,
+				"stepP99": 0.000761631,
+				"stepP999": 0.00136778,
+				"over1ms": 4,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 32282
+			}
+		},
+		{
+			"scenario": "frame-healthy",
+			"variant": "after-http",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.065,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 1936,
+					"errors": {},
+					"perSecond": 240.04959702417855,
+					"latencyMs": {
+						"p50": 66.64346800005296,
+						"p90": 66.82794099999592,
+						"p99": 68.12481100001605,
+						"max": 68.80422400002135,
+						"mean": 66.42507168595107
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 492,
+				"wallSeconds": 8.200143,
+				"cpuSeconds": 0.207002,
+				"stepTotalSeconds": 0.190252,
+				"stepMax": 0.002503,
+				"stepP50": 0.000348912,
+				"stepP99": 0.00222797,
+				"stepP999": 0.002579153,
+				"over1ms": 12,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 25041.9
+			}
+		},
+		{
+			"scenario": "frame-healthy",
+			"variant": "after-http-tuned",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.016,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 7691,
+					"errors": {},
+					"perSecond": 959.4560878243512,
+					"latencyMs": {
+						"p50": 16.655923999962397,
+						"p90": 17.040597000042908,
+						"p99": 19.123420000018086,
+						"max": 20.796409000002313,
+						"mean": 16.65602650448591
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 486,
+				"wallSeconds": 8.100202,
+				"cpuSeconds": 0.497036,
+				"stepTotalSeconds": 0.48321,
+				"stepMax": 0.004669,
+				"stepP50": 0.000839698,
+				"stepP99": 0.003629128,
+				"stepP999": 0.004863378,
+				"over1ms": 107,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 24641.1
+			}
+		},
+		{
+			"scenario": "frame-healthy",
+			"variant": "after-app",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.065,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 1936,
+					"errors": {},
+					"perSecond": 240.04959702417855,
+					"latencyMs": {
+						"p50": 66.6474000000162,
+						"p90": 66.8294069999829,
+						"p99": 68.15915999998106,
+						"max": 70.14091600000393,
+						"mean": 66.42859863946309
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 491,
+				"wallSeconds": 8.183529,
+				"cpuSeconds": 0.324287,
+				"stepTotalSeconds": 0.304308,
+				"stepMax": 0.003967,
+				"stepP50": 0.000541277,
+				"stepP99": 0.002579153,
+				"stepP999": 0.004001113,
+				"over1ms": 23,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 26362.2
+			}
+		},
+		{
+			"scenario": "frame-healthy",
+			"variant": "after-app-tuned",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.015,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 7575,
+					"errors": {},
+					"perSecond": 945.1029320024952,
+					"latencyMs": {
+						"p50": 16.659033000003546,
+						"p90": 17.05572200001916,
+						"p99": 32.38486600003671,
+						"max": 49.7334189999965,
+						"mean": 16.919056382838008
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 486,
+				"wallSeconds": 8.100266,
+				"cpuSeconds": 0.817283,
+				"stepTotalSeconds": 0.807707,
+				"stepMax": 0.007816,
+				"stepP50": 0.001436169,
+				"stepP99": 0.005106547,
+				"stepP999": 0.007921931,
+				"over1ms": 481,
+				"over5ms": 17,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 24204.5
+			}
+		},
+		{
+			"scenario": "frame-healthy",
+			"variant": "raw-lua",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.065,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 1936,
+					"errors": {},
+					"perSecond": 240.04959702417855,
+					"latencyMs": {
+						"p50": 66.64363800000865,
+						"p90": 66.89577000000281,
+						"p99": 68.03583000000799,
+						"max": 69.66883800004143,
+						"mean": 66.43049853667313
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 491,
+				"wallSeconds": 8.183511,
+				"cpuSeconds": 0.167027,
+				"stepTotalSeconds": 0.15443,
+				"stepMax": 0.003266,
+				"stepP50": 0.000273382,
+				"stepP99": 0.001583376,
+				"stepP999": 0.003291726,
+				"over1ms": 9,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 25950.7
+			}
+		},
+		{
+			"scenario": "frame-healthy",
+			"variant": "raw-lua-tuned",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.015,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 7696,
+					"errors": {},
+					"perSecond": 960.199625701809,
+					"latencyMs": {
+						"p50": 16.666061000025366,
+						"p90": 16.912858000025153,
+						"p99": 18.483754999993835,
+						"max": 19.9392789999838,
+						"mean": 16.65359294815452
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 487,
+				"wallSeconds": 8.116859,
+				"cpuSeconds": 0.320166,
+				"stepTotalSeconds": 0.302536,
+				"stepMax": 0.003743,
+				"stepP50": 0.000568341,
+				"stepP99": 0.001662545,
+				"stepP999": 0.003810584,
+				"over1ms": 20,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 25950.7
+			}
+		},
+		{
+			"scenario": "frame-idle",
+			"variant": "before-http",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.32,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 32,
+					"errors": {},
+					"perSecond": 3.846153846153846,
+					"latencyMs": {
+						"p50": 265.19865099998424,
+						"p90": 8054.525847000012,
+						"p99": 8054.580913000042,
+						"max": 8054.580913000042,
+						"mean": 4097.414410375011
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 11,
+					"closedByServer": 3
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 41,
+				"wallSeconds": 8.337877,
+				"cpuSeconds": 0.010488,
+				"stepTotalSeconds": 7.728047,
+				"stepMax": 2.001425,
+				"stepP50": 0.000176224,
+				"stepP99": 2.062581523,
+				"stepP999": 2.062581523,
+				"over1ms": 5,
+				"over5ms": 4,
+				"over16ms": 4,
+				"over100ms": 4,
+				"over1s": 4,
+				"missedFrames": 4,
+				"peakLuaKb": 26166.7
+			}
+		},
+		{
+			"scenario": "frame-idle",
+			"variant": "before-app",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.32,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 32,
+					"errors": {},
+					"perSecond": 3.846153846153846,
+					"latencyMs": {
+						"p50": 255.4273530000355,
+						"p90": 8063.832456999982,
+						"p99": 8064.345532000007,
+						"max": 8064.345532000007,
+						"mean": 4097.210969999998
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 11,
+					"closedByServer": 3
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 46,
+				"wallSeconds": 8.430638,
+				"cpuSeconds": 0.012581,
+				"stepTotalSeconds": 7.739978,
+				"stepMax": 2.001435,
+				"stepP50": 0.000236157,
+				"stepP99": 2.062581523,
+				"stepP999": 2.062581523,
+				"over1ms": 4,
+				"over5ms": 4,
+				"over16ms": 4,
+				"over100ms": 4,
+				"over1s": 4,
+				"missedFrames": 4,
+				"peakLuaKb": 31130.6
+			}
+		},
+		{
+			"scenario": "frame-idle",
+			"variant": "after-http",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.064,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 1928,
+					"errors": {},
+					"perSecond": 239.0873015873016,
+					"latencyMs": {
+						"p50": 66.64961499994388,
+						"p90": 66.79939200001536,
+						"p99": 69.12232200003928,
+						"max": 100.12675999995554,
+						"mean": 66.69174067686716
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 8,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 486,
+				"wallSeconds": 8.100193,
+				"cpuSeconds": 0.216788,
+				"stepTotalSeconds": 0.196637,
+				"stepMax": 0.002283,
+				"stepP50": 0.000366358,
+				"stepP99": 0.001924604,
+				"stepP999": 0.002339368,
+				"over1ms": 11,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 25116.2
+			}
+		},
+		{
+			"scenario": "frame-idle",
+			"variant": "after-http-tuned",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 7677,
+					"errors": {},
+					"perSecond": 959.625,
+					"latencyMs": {
+						"p50": 16.65800500003388,
+						"p90": 17.08975799998734,
+						"p99": 19.26469400001224,
+						"max": 32.22792999999365,
+						"mean": 16.664107502670724
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 8,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 486,
+				"wallSeconds": 8.100193,
+				"cpuSeconds": 0.512136,
+				"stepTotalSeconds": 0.497638,
+				"stepMax": 0.005834,
+				"stepP50": 0.000881683,
+				"stepP99": 0.004411227,
+				"stepP999": 0.005911467,
+				"over1ms": 132,
+				"over5ms": 2,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 24925.3
+			}
+		},
+		{
+			"scenario": "frame-idle",
+			"variant": "after-app",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.06,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 1928,
+					"errors": {},
+					"perSecond": 239.20595533498758,
+					"latencyMs": {
+						"p50": 66.64684800000396,
+						"p90": 66.82453300000634,
+						"p99": 69.99115499993786,
+						"max": 100.2654099999927,
+						"mean": 66.66146792271836
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 8,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 489,
+				"wallSeconds": 8.150154,
+				"cpuSeconds": 0.333869,
+				"stepTotalSeconds": 0.318736,
+				"stepMax": 0.003434,
+				"stepP50": 0.000568341,
+				"stepP99": 0.002843516,
+				"stepP999": 0.003456312,
+				"over1ms": 26,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 26360.1
+			}
+		},
+		{
+			"scenario": "frame-idle",
+			"variant": "after-app-tuned",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.021,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 7563,
+					"errors": {},
+					"perSecond": 942.8998877945393,
+					"latencyMs": {
+						"p50": 16.663655000040308,
+						"p90": 17.001981999957934,
+						"p99": 32.98231500003021,
+						"max": 36.43376299994998,
+						"mean": 16.95703725333778
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 8,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 486,
+				"wallSeconds": 8.10016,
+				"cpuSeconds": 0.809871,
+				"stepTotalSeconds": 0.803804,
+				"stepMax": 0.005756,
+				"stepP50": 0.001436169,
+				"stepP99": 0.005361874,
+				"stepP999": 0.005911467,
+				"over1ms": 481,
+				"over5ms": 16,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 24791.7
+			}
+		},
+		{
+			"scenario": "frame-idle",
+			"variant": "raw-lua",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.061,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 1928,
+					"errors": {},
+					"perSecond": 239.17628085845428,
+					"latencyMs": {
+						"p50": 66.64951899996959,
+						"p90": 66.78487500001211,
+						"p99": 68.26461900002323,
+						"max": 100.0819279999705,
+						"mean": 66.67786809180532
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 8,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 488,
+				"wallSeconds": 8.133562,
+				"cpuSeconds": 0.154665,
+				"stepTotalSeconds": 0.137664,
+				"stepMax": 0.001649,
+				"stepP50": 0.000273382,
+				"stepP99": 0.001020659,
+				"stepP999": 0.001662545,
+				"over1ms": 3,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 25950.7
+			}
+		},
+		{
+			"scenario": "frame-idle",
+			"variant": "raw-lua-tuned",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.009,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 7696,
+					"errors": {},
+					"perSecond": 960.9189661630666,
+					"latencyMs": {
+						"p50": 16.663532000035048,
+						"p90": 16.886336999945343,
+						"p99": 17.96972900000401,
+						"max": 19.570761000039056,
+						"mean": 16.642117207900593
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 8,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 485,
+				"wallSeconds": 8.083469,
+				"cpuSeconds": 0.332824,
+				"stepTotalSeconds": 0.316999,
+				"stepMax": 0.003299,
+				"stepP50": 0.000596758,
+				"stepP99": 0.002020834,
+				"stepP999": 0.003456312,
+				"over1ms": 18,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 25950.7
+			}
+		},
+		{
+			"scenario": "frame-slowloris",
+			"variant": "before-http",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.302,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 32,
+					"errors": {},
+					"perSecond": 3.8544928932787283,
+					"latencyMs": {
+						"p50": 263.4567110000644,
+						"p90": 8038.436676999903,
+						"p99": 8038.641630000086,
+						"max": 8038.641630000086,
+						"mean": 4088.4514808437452
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 4,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 37,
+				"wallSeconds": 8.321876,
+				"cpuSeconds": 0.009637,
+				"stepTotalSeconds": 7.728406,
+				"stepMax": 7.721527,
+				"stepP50": 0.000159841,
+				"stepP99": 8.085585927,
+				"stepP999": 8.085585927,
+				"over1ms": 2,
+				"over5ms": 1,
+				"over16ms": 1,
+				"over100ms": 1,
+				"over1s": 1,
+				"missedFrames": 1,
+				"peakLuaKb": 26166.7
+			}
+		},
+		{
+			"scenario": "frame-slowloris",
+			"variant": "before-app",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.303,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 32,
+					"errors": {},
+					"perSecond": 3.8540286643381907,
+					"latencyMs": {
+						"p50": 265.4636000000173,
+						"p90": 8037.319576000096,
+						"p99": 8037.426389000029,
+						"max": 8037.426389000029,
+						"mean": 4088.9040492187632
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 4,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 38,
+				"wallSeconds": 8.337338,
+				"cpuSeconds": 0.011349,
+				"stepTotalSeconds": 7.729018,
+				"stepMax": 7.720334,
+				"stepP50": 0.000247965,
+				"stepP99": 8.085585927,
+				"stepP999": 8.085585927,
+				"over1ms": 1,
+				"over5ms": 1,
+				"over16ms": 1,
+				"over100ms": 1,
+				"over1s": 1,
+				"missedFrames": 1,
+				"peakLuaKb": 31064.4
+			}
+		},
+		{
+			"scenario": "frame-slowloris",
+			"variant": "after-http",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.065,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 1932,
+					"errors": {},
+					"perSecond": 239.55362678239308,
+					"latencyMs": {
+						"p50": 66.65429099998437,
+						"p90": 66.81495599995833,
+						"p99": 69.07276799995452,
+						"max": 83.37541699991561,
+						"mean": 66.56533174430676
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 4,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 490,
+				"wallSeconds": 8.166856,
+				"cpuSeconds": 0.210667,
+				"stepTotalSeconds": 0.19303,
+				"stepMax": 0.002234,
+				"stepP50": 0.000366358,
+				"stepP99": 0.001924604,
+				"stepP999": 0.002339368,
+				"over1ms": 13,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 25145.9
+			}
+		},
+		{
+			"scenario": "frame-slowloris",
+			"variant": "after-http-tuned",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.016,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 7681,
+					"errors": {},
+					"perSecond": 958.2085828343313,
+					"latencyMs": {
+						"p50": 16.664413999998942,
+						"p90": 16.9571050000377,
+						"p99": 19.343999999924563,
+						"max": 20.456752000027336,
+						"mean": 16.656978530530044
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 4,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 486,
+				"wallSeconds": 8.10018,
+				"cpuSeconds": 0.487245,
+				"stepTotalSeconds": 0.47232,
+				"stepMax": 0.004785,
+				"stepP50": 0.000839698,
+				"stepP99": 0.004631789,
+				"stepP999": 0.004863378,
+				"over1ms": 87,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 25082.1
+			}
+		},
+		{
+			"scenario": "frame-slowloris",
+			"variant": "after-app",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.064,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 1932,
+					"errors": {},
+					"perSecond": 239.58333333333334,
+					"latencyMs": {
+						"p50": 66.64626000006683,
+						"p90": 67.08276100002695,
+						"p99": 83.22197099996265,
+						"max": 96.69140899996273,
+						"mean": 66.55483161594147
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 4,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 485,
+				"wallSeconds": 8.096771,
+				"cpuSeconds": 0.377174,
+				"stepTotalSeconds": 0.357223,
+				"stepMax": 0.00411,
+				"stepP50": 0.000626596,
+				"stepP99": 0.002843516,
+				"stepP999": 0.004201169,
+				"over1ms": 40,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 1,
+				"peakLuaKb": 26360.1
+			}
+		},
+		{
+			"scenario": "frame-slowloris",
+			"variant": "after-app-tuned",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.004,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 7539,
+					"errors": {},
+					"perSecond": 941.9040479760121,
+					"latencyMs": {
+						"p50": 16.66686099988874,
+						"p90": 17.16207099996973,
+						"p99": 32.97764900000766,
+						"max": 49.65926800004672,
+						"mean": 16.975505246318903
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 4,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 488,
+				"wallSeconds": 8.13354,
+				"cpuSeconds": 0.851161,
+				"stepTotalSeconds": 0.856538,
+				"stepMax": 0.01323,
+				"stepP50": 0.001436169,
+				"stepP99": 0.005361874,
+				"stepP999": 0.01354919,
+				"over1ms": 480,
+				"over5ms": 18,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 25445.2
+			}
+		},
+		{
+			"scenario": "frame-slowloris",
+			"variant": "raw-lua",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.065,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 1932,
+					"errors": {},
+					"perSecond": 239.55362678239308,
+					"latencyMs": {
+						"p50": 66.6451980000129,
+						"p90": 66.85098300001118,
+						"p99": 72.7066829999676,
+						"max": 84.11418899998534,
+						"mean": 66.56724752536428
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 4,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 491,
+				"wallSeconds": 8.183512,
+				"cpuSeconds": 0.156499,
+				"stepTotalSeconds": 0.135588,
+				"stepMax": 0.001498,
+				"stepP50": 0.000260363,
+				"stepP99": 0.001020659,
+				"stepP999": 0.001507977,
+				"over1ms": 4,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 25950.7
+			}
+		},
+		{
+			"scenario": "frame-slowloris",
+			"variant": "raw-lua-tuned",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.01,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 7696,
+					"errors": {},
+					"perSecond": 960.7990012484395,
+					"latencyMs": {
+						"p50": 16.6632840000093,
+						"p90": 16.896467999904417,
+						"p99": 17.959924000082538,
+						"max": 20.147182000102475,
+						"mean": 16.644737794957976
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 4,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 482,
+				"wallSeconds": 8.033526,
+				"cpuSeconds": 0.330852,
+				"stepTotalSeconds": 0.316896,
+				"stepMax": 0.003171,
+				"stepP50": 0.000596758,
+				"stepP99": 0.002456336,
+				"stepP999": 0.003291726,
+				"over1ms": 33,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 25950.7
+			}
+		},
+		{
+			"scenario": "frame-slow-readers",
+			"variant": "before-http",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 9.324,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 64,
+					"errors": {},
+					"perSecond": 6.864006864006864,
+					"latencyMs": {
+						"p50": 3010.0550619999412,
+						"p90": 3037.8876059999457,
+						"p99": 3038.4913769999985,
+						"max": 3038.4913769999985,
+						"mean": 2299.729802406253
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 9,
+					"errors": {
+						"truncated (4011453 bytes)": 3
+					},
+					"perSecond": 0.9652509652509653,
+					"latencyMs": {
+						"p50": 3007.0500379999867,
+						"p90": 3042.134013000061,
+						"p99": 3042.134013000061,
+						"max": 3042.134013000061,
+						"mean": 3014.708126111111
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 78,
+				"wallSeconds": 9.358488,
+				"cpuSeconds": 0.104098,
+				"stepTotalSeconds": 8.220054,
+				"stepMax": 2.009894,
+				"stepP50": 0.000167833,
+				"stepP99": 2.062581523,
+				"stepP999": 2.062581523,
+				"over1ms": 12,
+				"over5ms": 12,
+				"over16ms": 6,
+				"over100ms": 6,
+				"over1s": 3,
+				"missedFrames": 6,
+				"peakLuaKb": 26166.7
+			}
+		},
+		{
+			"scenario": "frame-slow-readers",
+			"variant": "before-app",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 9.321,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 64,
+					"errors": {},
+					"perSecond": 6.866216071236992,
+					"latencyMs": {
+						"p50": 3009.2522999999346,
+						"p90": 3039.067548000021,
+						"p99": 3041.228524999926,
+						"max": 3041.228524999926,
+						"mean": 2298.824432578125
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 9,
+					"errors": {
+						"truncated (4011453 bytes)": 3
+					},
+					"perSecond": 0.965561635017702,
+					"latencyMs": {
+						"p50": 3007.7477959999815,
+						"p90": 3043.185867000022,
+						"p99": 3043.185867000022,
+						"max": 3043.185867000022,
+						"mean": 3014.643505444453
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 77,
+				"wallSeconds": 9.341158,
+				"cpuSeconds": 0.109189,
+				"stepTotalSeconds": 8.243268,
+				"stepMax": 2.008021,
+				"stepP50": 0.000247965,
+				"stepP99": 2.062581523,
+				"stepP999": 2.062581523,
+				"over1ms": 12,
+				"over5ms": 12,
+				"over16ms": 6,
+				"over100ms": 6,
+				"over1s": 3,
+				"missedFrames": 6,
+				"peakLuaKb": 38998.2
+			}
+		},
+		{
+			"scenario": "frame-slow-readers",
+			"variant": "after-http",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 10.318,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 1918,
+					"errors": {},
+					"perSecond": 185.88873812754412,
+					"latencyMs": {
+						"p50": 66.64775100001134,
+						"p90": 66.85432399995625,
+						"p99": 100.21206199994776,
+						"max": 116.48037799994927,
+						"mean": 67.04765741762127
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 8,
+					"errors": {},
+					"perSecond": 0.7753440589261485,
+					"latencyMs": {
+						"p50": 5111.618428000016,
+						"p90": 5202.18216299999,
+						"p99": 5202.18216299999,
+						"max": 5202.18216299999,
+						"mean": 5150.363891625006
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 620,
+				"wallSeconds": 10.333455,
+				"cpuSeconds": 0.289277,
+				"stepTotalSeconds": 0.26474,
+				"stepMax": 0.009229,
+				"stepP50": 0.000403909,
+				"stepP99": 0.00222797,
+				"stepP999": 0.009629156,
+				"over1ms": 12,
+				"over5ms": 4,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 41838.8
+			}
+		},
+		{
+			"scenario": "frame-slow-readers",
+			"variant": "after-http-tuned",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 9.817,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 7571,
+					"errors": {},
+					"perSecond": 771.2132015890802,
+					"latencyMs": {
+						"p50": 16.659823000081815,
+						"p90": 16.929851999972016,
+						"p99": 32.74492800002918,
+						"max": 49.89881600008812,
+						"mean": 16.928575780609535
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 12,
+					"errors": {},
+					"perSecond": 1.2223693592747276,
+					"latencyMs": {
+						"p50": 3263.669309000019,
+						"p90": 3270.967935999972,
+						"p99": 3279.731921000057,
+						"max": 3279.731921000057,
+						"mean": 3263.5407113333445
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 596,
+				"wallSeconds": 9.933487,
+				"cpuSeconds": 0.567716,
+				"stepTotalSeconds": 0.547136,
+				"stepMax": 0.009381,
+				"stepP50": 0.000839698,
+				"stepP99": 0.005911467,
+				"stepP999": 0.009629156,
+				"over1ms": 130,
+				"over5ms": 13,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 41936.8
+			}
+		},
+		{
+			"scenario": "frame-slow-readers",
+			"variant": "after-app",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 10.44,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 1910,
+					"errors": {},
+					"perSecond": 182.95019157088123,
+					"latencyMs": {
+						"p50": 66.65041000000201,
+						"p90": 66.92996400000993,
+						"p99": 104.7761570001021,
+						"max": 133.73849799996242,
+						"mean": 67.24133941466104
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 8,
+					"errors": {},
+					"perSecond": 0.7662835249042146,
+					"latencyMs": {
+						"p50": 5105.084098999971,
+						"p90": 5256.214690999943,
+						"p99": 5256.214690999943,
+						"max": 5256.214690999943,
+						"mean": 5147.770057124988
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 634,
+				"wallSeconds": 10.566802,
+				"cpuSeconds": 0.425015,
+				"stepTotalSeconds": 0.402737,
+				"stepMax": 0.011984,
+				"stepP50": 0.000626596,
+				"stepP99": 0.005629968,
+				"stepP999": 0.012289514,
+				"over1ms": 33,
+				"over5ms": 7,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 41643.6
+			}
+		},
+		{
+			"scenario": "frame-slow-readers",
+			"variant": "after-app-tuned",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 9.823,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 7421,
+					"errors": {},
+					"perSecond": 755.471851776443,
+					"latencyMs": {
+						"p50": 16.665664999978617,
+						"p90": 17.231689000036567,
+						"p99": 36.13509300001897,
+						"max": 57.63228999997955,
+						"mean": 17.2524884368681
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 12,
+					"errors": {},
+					"perSecond": 1.2216227221826326,
+					"latencyMs": {
+						"p50": 3267.3659019999905,
+						"p90": 3275.0038749999367,
+						"p99": 3279.900459000026,
+						"max": 3279.900459000026,
+						"mean": 3268.6411387499925
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 595,
+				"wallSeconds": 9.923278,
+				"cpuSeconds": 0.934158,
+				"stepTotalSeconds": 0.923414,
+				"stepMax": 0.012802,
+				"stepP50": 0.001507977,
+				"stepP99": 0.007185425,
+				"stepP999": 0.01290399,
+				"over1ms": 478,
+				"over5ms": 25,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 1,
+				"peakLuaKb": 42249.3
+			}
+		},
+		{
+			"scenario": "frame-slow-readers",
+			"variant": "raw-lua",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 10.395,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 1918,
+					"errors": {},
+					"perSecond": 184.51178451178453,
+					"latencyMs": {
+						"p50": 66.64618500007782,
+						"p90": 66.8242999999784,
+						"p99": 100.0177890000632,
+						"max": 116.66903900005855,
+						"mean": 66.98156896350284
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 8,
+					"errors": {},
+					"perSecond": 0.7696007696007696,
+					"latencyMs": {
+						"p50": 5175.213862000033,
+						"p90": 5206.772287999978,
+						"p99": 5206.772287999978,
+						"max": 5206.772287999978,
+						"mean": 5151.578951124975
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 626,
+				"wallSeconds": 10.433549,
+				"cpuSeconds": 0.236753,
+				"stepTotalSeconds": 0.213908,
+				"stepMax": 0.008836,
+				"stepP50": 0.000301403,
+				"stepP99": 0.001507977,
+				"stepP999": 0.009170625,
+				"over1ms": 12,
+				"over5ms": 4,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 41661.3
+			}
+		},
+		{
+			"scenario": "frame-slow-readers",
+			"variant": "raw-lua-tuned",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 9.817,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 7600,
+					"errors": {},
+					"perSecond": 774.1672608739941,
+					"latencyMs": {
+						"p50": 16.65922600007616,
+						"p90": 17.015539000043646,
+						"p99": 24.197844999842346,
+						"max": 48.68694499996491,
+						"mean": 16.85245208973647
+					}
+				},
+				"fragmented": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"slowReaders": {
+					"ok": 12,
+					"errors": {},
+					"perSecond": 1.2223693592747276,
+					"latencyMs": {
+						"p50": 3265.8215100001544,
+						"p90": 3280.6502089998685,
+						"p99": 3283.351389999967,
+						"max": 3283.351389999967,
+						"mean": 3268.5659175000037
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 592,
+				"wallSeconds": 9.866858,
+				"cpuSeconds": 0.420395,
+				"stepTotalSeconds": 0.403489,
+				"stepMax": 0.008791,
+				"stepP50": 0.000626596,
+				"stepP99": 0.005911467,
+				"stepP999": 0.009170625,
+				"over1ms": 42,
+				"over5ms": 6,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 41596.3
+			}
+		},
+		{
+			"scenario": "frame-fragmented",
+			"variant": "before-http",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.329,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 400,
+					"errors": {},
+					"perSecond": 48.024972985952694,
+					"latencyMs": {
+						"p50": 333.29174800007604,
+						"p90": 333.427122999914,
+						"p99": 333.7618070000317,
+						"max": 334.09336300008,
+						"mean": 325.4620637899992
+					}
+				},
+				"fragmented": {
+					"ok": 100,
+					"errors": {},
+					"perSecond": 12.006243246488173,
+					"latencyMs": {
+						"p50": 333.28453899989836,
+						"p90": 333.44404099998064,
+						"p99": 333.6556569999084,
+						"max": 334.5937059998978,
+						"mean": 332.1244211399951
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 503,
+				"wallSeconds": 8.383531,
+				"cpuSeconds": 0.106584,
+				"stepTotalSeconds": 0.084273,
+				"stepMax": 0.000893,
+				"stepP50": 0.000159841,
+				"stepP99": 0.000332297,
+				"stepP999": 0.000925767,
+				"over1ms": 0,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 26166.7
+			}
+		},
+		{
+			"scenario": "frame-fragmented",
+			"variant": "before-app",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.331,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 400,
+					"errors": {},
+					"perSecond": 48.01344376425399,
+					"latencyMs": {
+						"p50": 333.28557499987073,
+						"p90": 333.52129899989814,
+						"p99": 334.21607899991795,
+						"max": 335.3565060000401,
+						"mean": 325.50446173250384
+					}
+				},
+				"fragmented": {
+					"ok": 100,
+					"errors": {},
+					"perSecond": 12.003360941063498,
+					"latencyMs": {
+						"p50": 333.2609859998338,
+						"p90": 333.47343700006604,
+						"p99": 334.1020590001717,
+						"max": 334.5284039999824,
+						"mean": 332.17208242998925
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 506,
+				"wallSeconds": 8.433529,
+				"cpuSeconds": 0.164024,
+				"stepTotalSeconds": 0.139816,
+				"stepMax": 0.002279,
+				"stepP50": 0.000247965,
+				"stepP99": 0.000761631,
+				"stepP999": 0.002339368,
+				"over1ms": 3,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 32288.9
+			}
+		},
+		{
+			"scenario": "frame-fragmented",
+			"variant": "after-http",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.162,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 1788,
+					"errors": {},
+					"perSecond": 219.0639549130115,
+					"latencyMs": {
+						"p50": 66.77734399982728,
+						"p90": 83.28183400002308,
+						"p99": 83.62500100000761,
+						"max": 84.55984000000171,
+						"mean": 71.90041601677595
+					}
+				},
+				"fragmented": {
+					"ok": 148,
+					"errors": {},
+					"perSecond": 18.132810585640772,
+					"latencyMs": {
+						"p50": 216.71629899996333,
+						"p90": 233.2727260000538,
+						"p99": 233.3856340001803,
+						"max": 233.42098199995235,
+						"mean": 220.56214354054316
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 496,
+				"wallSeconds": 8.266957,
+				"cpuSeconds": 0.236256,
+				"stepTotalSeconds": 0.218132,
+				"stepMax": 0.002433,
+				"stepP50": 0.000403909,
+				"stepP99": 0.001832956,
+				"stepP999": 0.002456336,
+				"over1ms": 16,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 25262.6
+			}
+		},
+		{
+			"scenario": "frame-fragmented",
+			"variant": "after-http-tuned",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.18,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 7683,
+					"errors": {},
+					"perSecond": 939.2420537897311,
+					"latencyMs": {
+						"p50": 16.660516999894753,
+						"p90": 17.09361799992621,
+						"p99": 19.323581000091508,
+						"max": 32.905086000217125,
+						"mean": 16.68073191695897
+					}
+				},
+				"fragmented": {
+					"ok": 145,
+					"errors": {},
+					"perSecond": 17.726161369193154,
+					"latencyMs": {
+						"p50": 216.7048969999887,
+						"p90": 233.42413600021973,
+						"p99": 234.06210999982432,
+						"max": 234.0940839999821,
+						"mean": 222.18931197930482
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 496,
+				"wallSeconds": 8.266838,
+				"cpuSeconds": 0.525564,
+				"stepTotalSeconds": 0.512285,
+				"stepMax": 0.005076,
+				"stepP50": 0.000881683,
+				"stepP99": 0.004001113,
+				"stepP999": 0.005106547,
+				"over1ms": 158,
+				"over5ms": 2,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 25089.6
+			}
+		},
+		{
+			"scenario": "frame-fragmented",
+			"variant": "after-app",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.13,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 1788,
+					"errors": {},
+					"perSecond": 219.9261992619926,
+					"latencyMs": {
+						"p50": 66.81313100014813,
+						"p90": 83.27402799995616,
+						"p99": 84.00917299999855,
+						"max": 85.37292999983765,
+						"mean": 71.91229571420915
+					}
+				},
+				"fragmented": {
+					"ok": 148,
+					"errors": {},
+					"perSecond": 18.204182041820417,
+					"latencyMs": {
+						"p50": 216.67154500004835,
+						"p90": 233.121991999913,
+						"p99": 233.56973699992523,
+						"max": 233.65133599983528,
+						"mean": 219.2453631959459
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 493,
+				"wallSeconds": 8.21692,
+				"cpuSeconds": 0.334596,
+				"stepTotalSeconds": 0.322471,
+				"stepMax": 0.003894,
+				"stepP50": 0.000568341,
+				"stepP99": 0.002985692,
+				"stepP999": 0.004001113,
+				"over1ms": 27,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 26362.2
+			}
+		},
+		{
+			"scenario": "frame-fragmented",
+			"variant": "after-app-tuned",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.117,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 7588,
+					"errors": {},
+					"perSecond": 934.8281384748059,
+					"latencyMs": {
+						"p50": 16.672651999862865,
+						"p90": 17.10250599985011,
+						"p99": 32.07503099995665,
+						"max": 35.16483199992217,
+						"mean": 16.86169814101252
+					}
+				},
+				"fragmented": {
+					"ok": 148,
+					"errors": {},
+					"perSecond": 18.23333743994086,
+					"latencyMs": {
+						"p50": 216.6760789998807,
+						"p90": 230.66749799996614,
+						"p99": 233.42928499984555,
+						"max": 233.43365700007416,
+						"mean": 219.0212530472923
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 490,
+				"wallSeconds": 8.166909,
+				"cpuSeconds": 0.831353,
+				"stepTotalSeconds": 0.817579,
+				"stepMax": 0.006922,
+				"stepP50": 0.001436169,
+				"stepP99": 0.005361874,
+				"stepP999": 0.007185425,
+				"over1ms": 480,
+				"over5ms": 14,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 24438.1
+			}
+		},
+		{
+			"scenario": "frame-fragmented",
+			"variant": "raw-lua",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.143,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 1788,
+					"errors": {},
+					"perSecond": 219.57509517376886,
+					"latencyMs": {
+						"p50": 66.77876899996772,
+						"p90": 83.31644900003448,
+						"p99": 84.0245199999772,
+						"max": 85.03142299992032,
+						"mean": 71.87990887751852
+					}
+				},
+				"fragmented": {
+					"ok": 148,
+					"errors": {},
+					"perSecond": 18.175119734741493,
+					"latencyMs": {
+						"p50": 216.67424900014885,
+						"p90": 233.16920700017363,
+						"p99": 233.66345899994485,
+						"max": 233.8272860001307,
+						"mean": 219.049505979732
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 493,
+				"wallSeconds": 8.216923,
+				"cpuSeconds": 0.172533,
+				"stepTotalSeconds": 0.152886,
+				"stepMax": 0.001696,
+				"stepP50": 0.000287051,
+				"stepP99": 0.001071691,
+				"stepP999": 0.001745672,
+				"over1ms": 5,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 25950.7
+			}
+		},
+		{
+			"scenario": "frame-fragmented",
+			"variant": "raw-lua-tuned",
+			"reps": 3,
+			"client": {
+				"elapsedSeconds": 8.187,
+				"durationSeconds": 8,
+				"healthy": {
+					"ok": 7696,
+					"errors": {},
+					"perSecond": 940.0268718700379,
+					"latencyMs": {
+						"p50": 16.663233999861404,
+						"p90": 16.983962000114843,
+						"p99": 18.24686700012535,
+						"max": 19.83758300007321,
+						"mean": 16.629609494411216
+					}
+				},
+				"fragmented": {
+					"ok": 148,
+					"errors": {},
+					"perSecond": 18.077439843654577,
+					"latencyMs": {
+						"p50": 216.7036429999862,
+						"p90": 233.3151020000223,
+						"p99": 233.45660599996336,
+						"max": 233.45673600002192,
+						"mean": 220.31282016892314
+					}
+				},
+				"slowReaders": {
+					"ok": 0,
+					"errors": {},
+					"perSecond": 0,
+					"latencyMs": {
+						"p50": null,
+						"p90": null,
+						"p99": null,
+						"max": null,
+						"mean": null
+					}
+				},
+				"idle": {
+					"connections": 0,
+					"closedByServer": 0
+				},
+				"slowloris": {
+					"connections": 0,
+					"closedByServer": 0
+				}
+			},
+			"server": {
+				"calls": 493,
+				"wallSeconds": 8.216874,
+				"cpuSeconds": 0.336739,
+				"stepTotalSeconds": 0.32045,
+				"stepMax": 0.002848,
+				"stepP50": 0.000596758,
+				"stepP99": 0.002121876,
+				"stepP999": 0.002985692,
+				"over1ms": 26,
+				"over5ms": 0,
+				"over16ms": 0,
+				"over100ms": 0,
+				"over1s": 0,
+				"missedFrames": 0,
+				"peakLuaKb": 25950.7
+			}
+		}
+	]
+}

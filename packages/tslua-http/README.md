@@ -149,6 +149,15 @@ network deadlines would never expire.
 - A request is dispatched only when it is complete. If the client half-closes after a complete request, it is still
   answered. A connection that closes mid-request is dropped without a response.
 
+## Performance
+
+[`benchmarks/http`](../../benchmarks/http) compares this server with the version before the non-blocking refactor, and
+with a hand-written Lua server, under well-behaved, idle, slowloris, slow-reader and fragmented clients. See its
+[findings](../../benchmarks/http/README.md#findings-committed-run-b4dc06d-against-677d1cf) and
+[results](../../benchmarks/http/results/RESULTS.md). For code written against this package: avoid `get`/`set` accessors
+on classes in hot paths, because TypeScriptToLua routes every property access on such a class through descriptor
+lookups.
+
 ## Testing
 
 `npm test` compiles `tests/index.ts` with TypeScriptToLua and runs it on the repository's `lua51` interpreter with
