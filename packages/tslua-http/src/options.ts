@@ -11,18 +11,17 @@ export type Clock = (this: void) => number;
  *
  * ## Memory bound
  *
- * Request bodies and serialized responses are counted against one budget, `maxBufferedBytes`. A declared body is
- * reserved when its head arrives, and a body that does not fit gets `503` before anything is read or dispatched; so
- * retained bodies never exceed `maxBufferedBytes`. A response is counted from dispatch until its connection closes,
- * which makes new bodies wait for room, but it never delays or fails a request: a few slow readers must not stop the
- * server answering everyone else. Responses are bounded per connection by `maxResponseBytes` and in time by
- * `responseTimeout`. Each connection also holds at most `maxRequestHeaderBytes + ioChunkBytes` bytes of head. The
- * server's own buffers are therefore bounded by
+ * Declared request bodies share one budget, `maxBufferedBodyBytes`: a body is reserved when its head arrives, and one
+ * that does not fit gets `503` before anything is read or dispatched. Serialized responses are bounded per connection
+ * by `maxResponseBytes` and in time by `responseTimeout`; they are deliberately not part of the body budget, so clients
+ * that stop reading large responses cannot make the server refuse small requests from everyone else. Each connection
+ * also holds at most `maxRequestHeaderBytes + ioChunkBytes` bytes of head. The server's own buffers are therefore
+ * bounded by
  *
- *     maxBufferedBytes + maxConnections * (maxRequestHeaderBytes + ioChunkBytes + maxResponseBytes)
+ *     maxBufferedBodyBytes + maxConnections * (maxRequestHeaderBytes + ioChunkBytes + maxResponseBytes)
  *
  * which is 32 MiB + 64 * (16 KiB + 4 MiB), about 289 MiB, with the defaults. That worst case needs 64 clients each
- * holding a 4 MiB response unread; lower `maxResponseBytes` or `maxConnections` if your responses are small or your
+ * leaving a 4 MiB response unread; lower `maxResponseBytes` or `maxConnections` if your responses are small or your
  * clients few. Objects the request handler builds (for example the response body string before serialization) are
  * outside this bound.
  */
@@ -36,10 +35,10 @@ export interface HttpServerOptions {
 	maxConnections?: number;
 
 	/**
-	 * The budget for request bodies and serialized responses across all connections: a body that does not fit gets
-	 * `503` (see the memory bound above). Default `33554432` (32 MiB).
+	 * The most bytes of declared request bodies held across all connections: a body that does not fit gets `503`
+	 * (see the memory bound above). Default `33554432` (32 MiB).
 	 */
-	maxBufferedBytes?: number;
+	maxBufferedBodyBytes?: number;
 
 	/** The most bytes in the request line plus headers, terminator included. Larger heads get `431`. Default `8192`. */
 	maxRequestHeaderBytes?: number;
@@ -111,7 +110,7 @@ export type ResolvedServerOptions = Required<HttpServerOptions>;
 
 export const DEFAULT_SERVER_OPTIONS: Readonly<ResolvedServerOptions> = {
 	maxConnections: 64,
-	maxBufferedBytes: 33554432,
+	maxBufferedBodyBytes: 33554432,
 	maxRequestHeaderBytes: 8192,
 	maxRequestHeaderCount: 64,
 	maxRequestBodyBytes: 1048576,
@@ -142,7 +141,7 @@ const POSITIVE_INTEGERS: (keyof HttpServerOptions)[] = [
 ];
 
 const NON_NEGATIVE: (keyof HttpServerOptions)[] = [
-	"maxBufferedBytes",
+	"maxBufferedBodyBytes",
 	"maxRequestBodyBytes",
 	"maxResponseBytes",
 	"idleTimeout",

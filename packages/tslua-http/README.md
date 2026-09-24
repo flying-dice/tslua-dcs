@@ -79,7 +79,7 @@ a later pump. The time budget is cooperative. It is checked between operations a
 already running, but no further handler starts once it is spent.
 
 `pump()` returns counters for the call (`accepted`, `visited`, `dispatched`, `bytesRead`, `bytesWritten`, `closed`,
-`active`, `bufferedBytes`), and `connectionCount()` returns the number of open connections. You can use them for your own bounded instrumentation. The server logs connection events at debug level
+`active`, `bufferedBodyBytes`), and `connectionCount()` returns the number of open connections. You can use them for your own bounded instrumentation. The server logs connection events at debug level
 and failures at warn or error level. It never logs per pump, and a read or write that would block is never logged.
 
 ## Options and defaults
@@ -90,7 +90,7 @@ your workload.
 | Option | Default | Meaning |
 |---|---|---|
 | `maxConnections` | `64` | Open connections; accepting pauses at this count. Idle connections are cheap, so keep this well above the expected number of clients: a few idle clients can otherwise hold every slot until their deadlines expire |
-| `maxBufferedBytes` | `33554432` | Budget for request bodies plus serialized responses across all connections; a body that does not fit gets `503` (see below) |
+| `maxBufferedBodyBytes` | `33554432` | Declared request bodies held across all connections; a body that does not fit gets `503` (see below) |
 | `maxRequestHeaderBytes` | `8192` | Request line plus headers; more gets `431` |
 | `maxRequestHeaderCount` | `64` | Header lines; more gets `431` |
 | `maxRequestBodyBytes` | `1048576` | Largest `Content-Length`; more gets `413` before any body is read |
@@ -107,15 +107,14 @@ your workload.
 | `maxPumpSeconds` | `0.005` | Soft time budget per pump |
 | `clock` | `socket.gettime` | Clock for deadlines and the time budget |
 
-**Memory bound.** Request bodies and serialized responses are counted against the `maxBufferedBytes` budget. A declared
-body is reserved when its head arrives, and one that does not fit gets `503 Service Unavailable` before anything is
-read or dispatched, so retained bodies never exceed the budget. A response is counted from dispatch until its connection
-closes. That makes new bodies wait for room, but it never delays or fails a request: a few clients that stop reading
-must not stop the server answering everyone else. Responses are bounded per connection by `maxResponseBytes` and in time
-by `responseTimeout`. Each connection also holds at most one head buffer (`maxRequestHeaderBytes` plus one read chunk).
+**Memory bound.** Declared request bodies share the `maxBufferedBodyBytes` budget. A body is reserved when its head
+arrives, and one that does not fit gets `503 Service Unavailable` before anything is read or dispatched. Serialized
+responses are bounded per connection by `maxResponseBytes` and in time by `responseTimeout`. They are deliberately not
+part of the body budget, so clients that stop reading large responses cannot make the server refuse small requests
+from everyone else. Each connection also holds at most one head buffer (`maxRequestHeaderBytes` plus one read chunk).
 The server's own buffers are therefore bounded by
-`maxBufferedBytes + maxConnections × (maxRequestHeaderBytes + ioChunkBytes + maxResponseBytes)`, about 289 MiB with the
-defaults. That worst case needs 64 clients each leaving a 4 MiB response unread, so lower `maxResponseBytes` or
+`maxBufferedBodyBytes + maxConnections × (maxRequestHeaderBytes + ioChunkBytes + maxResponseBytes)`, about 289 MiB with
+the defaults. That worst case needs 64 clients each leaving a 4 MiB response unread, so lower `maxResponseBytes` or
 `maxConnections` if your responses are small or your clients few. While a complete body is joined into one string its fragments exist alongside it for a
 moment, and strings the handler builds for itself (such as a response body before serialization) are outside this
 bound.
@@ -144,7 +143,7 @@ network deadlines would never expire.
 | `Content-Length` above `maxRequestBodyBytes` | `413` |
 | Any `Expect` header (the server never sends `100 Continue`) | `417` |
 | Head larger than `maxRequestHeaderBytes`, or more than `maxRequestHeaderCount` headers | `431` |
-| A declared body that does not fit in the free `maxBufferedBytes` budget | `503` |
+| A declared body that does not fit in the free `maxBufferedBodyBytes` budget | `503` |
 | Request not complete within `requestTimeout` (or `idleTimeout`) | `408` |
 
 - A request is dispatched only when it is complete. If the client half-closes after a complete request, it is still

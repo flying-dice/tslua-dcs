@@ -93,9 +93,9 @@ const mutations = [
 		],
 	},
 	{
-		name: "responses not counted against the buffer budget",
-		edits: [["this.reserve(conn, serialized.length);", "// not reserved"]],
-		expect: ["pending responses count against the budget"],
+		name: "body budget not enforced",
+		edits: [["this.options.maxBufferedBodyBytes\n", "math.huge\n"]],
+		expect: ["a body that does not fit in maxBufferedBodyBytes gets 503"],
 	},
 ];
 

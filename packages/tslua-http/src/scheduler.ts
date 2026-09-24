@@ -38,8 +38,8 @@ export interface PumpStats {
 	closed: number;
 	/** Connections still open when the pump returned. */
 	active: number;
-	/** Bytes of request bodies and responses retained when the pump returned (see `maxBufferedBytes`). */
-	bufferedBytes: number;
+	/** Bytes of declared request bodies held when the pump returned (see `maxBufferedBodyBytes`). */
+	bufferedBodyBytes: number;
 }
 
 /** Everything the server retains for one connection between pumps. */
@@ -71,7 +71,7 @@ interface Connection {
 	writeDeadline: number;
 	/** Set during a visit when the connection wanted a budgeted operation (I/O or dispatch) and was refused. */
 	starved: boolean;
-	/** Bytes of `maxBufferedBytes` this connection holds: its declared body, then its response. */
+	/** Bytes of `maxBufferedBodyBytes` this connection holds: its declared body, until dispatch. */
 	reserved: number;
 }
 
@@ -100,7 +100,7 @@ export class ConnectionScheduler {
 	private connections: Connection[] = [];
 	private nextConnectionId = 1;
 	/** The sum of every connection's `reserved`. */
-	private bufferedBytes = 0;
+	private bufferedBodyBytes = 0;
 	private lastNow = -math.huge;
 	private closed = false;
 	/** Reused by every pump to avoid a table allocation per call. */
@@ -140,7 +140,7 @@ export class ConnectionScheduler {
 			bytesWritten: 0,
 			closed: 0,
 			active: this.connections.length,
-			bufferedBytes: this.bufferedBytes,
+			bufferedBodyBytes: this.bufferedBodyBytes,
 		};
 		if (this.closed) return stats;
 
@@ -180,7 +180,7 @@ export class ConnectionScheduler {
 		}
 
 		stats.active = this.connections.length;
-		stats.bufferedBytes = this.bufferedBytes;
+		stats.bufferedBodyBytes = this.bufferedBodyBytes;
 		return stats;
 	}
 
@@ -392,12 +392,13 @@ export class ConnectionScheduler {
 			}
 			if (
 				result.bodyLength > 0 &&
-				this.bufferedBytes + result.bodyLength > this.options.maxBufferedBytes
+				this.bufferedBodyBytes + result.bodyLength >
+					this.options.maxBufferedBodyBytes
 			) {
 				this.reject(
 					conn,
 					HttpStatus.SERVICE_UNAVAILABLE,
-					`a ${result.bodyLength}-byte body does not fit in the buffer budget (${this.bufferedBytes} of ${this.options.maxBufferedBytes} bytes in use)`,
+					`a ${result.bodyLength}-byte body does not fit in the buffer budget (${this.bufferedBodyBytes} of ${this.options.maxBufferedBodyBytes} bytes in use)`,
 				);
 				return;
 			}
@@ -477,13 +478,12 @@ export class ConnectionScheduler {
 			);
 			return;
 		}
-		this.reserve(conn, serialized.length);
 		this.startResponse(conn, serialized, response.status);
 	}
 
 	/** Sets how many bytes of the buffer budget `conn` holds. */
 	private reserve(conn: Connection, bytes: number) {
-		this.bufferedBytes += bytes - conn.reserved;
+		this.bufferedBodyBytes += bytes - conn.reserved;
 		conn.reserved = bytes;
 	}
 

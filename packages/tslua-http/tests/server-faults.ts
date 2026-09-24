@@ -78,7 +78,7 @@ describe("HttpServer with socket doubles", () => {
 				bytesWritten: 0,
 				closed: 0,
 				active: 0,
-				bufferedBytes: 0,
+				bufferedBodyBytes: 0,
 			});
 			expect(requests).toHaveLength(0);
 			expect(logError).not.toHaveBeenCalled();
@@ -129,7 +129,7 @@ describe("HttpServer with socket doubles", () => {
 				bytesWritten: HELLO.length,
 				closed: 1,
 				active: 0,
-				bufferedBytes: 0,
+				bufferedBodyBytes: 0,
 			});
 			expect(logError).not.toHaveBeenCalled();
 			expect(logWarn).not.toHaveBeenCalled();

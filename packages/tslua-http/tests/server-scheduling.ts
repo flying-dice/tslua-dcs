@@ -355,7 +355,7 @@ describe("HttpServer scheduling", () => {
 	});
 
 	describe("buffer budget", () => {
-		test("a body that does not fit in maxBufferedBytes gets 503 before it is read or dispatched", () => {
+		test("a body that does not fit in maxBufferedBodyBytes gets 503 before it is read or dispatched", () => {
 			const first = fakeClient([
 				"POST /a HTTP/1.1\r\nContent-Length: 60\r\n\r\n",
 			]);
@@ -363,10 +363,10 @@ describe("HttpServer scheduling", () => {
 				"POST /b HTTP/1.1\r\nContent-Length: 50\r\n\r\n",
 			]);
 			const { server, requests } = fakeServer([first, second], {
-				maxBufferedBytes: 100,
+				maxBufferedBodyBytes: 100,
 			});
 			const stats = server.pump();
-			expect(stats.bufferedBytes).toBe(60);
+			expect(stats.bufferedBodyBytes).toBe(60);
 			expect(second.written()).toBe(errorBytes(503, "Service Unavailable"));
 			expect(second.receive).toHaveBeenCalledTimes(1);
 			expect(logWarn).toHaveBeenCalledWith(
@@ -376,45 +376,42 @@ describe("HttpServer scheduling", () => {
 			);
 
 			first.arrive(string.rep("a", 60));
-			expect(server.pump().bufferedBytes).toBe(0);
+			expect(server.pump().bufferedBodyBytes).toBe(0);
 			expect(requests.map((r) => r.path)).toEqual(["/a"]);
 		});
 
-		test("pending responses count against the budget: new bodies get 503, but requests are never held back", () => {
+		test("pending responses do not count against the body budget", () => {
 			const stalled = ready("/big");
 			stalled.sendLimits(0, 0, 0);
 			const { server, listener, requests } = fakeServer(
 				[stalled],
-				{ maxBufferedBytes: 100 },
+				{ maxBufferedBodyBytes: 100 },
 				(req, res) => {
 					res.status = 200;
 					res.body = req.path === "/big" ? string.rep("x", 150) : "Hello";
 					return res;
 				},
 			);
-			expect(server.pump().bufferedBytes).toBeGreaterThan(150);
+			expect(server.pump().bufferedBodyBytes).toBe(0);
 
-			const get = ready("/next");
 			const post = fakeClient([
 				"POST /upload HTTP/1.1\r\nContent-Length: 5\r\n\r\nhello",
 			]);
-			listener.enqueue(get, post);
+			listener.enqueue(ready("/next"), post);
 			server.pump();
-			expect(requests.map((r) => r.path)).toEqual(["/big", "/next"]);
-			expect(get.written()).toBe(HELLO);
-			expect(post.written()).toBe(errorBytes(503, "Service Unavailable"));
+			expect(requests.map((r) => r.path)).toEqual(["/big", "/next", "/upload"]);
+			expect(post.written()).toBe(HELLO);
+			expect(stalled.close).not.toHaveBeenCalled();
 		});
 
 		test("releases every reservation when connections close", () => {
 			const a = fakeClient([
 				"POST / HTTP/1.1\r\nContent-Length: 10\r\n\r\nabc",
 			]);
-			const b = ready();
-			b.sendLimits(0);
-			const { server } = fakeServer([a, b]);
-			expect(server.pump().bufferedBytes).toBe(10 + HELLO.length);
+			const { server } = fakeServer([a]);
+			expect(server.pump().bufferedBodyBytes).toBe(10);
 			server.close();
-			expect(server.pump().bufferedBytes).toBe(0);
+			expect(server.pump().bufferedBodyBytes).toBe(0);
 		});
 	});
 

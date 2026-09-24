@@ -21,7 +21,7 @@ local M = {}
 
 local PROFILES = {
 	default = {
-		maxConnections = 64, maxBufferedBytes = 32 * 1048576, maxAcceptsPerPump = 4, maxVisitsPerPump = 32, maxDispatchesPerPump = 4,
+		maxConnections = 64, maxBufferedBodyBytes = 32 * 1048576, maxAcceptsPerPump = 4, maxVisitsPerPump = 32, maxDispatchesPerPump = 4,
 		ioChunkBytes = 8192, maxIoBytesPerVisit = 32768, maxIoBytesPerPump = 262144, maxPumpSeconds = 0.005,
 		maxHeaderBytes = 8192, maxHeaderCount = 64, maxBodyBytes = 1048576, maxResponseBytes = 16 * 1048576,
 		requestTimeout = 10, responseTimeout = 30,
@@ -86,7 +86,7 @@ function M.create(port, profile)
 	-- Open connections in service order: after each pump, those not reached come first, then those refused a
 	-- budgeted operation, then the rest; new connections join at the back (the same policy as tslua-http).
 	local conns, nextId, lastNow, closed = {}, 1, -huge, false
-	local buffered = 0 -- bytes of bodies and responses held, against cfg.maxBufferedBytes
+	local buffered = 0 -- bytes of declared bodies held, against cfg.maxBufferedBodyBytes
 
 	local function reserve(c, bytes)
 		buffered = buffered + bytes - (c.reserved or 0)
@@ -161,7 +161,7 @@ function M.create(port, profile)
 			if e + 3 > cfg.maxHeaderBytes then return startResponse(c, respond(431)) end
 			local status = parseHead(c, sub(c.buf, 1, e + 1))
 			if status then return startResponse(c, respond(status)) end
-			if c.need > 0 and buffered + c.need > cfg.maxBufferedBytes then return startResponse(c, respond(503)) end
+			if c.need > 0 and buffered + c.need > cfg.maxBufferedBodyBytes then return startResponse(c, respond(503)) end
 			reserve(c, c.need)
 			local rest = sub(c.buf, e + 4)
 			c.buf = nil
@@ -240,11 +240,7 @@ function M.create(port, profile)
 				reserve(c, 0)
 				local routed, out = pcall(route, c.method, c.path, c.body)
 				c.body = nil
-				if not routed or #out > cfg.maxResponseBytes then
-					out = respond(500)
-				else
-					reserve(c, #out)
-				end
+				if not routed or #out > cfg.maxResponseBytes then out = respond(500) end
 				startResponse(c, out)
 			end
 			if c.state == "write" then
