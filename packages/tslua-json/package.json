@@ -34,7 +34,7 @@
 		"@flying-dice/tslua-lua51": "^0.33.0",
 		"@flying-dice/tslua-luatest": "^0.33.0",
 		"lua-types": "^2.14.1",
-		"typescript": "6.0.2",
+		"typescript": "6.0.3",
 		"typescript-to-lua": "^1.37.1"
 	}
 }
