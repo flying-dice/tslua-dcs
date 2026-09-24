@@ -68,8 +68,10 @@ A request without a body goes from `READING_HEADERS` straight to `READY_TO_DISPA
    - closes the connection once the whole response has been accepted by the socket. That means the bytes are in the
      operating system's send buffer, not that the client has received or processed them.
 3. stops early when a per-pump budget is spent: `maxIoBytesPerPump` bytes read plus written, `maxDispatchesPerPump`
-   handler runs, or `maxPumpSeconds` of clock time. The first accept, visit and dispatch of a pump always happen, so
-   the server keeps making progress with a coarse clock.
+   handler runs, or `maxPumpSeconds` of clock time. No handler starts once the time budget is spent, not even the
+   pump's first; a request refused for time goes first in the next pump. The first accept and the first connection
+   visit of a pump always happen, so sockets keep being serviced with a coarse clock. A handler that calls `pump()`
+   gets an empty result: re-entrant pumps do nothing.
 4. reorders the connections for the next pump: first the ones this pump did not reach, then the ones that were refused
    a budgeted operation (a handler run, or I/O once the byte budget ran out), then the rest. New connections join at
    the back. A connection that loses out in one pump is therefore first in the next, however many new clients arrive.

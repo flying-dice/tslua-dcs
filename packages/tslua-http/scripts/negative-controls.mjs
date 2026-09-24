@@ -93,6 +93,21 @@ const mutations = [
 		],
 	},
 	{
+		name: "re-entrant pump not guarded",
+		edits: [["if (this.closed || this.pumping) return stats;", "if (this.closed) return stats;"]],
+		expect: ["a handler that calls pump() re-entrantly gets an empty result"],
+	},
+	{
+		name: "first dispatch of a pump exempt from the time budget",
+		edits: [
+			[
+				"if (budget.dispatches > 0 && this.now() < budget.timeLimit) {",
+				"if (budget.dispatches > 0 && (stats.dispatched === 0 || this.now() < budget.timeLimit)) {",
+			],
+		],
+		expect: ["starts no handler when the budget expires before dispatch"],
+	},
+	{
 		name: "body budget not enforced",
 		edits: [["this.options.maxBufferedBodyBytes\n", "math.huge\n"]],
 		expect: ["a body that does not fit in maxBufferedBodyBytes gets 503"],

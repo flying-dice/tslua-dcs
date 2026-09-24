@@ -177,6 +177,35 @@ describe("HttpServer with socket doubles", () => {
 			expect(logError).not.toHaveBeenCalled();
 		});
 
+		test("a handler that calls pump() re-entrantly gets an empty result and cannot reset the outer limits", () => {
+			const clients = [
+				fakeClient(["GET /1 HTTP/1.1\r\n\r\n"]),
+				fakeClient(["GET /2 HTTP/1.1\r\n\r\n"]),
+				fakeClient(["GET /3 HTTP/1.1\r\n\r\n"]),
+			];
+			const inner: unknown[] = [];
+			const fake = fakeServer(
+				clients,
+				{ maxDispatchesPerPump: 1 },
+				(_req, res) => {
+					const stats = fake.server.pump();
+					inner.push({ visited: stats.visited, dispatched: stats.dispatched });
+					res.status = 200;
+					res.body = "Hello";
+					return res;
+				},
+			);
+			const outer = fake.server.pump();
+			expect(outer.dispatched).toBe(1);
+			expect(fake.requests.map((r) => r.path)).toEqual(["/1"]);
+			expect(inner).toEqual([{ visited: 0, dispatched: 0 }]);
+
+			fake.server.pump();
+			fake.server.pump();
+			expect(fake.requests.map((r) => r.path)).toEqual(["/1", "/2", "/3"]);
+			for (const client of clients) expect(client.written()).toBe(HELLO);
+		});
+
 		test("logs connection events at debug level, never per pump", () => {
 			Logger.level = LogLevel.DEBUG;
 			const debug = spyOn(Logger.transports, "debug").mockReturnValue(

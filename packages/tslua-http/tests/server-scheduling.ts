@@ -335,7 +335,7 @@ describe("HttpServer scheduling", () => {
 			expect(fake.requests.map((r) => r.path)).toEqual(["/1", "/2", "/3"]);
 		});
 
-		test("still accepts, visits and dispatches once per pump when every clock reading spends the budget", () => {
+		test("still accepts and visits once per pump when every clock reading spends the budget, but starts no handler", () => {
 			let time = 0;
 			const clients = [ready("/1"), ready("/2")];
 			const fake = fakeServer(clients, {
@@ -348,9 +348,30 @@ describe("HttpServer scheduling", () => {
 			const stats = fake.server.pump();
 			expect(stats.accepted).toBe(1);
 			expect(stats.visited).toBe(1);
-			expect(stats.dispatched).toBe(1);
-			fake.server.pump();
-			expect(fake.requests.map((r) => r.path)).toEqual(["/1", "/2"]);
+			expect(stats.dispatched).toBe(0);
+			expect(stats.bytesRead).toBeGreaterThan(0);
+			expect(fake.requests).toHaveLength(0);
+		});
+
+		test("starts no handler when the budget expires before dispatch, and dispatches that request next pump", () => {
+			const late = fakeClient();
+			const fake = fakeServer([late, ready("/other")], {
+				maxPumpSeconds: 0.005,
+			});
+			// Reading the request takes longer than the whole pump budget.
+			late.receive.mockImplementationOnce(() => {
+				fake.clock.advance(1);
+				return $multi("GET /late HTTP/1.1\r\n\r\n");
+			});
+			const first = fake.server.pump();
+			expect(first.dispatched).toBe(0);
+			expect(fake.requests).toHaveLength(0);
+
+			// The budget ran out before /other was even visited; both go ahead of anything new next pump.
+			const second = fake.server.pump();
+			expect(second.dispatched).toBe(2);
+			expect(fake.requests.map((r) => r.path)).toEqual(["/other", "/late"]);
+			expect(late.written()).toBe(HELLO);
 		});
 	});
 

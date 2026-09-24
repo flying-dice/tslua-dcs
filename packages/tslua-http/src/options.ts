@@ -90,7 +90,9 @@ export interface HttpServerOptions {
 
 	/**
 	 * A cooperative time budget for one pump, in seconds of {@link clock}. It is checked between operations: a
-	 * handler that is already running is never interrupted, and no new handler starts once it is spent.
+	 * handler that is already running is never interrupted, and no new handler starts once it is spent, not even
+	 * the pump's first (a request refused for time goes first in the next pump). The first accept and the first
+	 * connection visit of a pump always happen, so sockets keep being serviced.
 	 * Default `0.005`. The default clock is the wall clock, whose resolution is coarse on some platforms
 	 * (around 15 ms on Windows), so treat this as a soft limit.
 	 */

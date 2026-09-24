@@ -102,6 +102,7 @@ export class HttpServer {
 	 * @returns What this pump did. Cheap to ignore; useful for instrumentation.
 	 */
 	pump(): PumpStats {
+		// Re-entrant calls (from a request handler) return at once and do nothing.
 		return this.scheduler.pump();
 	}
 

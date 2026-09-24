@@ -103,6 +103,8 @@ export class ConnectionScheduler {
 	private bufferedBodyBytes = 0;
 	private lastNow = -math.huge;
 	private closed = false;
+	/** True while a pump runs, so a handler that calls pump() cannot reset the running pump's budget. */
+	private pumping = false;
 	/** Reused by every pump to avoid a table allocation per call. */
 	private readonly budget: PumpBudget = { io: 0, dispatches: 0, timeLimit: 0 };
 
@@ -142,8 +144,21 @@ export class ConnectionScheduler {
 			active: this.connections.length,
 			bufferedBodyBytes: this.bufferedBodyBytes,
 		};
-		if (this.closed) return stats;
+		// A re-entrant call (a handler calling pump) does nothing: it would otherwise reset the shared budget and let
+		// the running pump exceed its limits.
+		if (this.closed || this.pumping) return stats;
+		this.pumping = true;
+		try {
+			this.pumpOnce(stats);
+		} finally {
+			this.pumping = false;
+		}
+		stats.active = this.connections.length;
+		stats.bufferedBodyBytes = this.bufferedBodyBytes;
+		return stats;
+	}
 
+	private pumpOnce(stats: PumpStats) {
 		const options = this.options;
 		const budget = this.budget;
 		budget.io = options.maxIoBytesPerPump;
@@ -155,8 +170,9 @@ export class ConnectionScheduler {
 			stats.accepted < options.maxAcceptsPerPump &&
 			this.connections.length < options.maxConnections
 		) {
-			// The first accept, visit and dispatch of a pump always happen, so a coarse or jumping clock cannot
-			// stall the server; the time budget only stops further ones.
+			// The first accept and the first visit of a pump always happen, so a coarse clock cannot stop sockets being
+			// serviced; the time budget only stops further ones. Handlers are different: none starts once the budget
+			// is spent (see visit), and a request refused for time goes first in the next pump.
 			if (stats.accepted > 0 && this.now() >= budget.timeLimit) break;
 			const [client] = this.listener.accept();
 			// "timeout" means nobody is waiting; any other error (such as "closed") also ends accepting for this pump.
@@ -165,7 +181,7 @@ export class ConnectionScheduler {
 			stats.accepted++;
 		}
 
-		// A handler may call close() (or even pump()) re-entrantly, so iterate over a snapshot.
+		// A handler may call close() re-entrantly, so iterate over a snapshot.
 		const list = this.connections;
 		const count = list.length;
 		if (count > 0) {
@@ -178,10 +194,6 @@ export class ConnectionScheduler {
 			stats.visited = visited;
 			if (!this.closed) this.reorder(list, visited);
 		}
-
-		stats.active = this.connections.length;
-		stats.bufferedBodyBytes = this.bufferedBodyBytes;
-		return stats;
 	}
 
 	/**
@@ -237,12 +249,6 @@ export class ConnectionScheduler {
 		}
 		for (let i = 0; i < visited; i++) {
 			if (!list[i].starved && list[i].state !== "CLOSED") next.push(list[i]);
-		}
-		// Connections added re-entrantly (by a handler calling pump) are not in `list`.
-		if (this.connections !== list) {
-			for (const conn of this.connections) {
-				if (conn.state !== "CLOSED" && !next.includes(conn)) next.push(conn);
-			}
 		}
 		this.connections = next;
 	}
@@ -304,10 +310,7 @@ export class ConnectionScheduler {
 		}
 
 		if (conn.state === "READY_TO_DISPATCH") {
-			if (
-				budget.dispatches > 0 &&
-				(stats.dispatched === 0 || this.now() < budget.timeLimit)
-			) {
+			if (budget.dispatches > 0 && this.now() < budget.timeLimit) {
 				budget.dispatches--;
 				stats.dispatched++;
 				this.dispatch(conn);
