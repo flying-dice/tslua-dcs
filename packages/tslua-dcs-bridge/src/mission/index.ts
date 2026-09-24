@@ -8,6 +8,7 @@
  */
 import "../core/lua-paths";
 import { createBridge } from "../core/bridge";
+import { readInstalledToken } from "../core/token";
 
 declare const TSLUA_DCS_BRIDGE_MISSION_PORT: number | undefined;
 
@@ -17,6 +18,7 @@ const PUMP_INTERVAL = 0.02;
 const bridge = createBridge({
 	env: "mission",
 	port: TSLUA_DCS_BRIDGE_MISSION_PORT,
+	token: readInstalledToken(),
 });
 
 timer.scheduleFunction(

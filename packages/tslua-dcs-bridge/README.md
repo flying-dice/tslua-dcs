@@ -14,7 +14,7 @@ It is written in TypeScript and built with this repository's own packages, so it
 From the repository root:
 
 ```shell
-npm run dcs:start     # build, install, launch DCS, start and unpause the test mission
+npm run dcs:start     # build (with its workspace dependencies), install, launch DCS, start and unpause the test mission
 npm run dcs:status    # GET /health on both bridges
 npm run test:dcs      # run the mission and GUI type-example suites inside DCS
 ```
@@ -29,6 +29,7 @@ npm run test:dcs      # run the mission and GUI type-example suites inside DCS
 | Mission bridge (`dist/tslua-dcs-mission-bridge.lua`) | `<Saved Games>/Scripts/tslua-dcs/mission-bridge.lua` | the loader block below, at every mission start |
 | Loader block | `<DCS install>/Scripts/MissionScripting.lua`, right after `dofile('Scripts/ScriptingSystem.lua')` | DCS, when it creates the mission scripting state |
 | Test mission (`dist/tslua-dcs-test.miz`) | `<Saved Games>/Missions/tslua-dcs/tslua-dcs-test.miz` | `dcs-bridge mission` |
+| Bearer token (random, 256-bit) | `<Saved Games>/Config/tslua-dcs-bridge.token` | both bridges at load; the CLI and the exporters when they call `/rpc` |
 
 - The loader block sits between marker comments, so installing again replaces it rather than adding a
   second copy. The first install keeps the original file as `MissionScripting.lua.tslua-dcs.bak`.
@@ -77,13 +78,27 @@ exported from `scripts/dcs-bridge.mjs` for Node scripts.
 
 ## Security
 
-Both bridges bind to `127.0.0.1` and run any Lua sent to them, with the full rights of that DCS
-environment. Install them only on a development machine, and uninstall them when you are done.
+Both bridges run any Lua sent to them, with the full rights of that DCS environment. Binding to
+`127.0.0.1` isn't enough on its own, because a web page open in a browser can also send requests to
+loopback. So `POST /rpc` checks every request before it can reach `eval`:
+
+- **No browser requests:** any request with an `Origin` header gets **403**. Browsers send that header
+  on cross-origin requests; Node, curl and the CLI don't.
+- **JSON only:** a `Content-Type` other than `application/json` gets **415**. That removes the
+  `text/plain` "simple request" a page could send without a CORS preflight, and the bridge never
+  grants a preflight.
+- **Token required:** the request must carry `Authorization: Bearer <token>`, using the token
+  `install` wrote into Saved Games, or it gets **401**. A bridge that couldn't read a token refuses
+  every RPC.
+
+`GET /health` runs no code, so it needs no token, but it still refuses requests that carry an `Origin`
+header. The CLI and the exporters send the token automatically; set `DCS_BRIDGE_TOKEN` to override it.
+Install the bridges only on a development machine, and uninstall them when you are done.
 
 ## Development
 
 ```shell
-npm run build --workspace=@flying-dice/tslua-dcs-bridge   # the two Lua bundles and the test mission
+npm run dcs:build                                         # the bridge and every workspace package it needs, from a clean checkout
 npm test --workspace=@flying-dice/tslua-dcs-bridge        # JSON-RPC handler + loopback HTTP tests on lua51
 ```
 

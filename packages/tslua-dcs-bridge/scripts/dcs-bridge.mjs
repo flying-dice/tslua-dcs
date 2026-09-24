@@ -18,6 +18,7 @@
  * override with DCS_BRIDGE_GUI_URL / DCS_BRIDGE_MISSION_URL.
  */
 import { execFileSync, spawn } from "node:child_process";
+import { randomBytes } from "node:crypto";
 import {
 	copyFileSync,
 	existsSync,
@@ -48,6 +49,8 @@ const BEGIN_MARK = "-- BEGIN tslua-dcs-bridge";
 const END_MARK = "-- END tslua-dcs-bridge";
 const ANCHOR = "dofile('Scripts/ScriptingSystem.lua')";
 const TEST_MISSION = "tslua-dcs-test.miz";
+/** Relative to Saved Games; the bridges read it at load (see src/core/token.ts). */
+const TOKEN_FILE = join("Config", "tslua-dcs-bridge.token");
 
 function fail(message) {
 	throw new Error(`[dcs-bridge] ${message}`);
@@ -108,6 +111,7 @@ function paths() {
 		missionScript: join(savedGames, "Scripts", MISSION_DIR, MISSION_FILE),
 		missionScripting: join(install, "Scripts", "MissionScripting.lua"),
 		testMission: join(savedGames, "Missions", MISSION_DIR, TEST_MISSION),
+		token: join(savedGames, TOKEN_FILE),
 		exe: [join(install, "bin-mt", "DCS.exe"), join(install, "bin", "DCS.exe")].find((p) => existsSync(p)),
 	};
 }
@@ -133,6 +137,11 @@ export function install() {
 	for (const bundle of ["tslua-dcs-gui-bridge.lua", "tslua-dcs-mission-bridge.lua", TEST_MISSION]) {
 		if (!existsSync(join(distDir, bundle))) fail(`missing dist/${bundle}; run npm run build first`);
 	}
+	// The bearer token every RPC must present. Kept across reinstalls so a running
+	// DCS (which read it at load) keeps accepting requests.
+	mkdirSync(dirname(p.token), { recursive: true });
+	if (!existsSync(p.token)) writeFileSync(p.token, `${randomBytes(32).toString("hex")}
+`);
 	mkdirSync(dirname(p.hook), { recursive: true });
 	mkdirSync(dirname(p.missionScript), { recursive: true });
 	copyFileSync(join(distDir, "tslua-dcs-gui-bridge.lua"), p.hook);
@@ -158,6 +167,7 @@ export function install() {
 	console.log(`installed GUI hook       ${p.hook}`);
 	console.log(`installed mission script ${p.missionScript}`);
 	console.log(`installed test mission   ${p.testMission}`);
+	console.log(`bridge token             ${p.token}`);
 	console.log(`patched                  ${p.missionScripting} (original kept at ${backup})`);
 	console.log("Restart DCS to load the GUI hook; the mission bridge starts with every mission.");
 }
@@ -167,12 +177,13 @@ export function uninstall() {
 	rmSync(p.hook, { force: true });
 	rmSync(dirname(p.missionScript), { recursive: true, force: true });
 	rmSync(dirname(p.testMission), { recursive: true, force: true });
+	rmSync(p.token, { force: true });
 	if (existsSync(p.missionScripting)) {
 		const source = readFileSync(p.missionScripting, "utf8");
 		const clean = stripLoader(source);
 		if (clean !== source) writeFileSync(p.missionScripting, clean);
 	}
-	console.log("removed the GUI hook, the mission script, the test mission and the MissionScripting.lua loader");
+	console.log("removed the GUI hook, the mission script, the test mission, the token and the MissionScripting.lua loader");
 }
 
 export async function health(env, timeoutMs = 2000) {
@@ -181,13 +192,21 @@ export async function health(env, timeoutMs = 2000) {
 	return response.json();
 }
 
+/** The bearer token for RPC calls: DCS_BRIDGE_TOKEN, else the installed token file. */
+export function bridgeToken() {
+	if (process.env.DCS_BRIDGE_TOKEN) return process.env.DCS_BRIDGE_TOKEN.trim();
+	const file = join(findSavedGames(), TOKEN_FILE);
+	if (!existsSync(file)) fail(`no bridge token at ${file}; run dcs-bridge install`);
+	return readFileSync(file, "utf8").trim();
+}
+
 let rpcId = 0;
 /** Calls a JSON-RPC method on a bridge and returns its result (throws on an RPC error). */
 export async function rpc(env, method, params = {}, timeoutMs = 120000) {
 	const id = `dcs-bridge-${++rpcId}`;
 	const response = await fetch(`${BRIDGE_URLS[env]}/rpc`, {
 		method: "POST",
-		headers: { "content-type": "application/json" },
+		headers: { "content-type": "application/json", authorization: `Bearer ${bridgeToken()}` },
 		body: JSON.stringify({ jsonrpc: "2.0", id, method, params }),
 		signal: AbortSignal.timeout(timeoutMs),
 	});
@@ -248,14 +267,16 @@ export async function loadMission(file, { timeoutMs = 300000 } = {}) {
 }
 
 /** Lua-quotes a string for embedding in code sent to the bridge. */
-function luaString(value) {
+export function luaString(value) {
 	return `"${value
 		.replace(/\\/g, "\\\\")
 		.replace(/"/g, '\\"')
 		.replace(/\r/g, "\\r")
 		.replace(/\n/g, "\\n")
+		// Always three digits: a shorter \ddd escape followed by a source digit would be
+		// read as a longer (different or invalid) escape, e.g. TAB + "42" -> \942.
 		// biome-ignore lint/suspicious/noControlCharactersInRegex: Lua strings must escape every control character.
-		.replace(/[\x00-\x1f]/g, (c) => `\\${c.charCodeAt(0)}`)}"`;
+		.replace(/[\x00-\x1f\x7f]/g, (c) => `\\${String(c.charCodeAt(0)).padStart(3, "0")}`)}"`;
 }
 
 /**

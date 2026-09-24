@@ -7,12 +7,14 @@
  */
 import "../core/lua-paths";
 import { createBridge } from "../core/bridge";
+import { readInstalledToken } from "../core/token";
 
 declare const TSLUA_DCS_BRIDGE_GUI_PORT: number | undefined;
 
 const bridge = createBridge({
 	env: "gui",
 	port: TSLUA_DCS_BRIDGE_GUI_PORT,
+	token: readInstalledToken(),
 });
 
 function pump(this: void): void {

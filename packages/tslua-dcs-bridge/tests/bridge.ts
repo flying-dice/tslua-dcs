@@ -150,11 +150,17 @@ describe("JSON-RPC handler", () => {
 	});
 });
 
-/** Sends one raw HTTP request to the bridge, pumps it once, and returns the response. */
-function exchange(
-	bridge: Bridge,
-	request: string,
-): { status: number; body: string } {
+const TOKEN = "test-token-0123456789abcdef";
+
+interface Exchange {
+	status: number;
+	/** Response header values by lower-cased name. */
+	headers: Record<string, string>;
+	body: string;
+}
+
+/** Sends one raw HTTP request to the bridge, pumps it once, and returns the parsed response. */
+function exchange(bridge: Bridge, request: string): Exchange {
 	const [client, connectError] = socket.connect("127.0.0.1", bridge.port);
 	if (client === undefined) throw new Error(`connect failed: ${connectError}`);
 	client.settimeout(2);
@@ -164,22 +170,43 @@ function exchange(
 	client.close();
 	const raw = data ?? partial ?? "";
 	const [statusText] = string.match(raw, "^HTTP/1%.%d (%d+)");
-	const [, bodyStart] = string.find(raw, "\r\n\r\n", 1, true);
+	const [headEnd, bodyStart] = string.find(raw, "\r\n\r\n", 1, true);
+	const headers: Record<string, string> = {};
+	const head = headEnd === undefined ? raw : string.sub(raw, 1, headEnd - 1);
+	for (const [name, value] of string.gmatch(
+		head,
+		"\r\n([^:\r\n]+):%s*([^\r\n]*)",
+	)) {
+		headers[string.lower(name)] = value;
+	}
 	return {
 		status: tonumber(statusText) ?? 0,
+		headers,
 		body: bodyStart === undefined ? "" : string.sub(raw, bodyStart + 1),
 	};
 }
 
-function post(bridge: Bridge, body: string) {
+/** POSTs `body` to /rpc with the given extra header lines (default: JSON + the right token). */
+function postWith(
+	bridge: Bridge,
+	body: string,
+	headerLines: string[],
+): Exchange {
 	return exchange(
 		bridge,
-		`POST /rpc HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Type: application/json\r\nContent-Length: ${body.length}\r\n\r\n${body}`,
+		`POST /rpc HTTP/1.1\r\nHost: 127.0.0.1\r\n${headerLines.map((line) => `${line}\r\n`).join("")}Content-Length: ${body.length}\r\n\r\n${body}`,
 	);
 }
 
+function post(bridge: Bridge, body: string) {
+	return postWith(bridge, body, [
+		"Content-Type: application/json",
+		`Authorization: Bearer ${TOKEN}`,
+	]);
+}
+
 describe("HTTP over loopback", () => {
-	const bridge = createBridge({ env: "gui", port: 0 });
+	const bridge = createBridge({ env: "gui", port: 0, token: TOKEN });
 
 	test("binds an OS-assigned port and reports it", () => {
 		expect(bridge.port > 0).toBe(true);
@@ -263,5 +290,153 @@ describe("HTTP over loopback", () => {
 		bridge.close();
 		const [client] = socket.connect("127.0.0.1", port);
 		expect(client).toBe(undefined);
+	});
+});
+
+/** An eval whose side effect proves whether it ran: it sets a global. */
+function sideEffectBody(marker: string): string {
+	return json.encode({
+		jsonrpc: "2.0",
+		id: "probe",
+		method: "eval",
+		params: { code: `__bridge_probe = "${marker}" return "ran"` },
+	});
+}
+
+function probe(): unknown {
+	return (_G as unknown as { __bridge_probe?: unknown }).__bridge_probe;
+}
+
+describe("request trust (regression: cross-origin eval)", () => {
+	const bridge = createBridge({ env: "mission", port: 0, token: TOKEN });
+	const untokened = createBridge({ env: "mission", port: 0 });
+
+	const refused: [string, Bridge, string[], number, string][] = [
+		[
+			"a text/plain POST (a CORS-safelisted simple request) is refused",
+			bridge,
+			["Content-Type: text/plain", `Authorization: Bearer ${TOKEN}`],
+			415,
+			"Content-Type must be application/json",
+		],
+		[
+			"a form-encoded POST is refused",
+			bridge,
+			[
+				"Content-Type: application/x-www-form-urlencoded",
+				`Authorization: Bearer ${TOKEN}`,
+			],
+			415,
+			"Content-Type must be application/json",
+		],
+		[
+			"a request with an Origin header is refused, even with the right token",
+			bridge,
+			[
+				"Origin: https://evil.example",
+				"Content-Type: application/json",
+				`Authorization: Bearer ${TOKEN}`,
+			],
+			403,
+			"Origin header",
+		],
+		[
+			"a request without a token is refused",
+			bridge,
+			["Content-Type: application/json"],
+			401,
+			"missing or wrong bearer token",
+		],
+		[
+			"a request with the wrong token is refused",
+			bridge,
+			["Content-Type: application/json", "Authorization: Bearer not-the-token"],
+			401,
+			"missing or wrong bearer token",
+		],
+		[
+			"a bridge with no token configured refuses every RPC (fails closed)",
+			untokened,
+			["Content-Type: application/json", "Authorization: Bearer "],
+			401,
+			"no token configured",
+		],
+	];
+
+	for (const [name, target, headerLines, status, message] of refused) {
+		test(name, () => {
+			(_G as unknown as { __bridge_probe?: unknown }).__bridge_probe =
+				undefined;
+			const response = postWith(target, sideEffectBody(name), headerLines);
+			expect(response.status).toBe(status);
+			expect(response.headers["content-type"]).toBe("application/json");
+			const decoded = json.decode<RpcResponse>(response.body);
+			expect(decoded.error?.code).toBe(RpcErrorCode.UNAUTHORIZED);
+			expect(decoded.error?.message).toContain(message);
+			expect(probe()).toBeUndefined(); // the code never ran
+		});
+	}
+
+	test("the trusted request (JSON + token, no Origin) runs", () => {
+		const response = post(bridge, sideEffectBody("trusted"));
+		expect(response.status).toBe(200);
+		expect(json.decode<RpcResponse>(response.body).result).toBe("ran");
+		expect(probe()).toBe("trusted");
+	});
+
+	test("a JSON media type with parameters is accepted", () => {
+		const response = postWith(bridge, sideEffectBody("charset"), [
+			"Content-Type: Application/JSON; charset=utf-8",
+			`Authorization: Bearer ${TOKEN}`,
+		]);
+		expect(response.status).toBe(200);
+		expect(probe()).toBe("charset");
+	});
+
+	test("GET /health refuses browser origins but needs no token", () => {
+		expect(
+			exchange(bridge, "GET /health HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n")
+				.status,
+		).toBe(200);
+		const fromPage = exchange(
+			bridge,
+			"GET /health HTTP/1.1\r\nHost: 127.0.0.1\r\nOrigin: https://evil.example\r\n\r\n",
+		);
+		expect(fromPage.status).toBe(403);
+	});
+
+	test("cleanup", () => {
+		bridge.close();
+		untokened.close();
+		expect(true).toBe(true);
+	});
+});
+
+describe("response media type (regression: JSON advertised as text/plain)", () => {
+	const bridge = createBridge({ env: "gui", port: 0, token: TOKEN });
+
+	test("GET /health is application/json", () => {
+		expect(
+			exchange(bridge, "GET /health HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n")
+				.headers["content-type"],
+		).toBe("application/json");
+	});
+
+	test("successful RPC responses are application/json", () => {
+		const response = post(
+			bridge,
+			json.encode({ jsonrpc: "2.0", id: 1, method: "ping" }),
+		);
+		expect(response.headers["content-type"]).toBe("application/json");
+	});
+
+	test("RPC error responses are application/json", () => {
+		const response = post(bridge, "{not json");
+		expect(response.headers["content-type"]).toBe("application/json");
+	});
+
+	test("cleanup", () => {
+		bridge.close();
+		expect(true).toBe(true);
 	});
 });

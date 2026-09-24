@@ -9,7 +9,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { afterEach, beforeEach, test } from "node:test";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { inflateRawSync } from "node:zlib";
 
 const packageDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -151,4 +151,61 @@ test("the generated test mission is a valid .miz that Lua 5.1 can load", () => {
 	const lua51 = join(repoRoot, "node_modules", ".bin", process.platform === "win32" ? "lua51.cmd" : "lua51");
 	const out = execFileSync(lua51, [script], { encoding: "utf8", shell: process.platform === "win32" });
 	assert.equal(out.trim(), "ok");
+});
+
+test("install creates a per-install bearer token, keeps it on reinstall, and uninstall removes it", async () => {
+	dcsBridge("install");
+	const p = paths();
+	const token = readFileSync(p.token, "utf8").trim();
+	assert.match(token, /^[0-9a-f]{64}$/);
+	dcsBridge("install");
+	assert.equal(readFileSync(p.token, "utf8").trim(), token, "a running DCS keeps working after reinstall");
+	const { bridgeToken } = await import(`${pathToFileURL(cli).href}?token-test`);
+	const previous = { ...process.env };
+	try {
+		process.env.DCS_SAVED_GAMES = env.DCS_SAVED_GAMES;
+		delete process.env.DCS_BRIDGE_TOKEN;
+		assert.equal(bridgeToken(), token);
+		process.env.DCS_BRIDGE_TOKEN = "from-env";
+		assert.equal(bridgeToken(), "from-env");
+	} finally {
+		process.env = previous;
+	}
+	dcsBridge("uninstall");
+	assert.ok(!existsSync(p.token));
+});
+
+test("luaString round-trips every byte through Lua 5.1, including control characters before digits", async () => {
+	// Regression: variable-width \ddd escapes turned TAB + "42" into the invalid "\942"
+	// and byte 1 + "2" into "\12" (a different character).
+	const { luaString } = await import(`${pathToFileURL(cli).href}?quote-test`);
+	const samples = [
+		"\t42",
+		"\u00012",
+		"\u000199",
+		"x\u001f0y",
+		"\u007f9",
+		'quote " backslash \\ end',
+		"crlf\r\nlf\n",
+		Array.from({ length: 128 }, (_, i) => String.fromCharCode(i)).join(""),
+		Array.from({ length: 128 }, (_, i) => `${String.fromCharCode(i)}${i % 10}`).join(""),
+	];
+	const script = join(sandbox, "roundtrip.lua");
+	writeFileSync(
+		script,
+		`${samples
+			.map(
+				(sample) =>
+					`io.write((string.gsub(${luaString(sample)}, ".", function(c) return string.format("%02x", string.byte(c)) end)), "\\n")`,
+			)
+			.join("\n")}\n`,
+	);
+	const lua51 = join(repoRoot, "node_modules", ".bin", process.platform === "win32" ? "lua51.cmd" : "lua51");
+	const lines = execFileSync(lua51, [script], { encoding: "utf8", shell: process.platform === "win32" })
+		.trim()
+		.split(/\r?\n/);
+	assert.deepEqual(
+		lines,
+		samples.map((sample) => Buffer.from(sample, "latin1").toString("hex")),
+	);
 });

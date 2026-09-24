@@ -34,6 +34,8 @@ export interface BridgeOptions {
 	bindAddress?: string;
 	/** Seconds since some epoch; used for uptime and pump-liveness reporting. */
 	clock?: () => number;
+	/** The bearer token RPC callers must present. Without one, every RPC is refused. */
+	token?: string;
 }
 
 export interface Bridge {
@@ -56,6 +58,7 @@ export const RpcErrorCode = {
 	COMPILE_ERROR: -32000,
 	RUNTIME_ERROR: -32001,
 	RESULT_NOT_ENCODABLE: -32002,
+	UNAUTHORIZED: -32003,
 } as const;
 
 interface RpcRequest {
@@ -185,8 +188,59 @@ function encodeError(id: unknown, error: RpcError): string {
 
 function sendJson(res: AppHttpResponse, status: HttpStatus, body: string) {
 	res.status(status);
-	res.res.headers["Content-Type"] = "application/json";
 	res.send(body);
+	// After send(): AppHttpResponse.send() always sets text/plain.
+	res.res.headers["Content-Type"] = "application/json";
+}
+
+/**
+ * Why a request is refused before it can reach `eval`, or `undefined` if it
+ * may proceed. The bridge runs arbitrary Lua, so every RPC must prove it comes
+ * from a trusted local tool, not from a web page that can reach loopback:
+ *
+ * - Browsers send `Origin` on cross-origin requests; local tools (Node, curl)
+ *   do not. Any request carrying an `Origin` header is refused.
+ * - `Content-Type` must be `application/json`. A page can only send it after a
+ *   CORS preflight, which the bridge never grants (no simple-request bypass
+ *   with `text/plain`).
+ * - `Authorization: Bearer <token>` must match the per-install token that
+ *   `dcs-bridge install` writes into Saved Games. Without a configured token
+ *   the bridge refuses every RPC (fails closed).
+ */
+export function refuseUntrusted(
+	headers: Record<string, string | undefined>,
+	token: string | undefined,
+): { status: HttpStatus; message: string } | undefined {
+	if (headers.origin !== undefined) {
+		return {
+			status: HttpStatus.FORBIDDEN,
+			message:
+				"requests from web pages (with an Origin header) are not accepted",
+		};
+	}
+	const [mediaType] = string.match(
+		string.lower(headers["content-type"] ?? ""),
+		"^%s*([^;%s]+)",
+	);
+	if (mediaType !== "application/json") {
+		return {
+			status: HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+			message: "Content-Type must be application/json",
+		};
+	}
+	if (token === undefined || token === "") {
+		return {
+			status: HttpStatus.UNAUTHORIZED,
+			message: "the bridge has no token configured; run dcs-bridge install",
+		};
+	}
+	if (headers.authorization !== `Bearer ${token}`) {
+		return {
+			status: HttpStatus.UNAUTHORIZED,
+			message: "missing or wrong bearer token",
+		};
+	}
+	return undefined;
 }
 
 /** Handles one raw JSON-RPC HTTP body and returns the response body. */
@@ -249,7 +303,19 @@ export function createBridge(options: BridgeOptions): Bridge {
 	// LuaSocket 3 reports the port as a string.
 	const port = tonumber(boundPort) ?? requestedPort;
 
-	app.get("/health", (_req: AppHttpRequest, res: AppHttpResponse) => {
+	app.get("/health", (req: AppHttpRequest, res: AppHttpResponse) => {
+		// Health needs no token (it runs no code), but a web page still has no business probing it.
+		if (req.req.headers.origin !== undefined) {
+			sendJson(
+				res,
+				HttpStatus.FORBIDDEN,
+				json.encode({
+					error:
+						"requests from web pages (with an Origin header) are not accepted",
+				}),
+			);
+			return;
+		}
 		sendJson(
 			res,
 			HttpStatus.OK,
@@ -267,6 +333,18 @@ export function createBridge(options: BridgeOptions): Bridge {
 	});
 
 	app.post("/rpc", (req: AppHttpRequest, res: AppHttpResponse) => {
+		const refusal = refuseUntrusted(req.req.headers, options.token);
+		if (refusal !== undefined) {
+			sendJson(
+				res,
+				refusal.status,
+				encodeError(
+					undefined,
+					new RpcError(RpcErrorCode.UNAUTHORIZED, refusal.message),
+				),
+			);
+			return;
+		}
 		sendJson(res, HttpStatus.OK, handleRpcBody(req.req.body, name, env, port));
 	});
 
