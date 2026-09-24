@@ -3,7 +3,10 @@
 	"version": "0.33.0",
 	"private": true,
 	"scripts": {
-		"build": "tstl -p tsconfig.json",
+		"build": "tstl -p tsconfig.json && npm run build:doubles",
+		"build:doubles": "tstl -p tsconfig.doubles.json",
+		"test": "npm run test:lua",
+		"test:lua": "npm run build && tstl -p tsconfig.tests.json && lua51 --preload dist/dcs-mission-doubles.lua .test/mission-tests.lua && lua51 --preload dist/dcs-mission-doubles.lua .test/tests.lua",
 		"test:dcs": "npm run export --workspace=@flying-dice/tslua-dcs-mission-types && npm run build --workspace=@flying-dice/tslua-dcs-mission-types && npm run build && dcs-bridge run mission .test/mission-tests.lua"
 	},
 	"dependencies": {

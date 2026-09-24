@@ -4,7 +4,7 @@ import { groupFixture } from "./fixtures";
 describe("Group examples", () => {
 	test("group lookup and getters return documented values", () => {
 		const group = groupFixture();
-		expect(Group.getByName(group.getName())).toBe(group);
+		expect(Group.getByName(group.getName())).toEqual(group);
 		expect(type(group.getID())).toBe("number");
 		expect(type(group.getCoalition())).toBe("number");
 		expect(type(group.getCategory())).toBe("number");

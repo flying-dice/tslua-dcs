@@ -10,8 +10,10 @@ export const responses = (
 	const res: ResponsesObject = {};
 
 	Object.keys(responseRefs).forEach((key) => {
-		const httpStatus: HttpStatus = Number.parseInt(key);
-		const responseRef = responseRefs[httpStatus];
+		// Look the entry up with the key exactly as enumerated: in Lua a key written as `[HttpStatus.OK]`
+		// is the number 200 while one written as `"200"` is a string, so parsing the key into a number
+		// would miss string keys.
+		const responseRef = responseRefs[key as unknown as HttpStatus];
 		if (!responseRef) return;
 		const [response, ref] = responseRef;
 		res[key.toString()] = {

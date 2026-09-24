@@ -218,13 +218,20 @@ export interface l_DCS extends DCSConstants {
 	/**
 	 * Installs GameGUI callback handlers.
 	 *
+	 * DCS calls each handler as a plain Lua function with the hook's arguments, so the handlers take
+	 * no `self` (`this: void`). A handler that must return several values (for example
+	 * `onPlayerTryConnect` returning `false, reason`) needs an explicit `LuaMultiReturn` return type.
+	 *
 	 * @param callbacks Callback table; omitted callbacks remain unhandled.
 	 * @returns Nothing.
 	 * @example `DCS.setUserCallbacks({ onSimulationStart: () => log.info("Started") });`
 	 * @see %DCS_INSTALL_DIR%/API/Sim_ControlAPI.md:201
 	 */
 	setUserCallbacks(
-		callbacks: Record<string, ((...args: unknown[]) => unknown) | undefined>,
+		callbacks: Record<
+			string,
+			((this: void, ...args: unknown[]) => unknown) | undefined
+		>,
 	): void;
 	/**
 	 * Saves a screenshot with the supplied name.
@@ -345,9 +352,11 @@ export interface l_DCS extends DCSConstants {
 	/**
 	 * Enumerates mission-persistence records through a native callback.
 	 *
-	 * @param visitor Called for every record.
+	 * @param visitor Called for every record, as a plain Lua function (no `self`).
 	 */
-	enumMissionPersistenceData(visitor: (record: unknown) => void): void;
+	enumMissionPersistenceData(
+		visitor: (this: void, record: unknown) => void,
+	): void;
 	/**
 	 * Exports current mission data to a `.miz` file.
 	 *

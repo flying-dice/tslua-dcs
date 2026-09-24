@@ -260,7 +260,16 @@ export interface ReferenceObject {
  * @param obj The value to check.
  */
 export function isReferenceObject(obj: any): obj is ReferenceObject {
-	return Object.prototype.hasOwnProperty.call(obj, "$ref");
+	return hasOwnRef(obj);
+}
+
+/**
+ * Whether the table has its own `$ref` key. `Object.prototype.hasOwnProperty` does not exist
+ * under TypeScriptToLua (it compiles to an index of the undefined global `Object`), so the
+ * own-key check uses `rawget`, which ignores metatables just as `hasOwnProperty` ignores prototypes.
+ */
+function hasOwnRef(obj: object): boolean {
+	return rawget(obj as { $ref?: unknown }, "$ref") !== undefined;
 }
 
 export type SchemaObjectType =
@@ -343,7 +352,7 @@ export interface SchemaObject extends ISpecificationExtension {
 export function isSchemaObject(
 	schema: SchemaObject | ReferenceObject,
 ): schema is SchemaObject {
-	return !Object.prototype.hasOwnProperty.call(schema, "$ref");
+	return !hasOwnRef(schema);
 }
 
 export interface SchemasObject {

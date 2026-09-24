@@ -438,7 +438,7 @@ describe("announce", () => {
 });
 ```
 
-The same bundle can also run inside DCS (for example through the DCS Studio bridge). Reporting uses `print`,
+The same bundle can also run inside DCS (for example with `dcs-bridge run`, see tslua-dcs-bridge). Reporting uses `print`,
 falling back to `env.info`, and a failing run raises an error that the calling `pcall` sees. The
 `tslua-dcs-*-types_test` packages run their suites this way.
 

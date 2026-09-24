@@ -40,11 +40,14 @@ export class SpecificationExtension implements ISpecificationExtension {
 	}
 	listExtensions(): string[] {
 		const res: string[] = [];
+		// `for...in` compiles to `pairs(self)`, which visits only the instance's own keys (methods live
+		// on the class metatable), so no `hasOwnProperty` check is needed; it does not exist in Lua.
 		for (const propName in this) {
-			if (Object.prototype.hasOwnProperty.call(this, propName)) {
-				if (SpecificationExtension.isValidExtension(propName)) {
-					res.push(propName);
-				}
+			if (
+				typeof propName === "string" &&
+				SpecificationExtension.isValidExtension(propName)
+			) {
+				res.push(propName);
 			}
 		}
 		return res;

@@ -1,0 +1,18 @@
+{
+	"$schema": "https://raw.githubusercontent.com/TypeScriptToLua/TypeScriptToLua/refs/tags/v1.37.1/tsconfig-schema.json",
+	"extends": "../tsconfig.base.tstl.json",
+	"include": [
+		"../tslua-dcs-gui-types/src/**/*.ts",
+		"../tslua-dcs-gui-types/tests/doubles/**/*.ts"
+	],
+	"compilerOptions": {
+		"declaration": false,
+		"outDir": ".test",
+		"rootDir": ".."
+	},
+	"tstl": {
+		"luaTarget": "5.1",
+		"luaBundleEntry": "../tslua-dcs-gui-types/tests/doubles/index.ts",
+		"luaBundle": "doubles.lua"
+	}
+}

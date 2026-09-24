@@ -4,7 +4,9 @@
 	"description": "Test app for DCS World and tslua-http",
 	"private": true,
 	"scripts": {
-		"build": "rimraf dist && tstl -p tsconfig.tstl.json"
+		"build": "rimraf dist && tstl -p tsconfig.tstl.json",
+		"test": "npm run test:lua",
+		"test:lua": "npm run build && tstl -p tsconfig.tstl-tests.json && tstl -p ../tslua-dcs-mission-types_test/tsconfig.doubles.json --outDir ../tslua-dcs-testapp/.test && lua51 --preload .test/dcs-mission-doubles.lua .test/tests.lua"
 	},
 	"keywords": [],
 	"author": "",
@@ -17,11 +19,11 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.14",
+		"@flying-dice/tslua-luatest": "^0.33.0",
 		"lua-types": "^2.14.1",
 		"prettier": "^3.9.8",
 		"rimraf": "^6.1.3",
 		"typescript": "6.0.2",
-		"typescript-to-lua": "^1.37.1",
-		"vitest": "^4.1.11"
+		"typescript-to-lua": "^1.37.1"
 	}
 }

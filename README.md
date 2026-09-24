@@ -81,7 +81,7 @@ Contributions to this project are welcome. If you find an issue or have suggesti
 
 There are various ways to datamine dcs and of course the docs are a great source of information.
 
-Type exports are maintained through DCS Studio. See [UPDATING.md](UPDATING.md) for bridge setup, mission prerequisites, and troubleshooting.
+Type exports are maintained through the repository's own DCS bridge (`npm run dcs:start`). See [UPDATING.md](UPDATING.md) for setup and troubleshooting.
 
 #### Useful Resources
 - https://www.digitalcombatsimulator.com/en/support/faq/1249/

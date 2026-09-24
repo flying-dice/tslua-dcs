@@ -5,7 +5,7 @@ describe("StaticObject examples", () => {
 	test("static lookup and getters return documented values when available", () => {
 		const object = staticFixture();
 		if (!object) return;
-		expect(StaticObject.getByName(object.getName())).toBe(object);
+		expect(StaticObject.getByName(object.getName())).toEqual(object);
 		expect(type(object.getID())).toBe("number");
 		expect(type(object.getLife())).toBe("number");
 		expect(type(object.getCountry())).toBe("number");

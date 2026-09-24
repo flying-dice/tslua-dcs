@@ -23,7 +23,7 @@ export interface l_missionCommands extends _missionCommands {
 	addCommand<T>(
 		name: string,
 		path: MissionCommandPath | undefined,
-		callback: (argument: T) => void,
+		callback: (this: void, argument: T) => void,
 		argument: T,
 	): MissionCommandPath;
 
@@ -43,7 +43,7 @@ export interface l_missionCommands extends _missionCommands {
 		coalitionId: number,
 		name: string,
 		path: MissionCommandPath | undefined,
-		callback: (argument: T) => void,
+		callback: (this: void, argument: T) => void,
 		argument: T,
 	): MissionCommandPath;
 
@@ -63,7 +63,7 @@ export interface l_missionCommands extends _missionCommands {
 		groupId: number,
 		name: string,
 		path: MissionCommandPath | undefined,
-		callback: (argument: T) => void,
+		callback: (this: void, argument: T) => void,
 		argument: T,
 	): MissionCommandPath;
 

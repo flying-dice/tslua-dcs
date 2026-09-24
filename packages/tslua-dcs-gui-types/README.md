@@ -18,7 +18,7 @@ npm install @flying-dice/tslua-dcs-gui-types
 
 Contributions to this project are welcome. If you find an issue or have suggestions for improvements, please open an issue or submit a pull request.
 
-Exports use DCS Studio's GUI bridge. Follow the canonical [update guide](../../UPDATING.md), start DCS at the main menu, and run `npm run export`.
+Exports use the project's GUI bridge ([tslua-dcs-bridge](../tslua-dcs-bridge/README.md)). Follow the canonical [update guide](../../UPDATING.md): run `npm run dcs:start`, then `npm run export`.
 
 #### Exports
 
@@ -30,7 +30,7 @@ npm run export
 
 This will
 1. Read `scripts/export.bridge.lua`
-2. Connect to the installed DCS Studio GUI bridge and traverse configured namespaces
+2. Connect to the project GUI bridge and traverse configured namespaces
 3. Assemble a foundation typescript interface
 
 From here you can extend the underlying interface and replace the typing information.
@@ -38,6 +38,25 @@ From here you can extend the underlying interface and replace the typing informa
 Updating the `packages/tslua-dcs-gui-types/src/index.d.ts` with a variable where the type is of your extending interface will allow it to be used.
 
 To add namespaces, update `scripts/config.ts` and run `npm run export` again.
+
+#### Testing
+
+Everything runs offline on the repository's `lua51` interpreter with `@flying-dice/tslua-luatest`:
+
+```shell
+npm test --workspace=@flying-dice/tslua-dcs-gui-types        # declarations, doubles and export generator
+npm test --workspace=@flying-dice/tslua-dcs-gui-types-test   # the executable examples, offline
+npm run test:dcs:gui                                          # the same examples inside DCS (project bridge)
+```
+
+- `tests/doubles/` holds the DCS GUI test doubles (`DCS`, `Export`, `net`, `lfs`, `log`, `terrain`,
+  `coalition`, `db`), typed against these declarations and preloaded with `lua51 --preload`. See
+  [tests/doubles/README.md](tests/doubles/README.md) for what they model and how to extend them.
+- `tests/call-shapes.ts` calls every declared function once through a spy, checking that it compiles
+  to a dot call with the declared arguments. `tests/lua-shapes.ts` covers multiple return values,
+  callbacks DCS invokes (`DCS.setUserCallbacks`), iterators, overloads and object methods.
+- `tests/surface.ts` checks that the doubles expose exactly the members of `src/exports/*.export.ts`.
+- `npm run test:export` type-checks `scripts/` and tests `scripts/export.bridge.lua` against fixtures.
 
 #### Useful Resources
 - https://wiki.hoggitworld.com/view/DCS_server_gameGUI
