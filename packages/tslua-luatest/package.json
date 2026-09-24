@@ -32,7 +32,7 @@
 	},
 	"devDependencies": {
 		"lua-types": "^2.14.1",
-		"typescript": "6.0.2",
+		"typescript": "6.0.3",
 		"typescript-to-lua": "^1.37.1"
 	},
 	"gitHead": "a6ae4c01c5f5796bcc1c0e88d4b790d83de03340"
