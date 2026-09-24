@@ -1,6 +1,6 @@
 /**
  * The TypeScript examples of the mission scripting declarations. The same bundle
- * (`.test/mission-tests.lua`) runs inside DCS (`npm run test:dcs`, through the DCS Studio mission bridge)
+ * (`.test/mission-tests.lua`) runs inside DCS (`npm run test:dcs`, through the project mission bridge)
  * and offline on lua51 with the mission-environment doubles preloaded (`npm test`).
  */
 import "./setup"; // must stay first

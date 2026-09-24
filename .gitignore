@@ -18,3 +18,4 @@ docs
 /packages/tslua-common/.test/
 /packages/tslua-json/.test/
 /packages/tslua-base64/.test/
+/packages/tslua-dcs-bridge/.test/

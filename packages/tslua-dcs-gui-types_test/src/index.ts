@@ -1,5 +1,5 @@
 // Entry of the example suites. The same bundle (.test/tests.lua) runs offline on lua51 with the
-// DCS GUI doubles preloaded (`npm test`) and inside DCS through the DCS Studio GUI bridge
+// DCS GUI doubles preloaded (`npm test`) and inside DCS through the project GUI bridge (`dcs-bridge run gui`)
 // (`npm run test:dcs`). run() prints the report and raises when a test failed, which fails the
 // lua51 process offline and the bridge's pcall in DCS.
 import "./setup"; // must stay first: enables deferred mode before any test is declared

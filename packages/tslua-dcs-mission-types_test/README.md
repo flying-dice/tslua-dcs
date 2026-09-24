@@ -22,8 +22,8 @@ lua51 --preload dist/dcs-mission-doubles.lua .test/mission-tests.lua
 lua51 --preload dist/dcs-mission-doubles.lua .test/tests.lua
 ```
 
-`npm run test:dcs` is unchanged: it builds `.test/mission-tests.lua` and evaluates it in a running mission
-through the DCS Studio mission bridge (`scripts/run.ts`). Both paths use luatest's deferred mode:
+`npm run test:dcs` builds `.test/mission-tests.lua` and runs it in a running mission through the project
+bridge (`dcs-bridge run mission`, see [tslua-dcs-bridge](../tslua-dcs-bridge/README.md)). Both paths use luatest's deferred mode:
 `src/setup.ts` calls `configure({ autoRun: false })` before any suite is imported and `src/index.ts` ends
 with `run()`, which throws when a test failed (non-zero exit on lua51, a failed `pcall` in DCS).
 

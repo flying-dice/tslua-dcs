@@ -18,7 +18,7 @@ npm install @flying-dice/tslua-dcs-mission-types
 
 Contributions to this project are welcome. If you find an issue or have suggestions for improvements, please open an issue or submit a pull request.
 
-Exports use DCS Studio's mission bridge. Follow the canonical [update guide](../../UPDATING.md): start a trusted development mission, unpause it, and run `npm run export`.
+Exports use the project's mission bridge ([tslua-dcs-bridge](../tslua-dcs-bridge/README.md)). Follow the canonical [update guide](../../UPDATING.md): run `npm run dcs:start` (it starts and unpauses the test mission), then `npm run export`.
 
 #### Exports
 
@@ -30,7 +30,7 @@ npm run export
 
 This will
 1. Read `scripts/export.bridge.lua`
-2. Connect to the installed DCS Studio mission bridge and traverse configured namespaces
+2. Connect to the project mission bridge and traverse configured namespaces
 3. Assemble a foundation typescript interface
 
 From here you can extend the underlying interface and replace the typing information.

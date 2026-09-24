@@ -27,6 +27,8 @@ jobs:
         with:
           workspaces: packages/tslua-lua51
       - run: npm ci
+      # Regression: the DCS bridge must build from a clean checkout (before anything else builds).
+      - run: npm run dcs:build
       - run: npm test
       - run: npm run test:lua
       - run: npm run audit:dcs-types -- --strict

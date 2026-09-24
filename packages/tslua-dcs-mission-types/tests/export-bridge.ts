@@ -1,5 +1,5 @@
 /**
- * scripts/export.bridge.lua is the chunk `npm run export` evaluates inside DCS (through the DCS Studio
+ * scripts/export.bridge.lua is the chunk `npm run export` evaluates inside DCS (through the project
  * mission bridge) to generate src/exports/*.export.ts from the live mission environment. These tests
  * run the same chunk on lua51 against synthetic namespaces, exactly as scripts/export.ts prepares it:
  * the two quoted placeholders are replaced by Lua string literals.

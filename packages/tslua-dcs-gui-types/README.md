@@ -18,7 +18,7 @@ npm install @flying-dice/tslua-dcs-gui-types
 
 Contributions to this project are welcome. If you find an issue or have suggestions for improvements, please open an issue or submit a pull request.
 
-Exports use DCS Studio's GUI bridge. Follow the canonical [update guide](../../UPDATING.md), start DCS at the main menu, and run `npm run export`.
+Exports use the project's GUI bridge ([tslua-dcs-bridge](../tslua-dcs-bridge/README.md)). Follow the canonical [update guide](../../UPDATING.md): run `npm run dcs:start`, then `npm run export`.
 
 #### Exports
 
@@ -30,7 +30,7 @@ npm run export
 
 This will
 1. Read `scripts/export.bridge.lua`
-2. Connect to the installed DCS Studio GUI bridge and traverse configured namespaces
+2. Connect to the project GUI bridge and traverse configured namespaces
 3. Assemble a foundation typescript interface
 
 From here you can extend the underlying interface and replace the typing information.
@@ -46,7 +46,7 @@ Everything runs offline on the repository's `lua51` interpreter with `@flying-di
 ```shell
 npm test --workspace=@flying-dice/tslua-dcs-gui-types        # declarations, doubles and export generator
 npm test --workspace=@flying-dice/tslua-dcs-gui-types-test   # the executable examples, offline
-npm run test:dcs:gui                                          # the same examples inside DCS (DCS Studio bridge)
+npm run test:dcs:gui                                          # the same examples inside DCS (project bridge)
 ```
 
 - `tests/doubles/` holds the DCS GUI test doubles (`DCS`, `Export`, `net`, `lfs`, `log`, `terrain`,
