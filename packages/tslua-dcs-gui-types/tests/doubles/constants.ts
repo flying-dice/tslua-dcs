@@ -1,0 +1,177 @@
+/** @noSelfInFile */
+
+/**
+ * Numeric constants of the DCS GUI namespaces, as the doubles expose them.
+ *
+ * DCS does not document most of these values, so the doubles use deterministic placeholders: the
+ * members of each generated interface (src/exports/*.export.ts) numbered in alphabetical order from
+ * 0. Code under test must compare against the constant (`DCS.UNIT_NAME`), never a literal number.
+ * The exceptions are `coalition` (0 neutral, 1 red, 2 blue, as in DCS; see index.ts), the `log`
+ * masks, which are bit flags so that masks combine like the real ones, and `net.CHAT_ALL` /
+ * `net.CHAT_TEAM`, which are negative so they never collide with a player ID.
+ */
+
+import type { l_DCS, l_log, l_net } from "../../src";
+
+/** The non-function members of a namespace interface. */
+export type Constants<T> = {
+	[K in keyof T as T[K] extends (...arguments_: never[]) => unknown
+		? never
+		: K]: T[K];
+};
+
+export const dcsConstants: Constants<l_DCS> = {
+	S_EVENT_AI_ABORT_MISSION: 0,
+	S_EVENT_BASE_CAPTURED: 1,
+	S_EVENT_BDA: 2,
+	S_EVENT_BIRTH: 3,
+	S_EVENT_CRASH: 4,
+	S_EVENT_DAYNIGHT: 5,
+	S_EVENT_DEAD: 6,
+	S_EVENT_DETAILED_FAILURE: 7,
+	S_EVENT_DISCARD_CHAIR_AFTER_EJECTION: 8,
+	S_EVENT_EJECTION: 9,
+	S_EVENT_EMERGENCY_LANDING: 10,
+	S_EVENT_ENGINE_SHUTDOWN: 11,
+	S_EVENT_ENGINE_STARTUP: 12,
+	S_EVENT_FLIGHT_TIME: 13,
+	S_EVENT_GROUP_CHANGE_OPTION: 14,
+	S_EVENT_HIT: 15,
+	S_EVENT_HUMAN_AIRCRAFT_REPAIR_FINISH: 16,
+	S_EVENT_HUMAN_AIRCRAFT_REPAIR_START: 17,
+	S_EVENT_HUMAN_FAILURE: 18,
+	S_EVENT_INVALID: 19,
+	S_EVENT_KILL: 20,
+	S_EVENT_LAND: 21,
+	S_EVENT_LANDING_AFTER_EJECTION: 22,
+	S_EVENT_LANDING_QUALITY_MARK: 23,
+	S_EVENT_MAC_EXTRA_SCORE: 24,
+	S_EVENT_MAC_LMS_RESTART: 25,
+	S_EVENT_MARK_ADDED: 26,
+	S_EVENT_MARK_CHANGE: 27,
+	S_EVENT_MARK_REMOVED: 28,
+	S_EVENT_MAX: 29,
+	S_EVENT_MISSION_END: 30,
+	S_EVENT_MISSION_RESTART: 31,
+	S_EVENT_MISSION_START: 32,
+	S_EVENT_MISSION_WINNER: 33,
+	S_EVENT_PARATROOPER_LENDING: 34,
+	S_EVENT_PILOT_DEAD: 35,
+	S_EVENT_PLAYER_CAPTURE_AIRFIELD: 36,
+	S_EVENT_PLAYER_COMMENT: 37,
+	S_EVENT_PLAYER_ENTER_UNIT: 38,
+	S_EVENT_PLAYER_LEAVE_UNIT: 39,
+	S_EVENT_PLAYER_SELF_KILL_PILOT: 40,
+	S_EVENT_REFUELING: 41,
+	S_EVENT_REFUELING_STOP: 42,
+	S_EVENT_RUNWAY_TAKEOFF: 43,
+	S_EVENT_RUNWAY_TOUCH: 44,
+	S_EVENT_SCORE: 45,
+	S_EVENT_SHOOTING_END: 46,
+	S_EVENT_SHOOTING_START: 47,
+	S_EVENT_SHOT: 48,
+	S_EVENT_SIMULATION_FREEZE: 49,
+	S_EVENT_SIMULATION_START: 50,
+	S_EVENT_SIMULATION_UNFREEZE: 51,
+	S_EVENT_TAKEOFF: 52,
+	S_EVENT_TOOK_CONTROL: 53,
+	S_EVENT_TRIGGER_ZONE: 54,
+	S_EVENT_UNIT_CREATE_TASK: 55,
+	S_EVENT_UNIT_DELETE_TASK: 56,
+	S_EVENT_UNIT_LOST: 57,
+	S_EVENT_UNIT_TASK_COMPLETE: 58,
+	S_EVENT_UNIT_TASK_STAGE: 59,
+	S_EVENT_WEAPON_ADD: 60,
+	S_EVENT_WEAPON_DROP: 61,
+	S_EVENT_WEAPON_REARM: 62,
+	UNIT_CALLSIGN: 63,
+	UNIT_CATEGORY: 64,
+	UNIT_COALITION: 65,
+	UNIT_COUNTRY_ID: 66,
+	UNIT_GROUPCATEGORY: 67,
+	UNIT_GROUPNAME: 68,
+	UNIT_GROUP_MISSION_ID: 69,
+	UNIT_HIDDEN: 70,
+	UNIT_INVISIBLE_MAP_ICON: 71,
+	UNIT_INVISIBLE_MAP_LABEL: 72,
+	UNIT_MISSION_ID: 73,
+	UNIT_NAME: 74,
+	UNIT_PLAYER_NAME: 75,
+	UNIT_ROLE: 76,
+	UNIT_RUNTIME_ID: 77,
+	UNIT_TASK: 78,
+	UNIT_TYPE: 79,
+	dModeFinish: 80,
+	dModeInit: 81,
+	dModePostStart: 82,
+	dModeStart: 83,
+	dModeStop: 84,
+	dModeUser: 85,
+	dModeWork: 86,
+};
+
+export const netConstants: Constants<l_net> = {
+	// Negative, so chat targets never collide with player IDs (DCS uses -1 and -2 as well).
+	CHAT_ALL: -1,
+	CHAT_TEAM: -2,
+	ERR_BAD_CALLSIGN: 2,
+	ERR_BANNED: 3,
+	ERR_CONNECT_FAILED: 4,
+	ERR_DENIED_TRIAL_ONLY: 5,
+	ERR_INVALID_ADDRESS: 6,
+	ERR_INVALID_PASSWORD: 7,
+	ERR_KICKED: 8,
+	ERR_NOT_ALLOWED: 9,
+	ERR_PROTOCOL_ERROR: 10,
+	ERR_REFUSED: 11,
+	ERR_SERVER_FULL: 12,
+	ERR_TAINTED_CLIENT: 13,
+	ERR_THATS_OKAY: 14,
+	ERR_TIMEOUT: 15,
+	ERR_WRONG_VERSION: 16,
+	GAME_MODE_CONQUEST: 17,
+	GAME_MODE_LAST_MAN_STANDING: 18,
+	GAME_MODE_MISSION: 19,
+	GAME_MODE_TEAM_DEATH_MATCH: 20,
+	PS_CAR: 21,
+	PS_CRASH: 22,
+	PS_EJECT: 23,
+	PS_LAND: 24,
+	PS_PING: 25,
+	PS_PLANE: 26,
+	PS_SCORE: 27,
+	PS_SHIP: 28,
+	RESUME_MANUAL: 29,
+	RESUME_ON_LOAD: 30,
+	RESUME_WITH_CLIENTS: 31,
+};
+
+export const logConstants: Constants<l_log> = {
+	// Levels: one bit each; ALL covers the five public levels, ALL_LEVELS adds TRACE.
+	ALERT: 1,
+	ERROR: 2,
+	WARNING: 4,
+	INFO: 8,
+	DEBUG: 16,
+	TRACE: 32,
+	ALL: 31,
+	ALL_LEVELS: 63,
+	// Output-mode flags.
+	MESSAGE: 0x100,
+	TIME: 0x200,
+	MODULE: 0x400,
+	LEVEL: 0x800,
+	TIME_UTC: 0x1000,
+	TIME_LOCAL: 0x2000,
+	TIME_RELATIVE: 0x4000,
+	MODELTIME: 0x8000,
+	THREAD: 0x10000,
+	EXTRA_INFO: 0x20000,
+	FULL: 0x0f00,
+	// Writer behaviour flags.
+	ASYNC: 0x100000,
+	IMMEDIATE: 0x200000,
+	RELIABLE: 0x400000,
+	BACKUP: 0x800000,
+	NO_HEADER_FOOTER: 0x1000000,
+};

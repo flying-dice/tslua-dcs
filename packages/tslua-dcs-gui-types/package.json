@@ -24,14 +24,17 @@
 		"CHANGELOG.md"
 	],
 	"scripts": {
-		"clean": "rimraf dist",
+		"clean": "rimraf dist .test",
 		"export": "tsx scripts/export.ts",
 		"typecheck:export": "tsc -p tsconfig.export.json",
-		"test:export": "vitest run scripts --passWithNoTests",
+		"test:export": "npm run typecheck:export && tstl -p tsconfig.tstl-export-tests.json && lua51 ./.test/export-tests.lua",
 		"build": "rimraf dist && tsc -p tsconfig.tstl.json && tstl -p tsconfig.tstl.json",
-		"test": "vitest run --coverage --passWithNoTests"
+		"build:doubles": "tstl -p tsconfig.tstl-doubles.json",
+		"test": "npm run test:lua && npm run test:export",
+		"test:lua": "npm run build:doubles && tstl -p tsconfig.tstl-tests.json && lua51 --preload ./.test/doubles.lua ./.test/tests.lua"
 	},
 	"devDependencies": {
+		"@flying-dice/tslua-luatest": "^0.33.0",
 		"@types/fs-extra": "^11.0.4",
 		"@types/node": "^22.20.4",
 		"fs-extra": "^11.4.0",

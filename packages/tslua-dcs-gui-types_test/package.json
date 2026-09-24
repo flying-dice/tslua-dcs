@@ -4,6 +4,9 @@
 	"private": true,
 	"scripts": {
 		"build": "tstl -p tsconfig.json",
+		"build:doubles": "tstl -p tsconfig.doubles.json",
+		"test": "npm run test:lua",
+		"test:lua": "npm run build && npm run build:doubles && lua51 --preload ./.test/doubles.lua ./.test/tests.lua",
 		"test:dcs": "npm run export --workspace=@flying-dice/tslua-dcs-gui-types && npm run build --workspace=@flying-dice/tslua-dcs-gui-types && npm run build && tsx scripts/run.ts"
 	},
 	"dependencies": {
