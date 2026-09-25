@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
       # Every Lua script runs on the repo-managed interpreter (packages/tslua-lua51),
       # so no system Lua/LuaRocks/LuaSocket is installed. Keep this version in
@@ -45,7 +45,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
       - run: npm ci
       - name: Set Git Config
