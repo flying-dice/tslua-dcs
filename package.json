@@ -42,7 +42,7 @@
 		"lua-types": "^2.14.1"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.5.14",
+		"@biomejs/biome": "2.5.15",
 		"lerna": "^10.0.1",
 		"nodemon": "^3.1.14",
 		"npm-check-updates": "^22.2.9",
