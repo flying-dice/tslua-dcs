@@ -34,7 +34,7 @@
 	"devDependencies": {
 		"@flying-dice/tslua-luatest": "^0.33.0",
 		"@types/fs-extra": "^11.0.4",
-		"@types/node": "^22.20.4",
+		"@types/node": "^24.0.0",
 		"fs-extra": "^11.4.0",
 		"lua-types": "^2.14.1",
 		"typescript": "6.0.2",
